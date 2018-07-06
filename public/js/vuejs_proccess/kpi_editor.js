@@ -1159,10 +1159,6 @@ var v = new Vue({
         this.same_user = (COMMON.UserRequestID == COMMON.UserViewedId) ? true : false;  // -> hot fix, has_perm(KPI__EDITING) => actor == target cho phep nhan vien tu chinh sua kpi, nhung logic moi thi khong cho phep
         this.get_surbodinate_user_viewed();
 
-        //get all kpi in kpilib when query_kpilib: ' ',
-        this.search_kpi_library();
-        // init data for kpilib
-        this.get_data_for_kpilib();
     },
     filters: {
         //marked: marked
@@ -1265,10 +1261,11 @@ var v = new Vue({
         },
         searched_kpis: {
             handler: function(){
-                kpi_lib.data_kpi_editor  = v;
-                kpi_lib.searched_kpis_lib = v.searched_kpis;
+                if(this.organization.enable_kpi_lib) {
+                    kpi_lib.data_kpi_editor = v;
+                    kpi_lib.searched_kpis_lib = v.searched_kpis;
+                }
             }
-
         }
     },
     created: function(){
@@ -1438,7 +1435,8 @@ var v = new Vue({
                 url: '/api/v2/kpilib/?' + params,
                 success: function (data) {
                     self.searched_kpis = data;
-                    kpi_lib.isLoading = false;
+                    if(self.organization.enable_kpi_lib == true)
+                        kpi_lib.isLoading = false;
                 }
             })
         },
@@ -3192,6 +3190,7 @@ var v = new Vue({
             var that = this;
             cloudjetRequest.ajax({
                 type: 'get',
+                async: false,
                 url: COMMON.LinkOrgAPI,
                 success: function (data) {
                     that.$set('organization', data);
@@ -4334,14 +4333,24 @@ var v = new Vue({
             this.update_quarter_target(kpi);
             this.kpi_ready(kpi.id, controller_prefix, ready);
         },
-        get_data_for_kpilib: function(){
-            kpi_lib.options = this.options_category;
-            kpi_lib.parent_cate = this.parent_category;
-            kpi_lib.child_cate = this.child_category;
-            kpi_lib.BSC_CATEGORY = this.BSC_CATEGORY;
-            kpi_lib.EXTRA_FIELDS_KPI = this.EXTRA_FIELDS;
+        init_data_for_kpilib: function(){
+            if(self.organization.enable_kpi_lib == true) {
+                kpi_lib.options = this.options_category;
+                kpi_lib.parent_cate = this.parent_category;
+                kpi_lib.child_cate = this.child_category;
+                kpi_lib.BSC_CATEGORY = this.BSC_CATEGORY;
+                kpi_lib.EXTRA_FIELDS_KPI = this.EXTRA_FIELDS;
+            }
         },
+        get_data_kpilib: function(){
+            //get all kpi in kpilib when query_kpilib: ' ',
+            this.search_kpi_library();
+            // init data for kpilib
+            this.init_data_for_kpilib();
+        }
+
     },
+
     events: {
         'update_lock_exscore_review': function (option) {
             var that = this
@@ -4370,7 +4379,8 @@ var v = new Vue({
             console.log('triggered fetch_user_exscore')
             this.fetch_exscore();
         }
-    }
+    },
+
 });
 
 v.get_current_quarter();
