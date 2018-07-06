@@ -1189,10 +1189,13 @@ var v = new Vue({
         }
     },
     watch: {
+        parentKPIs: function(val,oldVal){
+                            this.getListGroupV2();
+
+        },
         kpi_list: {
             handler: function (val, oldVal) {
                 this.calculate_total_weight();
-                this.getListGroupV2();
                 // this.getListGroup();
             }
             //,deep: true <-- slow
@@ -1361,12 +1364,12 @@ var v = new Vue({
                 //
                 var matchedGroup = self.findGroupByID(group.id, listGroup)
                 if (matchedGroup.length === 0){
-                    listGroup[index] = group
+                    self.$set('list_group['+ index + ']', group)
                     index++
                 }
 
             }
-            self.list_group = listGroup;
+            // self.list_group = listGroup;
             // console.log("====================== list group ===================")
             // console.log(this.list_group)
         },
