@@ -1,0 +1,20 @@
+{
+  "name": "static",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+"build": "find . -name \"*.md\" -type f -delete && git add . && git commit -am \"build and commit\" && git push origin master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TranDinhKhang/TranDinhKhang.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TranDinhKhang/TranDinhKhang.github.io/issues"
+  },
+  "homepage": "https://github.com/TranDinhKhang/TranDinhKhang.github.io#readme"
+}
