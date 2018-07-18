@@ -63,7 +63,9 @@ var targetPage = new Vue({
     data: {
         enableFollowTarget: COMMON.EnableRquireTarget,
         nameKPIEdit: "",
+        selected_kpi:{},
         dialogFormVisible: false,
+        dialogFormVisible_1: false,
         option: '',
         oldQuery: '',
         query: "",
@@ -207,7 +209,7 @@ var targetPage = new Vue({
 
 
         },
-        setCurrentUser: function (userId, userName) {
+        setCurrentUser: function (userId, userName) { //get user khi search
             var self = this
             self.query = userName
             self.oldQuery = userName
@@ -241,7 +243,7 @@ var targetPage = new Vue({
             self.getListKpi()
             self.refreshHistoryData()
         },
-        arraySpanMethod: function ({row, column, rowIndex, columnIndex}) {
+        arraySpanMethod: function ({row, column, rowIndex, columnIndex}) {// merge cac cell cua row category
             if (this.tableData[rowIndex].isGroup == true) {
                 if (this.isShowMonth) {
                     return [1, 19];
@@ -250,7 +252,7 @@ var targetPage = new Vue({
                 }
             }
         },
-        tableRowClassName: function ({row, rowIndex}) {
+        tableRowClassName: function ({row, rowIndex}) { // add class cho category
             if (this.tableData[rowIndex].isGroup == true) {
                 if (this.tableData[rowIndex].ten_KPI == gettext('Financial')) {
                     return 'target_fin_title';
@@ -270,7 +272,7 @@ var targetPage = new Vue({
                 return '';
             }
         },
-        createItem: function (item) {
+        createItem: function (item) { // created data cho tung kpi
             var self = this
             var tempTableData = {
                 kpi_id: '',
@@ -284,7 +286,8 @@ var targetPage = new Vue({
                 quarter_4: "",
                 isGroup: false,
                 score_calculation_type: "",
-                year_data: {}
+                year_data: {},
+                visible2: false,
             };
             console.log(item.name)
             tempTableData.ten_KPI = item.name == undefined ? "" : item.name;
@@ -295,7 +298,7 @@ var targetPage = new Vue({
             tempTableData.quarter_4 = item.quarter_four_target == undefined ? "" : item.quarter_four_target;
             tempTableData.edit = "";
             tempTableData.isGroup = item.isGroup == undefined ? false : true
-            tempTableData.score_calculation_type = item.score_calculation_type == undefined ? "" : gettext(item.score_calculation_type)
+            tempTableData.score_calculation_type = item.score_calculation_type == undefined ? "" : item.score_calculation_type
             // biến sử dung truyền khi request lên server
             tempTableData.current_quarter = item.quarter
             tempTableData.kpi_id = item.id
@@ -303,7 +306,18 @@ var targetPage = new Vue({
             tempTableData.yeardata = item.year_data == undefined ? "" : item.year_data;
             return tempTableData = tempTableData == undefined ? {} : tempTableData;
         },
-        getMonthsTarget: function (item) {
+        triggeredDismissModal: function(e){
+            this.selected_kpi = Object.assign(this.selected_kpi, e) // gan e cho vung nho this.selected_kpi
+            this.selected_kpi = e
+            this.dialogFormVisible = false
+            this.$set(this,'selected_kpi',JSON.parse(JSON.stringify({})))
+        },
+        showModalEdit: function(kpi){
+            console.log('triggered show modal')
+            this.selected_kpi = kpi
+            this.dialogFormVisible = true
+        },
+        getMonthsTarget: function (item) { // tao field thang theo tung quy
             var temp_months_target = {
                 quarter_1: {
                     month_1: '',
@@ -349,7 +363,71 @@ var targetPage = new Vue({
             }
             return temp_months_target
         },
-        getListKpi: function () {
+        updateTarget: function (kpi) { // update target khi edit tung field kpi
+            var tempMonth_1 = "";
+            var tempMonth_2 = "";
+            var tempMonth_3 = "";
+            var that = this;
+            if (kpi.year_data == undefined) {
+                kpi.year_data = {}
+                kpi.year_data['months_target'] = kpi.months_target;
+            } else {
+                if (kpi.year_data.months_target == undefined) {
+                    kpi.year_data['months_target'] = kpi.months_target;
+                } else {
+                    kpi.year_data.months_target = kpi.months_target;
+                }
+            }
+            if (kpi.current_quarter == 1) {
+                tempMonth_1 = kpi.months_target.quarter_1.month_1;
+                tempMonth_2 = kpi.months_target.quarter_1.month_2;
+                tempMonth_3 = kpi.months_target.quarter_1.month_3;
+            } else if (that.edit_target_data.current_quarter == 2) {
+                tempMonth_1 = kpi.months_target.quarter_2.month_1;
+                tempMonth_2 = kpi.months_target.quarter_2.month_2;
+                tempMonth_3 = kpi.months_target.quarter_2.month_3;
+            } else if (that.edit_target_data.current_quarter == 3) {
+                tempMonth_1 = kpi.months_target.quarter_3.month_1;
+                tempMonth_2 = kpi.months_target.quarter_3.month_2;
+                tempMonth_3 = kpi.months_target.quarter_3.month_3;
+            } else if (that.edit_target_data.ccurrent_quarter == 4) {
+                tempMonth_1 = kpi.months_target.quarter_4.month_1;
+                tempMonth_2 = kpi.months_target.quarter_4.month_2;
+                tempMonth_3 = kpi.months_target.quarter_4.month_3;
+            } else {
+            }
+            cloudjetRequest.ajax({
+                type: 'post',
+                url: '/api/v2/kpi/',
+                dataType: "json",
+                data: JSON.stringify({
+                    id: kpi.kpi_id,
+                    month_1_target: tempMonth_1,
+                    month_2_target: tempMonth_2,
+                    month_3_target: tempMonth_3,
+                    score_calculation_type: kpi.score_calculation_type,
+                    year_target: kpi.year,
+                    quarter_one_target: kpi.quarter_1,
+                    quarter_two_target: kpi.quarter_2,
+                    quarter_three_target: kpi.quarter_3,
+                    quarter_four_target: kpi.quarter_4,
+                    year_data: kpi.year_data
+                }),
+                success: function (result) {
+                    console.log("===================success============")
+                    console.log(result)
+                    kpi.visible2 = false;
+                    $('.el-popover').hide()
+                },
+                error: function () {
+                    $('.el-popover').hide()
+                }
+            })
+        },
+        cancel: function () {
+            $('.el-popover').hide()
+        },
+        getListKpi: function () { // sap xep kpi theo category
             var self = this
             cloudjetRequest.ajax({
                 type: 'GET',
@@ -486,10 +564,11 @@ var targetPage = new Vue({
         this.get_surbodinate_user_viewed();
         this.setCurrentUser(COMMON.UserViewedId, COMMON.UserName)
         console.log("======> show enable target<===========")
-        this.enableFollowTarget = (this.enableFollowTarget == "true")
+        this.enableFollowTarget = (this.enableFollowTarget == "True")
         console.log(this.enableFollowTarget)
-
-
+        setInterval(function(){
+            $('#launcher').hide();
+        }, 50);
     },
 
 });

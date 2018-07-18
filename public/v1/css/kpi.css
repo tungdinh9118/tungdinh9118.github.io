@@ -1286,7 +1286,6 @@ div.btn-wrapper .btn {
     background: #333333;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
     border:none;
-    z-index: 9999999;
 }
 
 #navbar .nav-left .one ul {
@@ -1560,6 +1559,15 @@ a:hover {
     color: #008b8b!important;
 }
 
+.material-icons.font-20.clear{
+    margin-top: -2px;
+    color: #ababab;
+}
+
+.material-icons.font-20.clear:hover{
+    cursor: pointer;
+}
+
 .material-icons.font-16{
     position: relative;
     bottom: -2px;
@@ -1689,6 +1697,12 @@ a:hover {
 }
 .btn-cus-5-9{
     padding:5px 9px 5px 9px;
+}
+.btn-cus-5-15{
+    padding:5px 15px 5px 15px;
+}
+.btn-cus-3-13{
+    padding:3px 13px 3px 13px;
 }
 
 .btn-width-120{
@@ -2281,7 +2295,7 @@ a:hover {
      height: 17px;
      left: 0;
      margin-left: -20px;
-     border: 1px solid #cccccc;
+     border: 1px solid #008b8b;
      border-radius: 50%;
      background-color: #fff;
      -webkit-transition: border 0.15s ease-in-out;
@@ -2690,6 +2704,35 @@ a:hover {
 #target .v-modal{
     z-index: 999999;
 }
-#target .btn-edit-target{
+.edit-box-title {
+    text-align: center;
+    margin: 5px 2px;
+}
+.btn-edit-box {
+    text-align: center;
+    margin: 5px 2px;
+}
+#target .btn-edit-target {
     display: none;
+}
+#target .column:hover .btn-edit-target{
+    display: inline-block;
+    /*float: right;*/
+}
+.modal-edit-target .el-input-number--small {
+    width: 150px;
+    line-height: 30px;
+}
+#target .error-msg {
+    color: #d9534f;
+    font-size: 12px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+.modal-edit-target .material-icons.font-20{
+    position: relative;
+    bottom: -4px;
+    margin-top: -9px;
+    color: #ffffff;
+    margin-right: 8px;
 }
