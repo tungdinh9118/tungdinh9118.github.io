@@ -2414,7 +2414,7 @@ a:hover {
 
  /*=========target page=========*/
 .target-page{
-    max-width: 1600px;
+    text-align: center;
 }
 .page-title{
     font-size: 18px;
@@ -2431,6 +2431,8 @@ a:hover {
 }
 
 .select-no-style{
+    position: relative;
+    top: -7px;
     padding: 5px 25px 5px 5px;
     border: none;
     -webkit-appearance: none;
@@ -2486,7 +2488,10 @@ a:hover {
 .target_fin_title td {
     background: #fef6e9;
 }
-
+.target_fin_title td .cell {
+    display: inherit;
+    font-size: 14px;
+}
 .target_client_title{
     background: #eaf1f7;
     color: #337ab7;
@@ -2496,6 +2501,10 @@ a:hover {
 .target_client_title td {
     background: #eaf1f7;
 }
+.target_client_title td .cell {
+    display: inherit;
+    font-size: 14px;
+}
 .target_internal_title{
     background: #edf5e7;
     color: #53a413;
@@ -2503,6 +2512,10 @@ a:hover {
 }
 .target_internal_title td{
     background: #edf5e7;
+}
+.target_internal_title td .cell {
+    display: inherit;
+    font-size: 14px;
 }
 .target_clean_title{
     background: #fdf1f1;
@@ -2512,6 +2525,11 @@ a:hover {
 
 .target_clean_title td{
     background: #fdf1f1;
+}
+
+.target_internal_title td .cell {
+    display: inherit;
+    font-size: 14px;
 }
 
 .target_other_title{
@@ -2524,13 +2542,20 @@ a:hover {
     background: #f9f9f9;
 }
 
+.target_clean_title td .cell {
+    display: inherit;
+    font-size: 14px;
+}
+
 .target_kpi_name_sup{
     font-size: 10px;
     color: #ababab;
+    text-align: left;
 }
 .target_kpi_name{
     font-size: 14px;
     color: #333333;
+    text-align: left;
 }
 .tbl-target .material-icons{
     color: #008b8b;
@@ -2571,8 +2596,9 @@ a:hover {
 }
 #target .search-target-staff {
     display: inline-block;
-    position: relative;
-    top: -20px;
+    position: absolute;
+    /* top: -20px; */
+    left: 15px;
 }
 #target .search-target-staff #search_user {
     /*margin:0 auto;*/
@@ -2601,8 +2627,7 @@ a:hover {
     cursor: pointer;
 }
 #target .title-target{
-    display: inline-block;
-    margin-left: 10%;
+    text-align: center;
 }
 #target #list_user_suggest .list-group-item {
     border: 0px;
@@ -2684,9 +2709,10 @@ a:hover {
 }
 .modal-edit-target .kpi-name{
     font-size: 12px;
+    font-weight: bold;
     text-align: left;
     color: #337ab7;
-    font-family: HelveticaNeue;
+    /* font-family: HelveticaNeue; */
 }
 .modal-edit-target  .el-dialog__body{
     padding: 0px 20px ;
@@ -2719,9 +2745,10 @@ a:hover {
     display: inline-block;
     /*float: right;*/
 }
-.modal-edit-target .el-input-number--small {
-    width: 150px;
-    line-height: 30px;
+#target .column .el-popover__reference{
+    min-width: 5px;
+    min-height: 5px;
+    display: inline-block;
 }
 #target .error-msg {
     color: #d9534f;
@@ -2735,4 +2762,46 @@ a:hover {
     margin-top: -9px;
     color: #ffffff;
     margin-right: 8px;
+}
+.modal-edit-target .el-dialog__title {
+    line-height: 24px;
+    font-size: 16px;
+    color: #333333;
+    font-weight: bold;
+}
+.modal-edit-target{
+    text-align: left;
+}
+.modal-edit-target .title-input {
+    color: #666666;
+    font-size: 12px;
+}
+.modal-edit-target .input-target-cell input {
+    padding: 0px 0px 0px 15px;
+    color: #333333;
+}
+.modal-edit-target .el-button:hover{
+    background-color: #e4e4e4;
+    color: #333333;
+    border-color: #333333;
+}
+.btn-edit-box .el-button:hover{
+    background-color: #e4e4e4;
+    color: #333333;
+    border-color: #333333;
+}
+.modal-edit-target .el-button--primary:hover{
+    background-color: #33a2a2;
+    color: #fff;
+    border-color: #33a2a2;
+}
+.btn-edit-box .el-button--primary:hover{
+    background-color: #33a2a2;
+    color: #fff;
+    border-color: #33a2a2;
+}
+.input-edit-cell > input {
+    text-align: center;
+    padding: 0px 0px;
+    color: #333333;
 }
