@@ -2732,11 +2732,12 @@ a:hover {
 }
 .edit-box-title {
     text-align: center;
-    margin: 5px 2px;
+    margin: 0px 2px 10px 2px;
+    color: #ababab;
 }
 .btn-edit-box {
     text-align: center;
-    margin: 5px 2px;
+    margin: 10px 2px 0px 2px;
 }
 #target .btn-edit-target {
     display: none;
@@ -2804,4 +2805,7 @@ a:hover {
     text-align: center;
     padding: 0px 0px;
     color: #333333;
+}
+.is-row-months .input-target-cell{
+    margin: 5px 10px 5px 0px !important;
 }

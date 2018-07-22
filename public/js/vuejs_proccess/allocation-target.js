@@ -62,6 +62,9 @@ var targetPage = new Vue({
     el: '#target',
     data: {
         enableFollowTarget: COMMON.EnableRquireTarget,
+        is_admin:COMMON.UserIsAdmin,
+        allow_edit_monthly_target:COMMON.AllowEditMonthlyTarget,
+        is_superuser:COMMON.UserIsSuperUser,
         nameKPIEdit: "",
         selected_kpi:{},
         dialogFormVisible: false,
@@ -276,6 +279,7 @@ var targetPage = new Vue({
             var self = this
             var tempTableData = {
                 kpi_id: '',
+                disable_edit:'',
                 current_quarter: '',
                 ten_KPI: '',
                 year: '',
@@ -300,6 +304,7 @@ var targetPage = new Vue({
             tempTableData.isGroup = item.isGroup == undefined ? false : true
             tempTableData.score_calculation_type = item.score_calculation_type == undefined ? "" : item.score_calculation_type
             // biến sử dung truyền khi request lên server
+            tempTableData.disable_edit = !(this.is_superuser || (item.enable_edit && this.allow_edit_monthly_target) || this.is_admin);
             tempTableData.current_quarter = item.quarter
             tempTableData.kpi_id = item.id
             tempTableData.months_target = self.getMonthsTarget(item) == undefined ? "" : self.getMonthsTarget(item);
@@ -310,7 +315,7 @@ var targetPage = new Vue({
             this.selected_kpi = Object.assign(this.selected_kpi, e) // gan e cho vung nho this.selected_kpi
             this.selected_kpi = e
             this.dialogFormVisible = false
-            this.$set(this,'selected_kpi',JSON.parse(JSON.stringify({})))
+            //this.$set(this,'selected_kpi',JSON.parse(JSON.stringify({})))
         },
         showModalEdit: function(kpi){
             console.log('triggered show modal')
@@ -402,15 +407,15 @@ var targetPage = new Vue({
                 dataType: "json",
                 data: JSON.stringify({
                     id: kpi.kpi_id,
-                    month_1_target: tempMonth_1,
-                    month_2_target: tempMonth_2,
-                    month_3_target: tempMonth_3,
+                    month_1_target: tempMonth_1 == ""? null : tempMonth_1,
+                    month_2_target: tempMonth_2 == ""? null : tempMonth_2,
+                    month_3_target: tempMonth_3 == ""? null : tempMonth_3,
                     score_calculation_type: kpi.score_calculation_type,
-                    year_target: kpi.year,
-                    quarter_one_target: kpi.quarter_1,
-                    quarter_two_target: kpi.quarter_2,
-                    quarter_three_target: kpi.quarter_3,
-                    quarter_four_target: kpi.quarter_4,
+                    year_target: kpi.year == ""? null : kpi.year,
+                    quarter_one_target: kpi.quarter_1 == ""? null : kpi.quarter_1,
+                    quarter_two_target: kpi.quarter_2 == ""? null : kpi.quarter_2,
+                    quarter_three_target: kpi.quarter_3 == ""? null : kpi.quarter_3,
+                    quarter_four_target: kpi.quarter_4 == ""? null : kpi.quarter_4,
                     year_data: kpi.year_data
                 }),
                 success: function (result) {
@@ -420,7 +425,6 @@ var targetPage = new Vue({
                     $('.el-popover').hide()
                 },
                 error: function () {
-                    $('.el-popover').hide()
                 }
             })
         },
@@ -516,6 +520,7 @@ var targetPage = new Vue({
                     $("#ico-clear").show();
                     $("#ico-search").hide();
                     $("#popup-progress").hide();
+                    if(is_admin){
                     cloudjetRequest.ajax({
                         method: "GET",
                         dataType: 'json',
@@ -534,6 +539,9 @@ var targetPage = new Vue({
                             $(".arrow-up").show();
                         }
                     })
+                    }else{
+
+                    }
                 } else {
                     $("#list_user_suggest").show();
                     that.list_user_searched = [];
@@ -551,7 +559,11 @@ var targetPage = new Vue({
                 dataType: 'json',
                 url: '/api/team/?user_id=' + COMMON.UserViewedId,
                 success: function (data) {
+                    console.log(data)
                     that.list_surbodinates_user_viewed = data;
+                    this.has_manage = that.list_surbodinates_user_viewed.length > 0
+                    console.log("=============surbodinate user==========")
+                    console.log(this.has_manage)
                 }
             })
         },
@@ -564,8 +576,12 @@ var targetPage = new Vue({
         this.get_surbodinate_user_viewed();
         this.setCurrentUser(COMMON.UserViewedId, COMMON.UserName)
         console.log("======> show enable target<===========")
-        this.enableFollowTarget = (this.enableFollowTarget == "True")
-        console.log(this.enableFollowTarget)
+        console.log(COMMON.UserIsAdmin)
+        console.log(COMMON.UserIsSuperUser)
+        console.log(COMMON.AllowEditMonthlyTarget)
+        console.log(COMMON.EditToDate)
+        console.log(COMMON.EnableRquireTarget)
+
         setInterval(function(){
             $('#launcher').hide();
         }, 50);
