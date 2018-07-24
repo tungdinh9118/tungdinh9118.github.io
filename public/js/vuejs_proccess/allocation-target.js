@@ -294,7 +294,7 @@ var targetPage = new Vue({
                 year_data: {},
                 visible2: false,
             };
-            console.log(item.name)
+            // console.log(item.name)
             tempTableData.ten_KPI = item.name == undefined ? "" : item.name;
             tempTableData.year = item.year_target == undefined ? "" : item.year_target;
             tempTableData.quarter_1 = item.quarter_one_target == undefined ? "" : item.quarter_one_target;
@@ -319,7 +319,7 @@ var targetPage = new Vue({
             //this.$set(this,'selected_kpi',JSON.parse(JSON.stringify({})))
         },
         showModalEdit: function(kpi){
-            console.log('triggered show modal')
+            // console.log('triggered show modal')
             this.selected_kpi = kpi
             this.dialogFormVisible = true
         },
@@ -379,10 +379,10 @@ var targetPage = new Vue({
                     get_current_quarter: true
                 },
                 success: function (res) {
-                    console.log("quarter")
+                    // console.log("quarter")
                     console.log(res);
                     self.get_current_quarter = res.fields.quarter
-                    console.log(this.get_current_quarter)
+                    // console.log(this.get_current_quarter)
                     self.getListKpi()
                 },
                 error: function (a, b, c) {
@@ -440,8 +440,8 @@ var targetPage = new Vue({
                     year_data: kpi.year_data
                 }),
                 success: function (result) {
-                    console.log("===================success============")
-                    console.log(result)
+                    // console.log("===================success============")
+                    // console.log(result)
                     kpi.visible2 = false;
                     $('.el-popover').hide()
                 },
@@ -489,12 +489,12 @@ var targetPage = new Vue({
                             }
                         }
                     }
-                    console.log("==========>>>><<<<<<<<==========")
-                    console.log(self.groupFinancial)
-                    console.log(self.groupCustomer)
-                    console.log(self.groupInternal)
-                    console.log(self.groupLearn)
-                    console.log(self.groupMore)
+                    // console.log("==========>>>><<<<<<<<==========")
+                    // console.log(self.groupFinancial)
+                    // console.log(self.groupCustomer)
+                    // console.log(self.groupInternal)
+                    // console.log(self.groupLearn)
+                    // console.log(self.groupMore)
                     //                             Array.prototype.pushArray = function() {
                     //    var toPush = this.concat.apply([], arguments);
                     //     for (var i = 0, len = toPush.length; i < len; ++i) {#}
@@ -521,7 +521,7 @@ var targetPage = new Vue({
                         self.tableData.push(self.createItem({name: gettext('More'), isGroup: true}));
                         self.tableData.push.apply(self.tableData, self.tableData.concat.apply([], self.groupMore));
                     }
-                    console.log(self.tableData)
+                    // console.log(self.tableData)
                 },
 
                 error: function (a, b, c) {
@@ -547,7 +547,7 @@ var targetPage = new Vue({
                         url: COMMON.LinkSearchPeople + '?all_sublevel=1&limit=10&search_term=' + that.query,
                         success: function (data) {
                             that.list_user_searched = data.suggestions;
-                            console.log(that.list_user_searched);
+                            // console.log(that.list_user_searched);
                             // self.quarter_period = [];
                             // self.user_profile = null;
                             if (that.list_user_searched < 1) {
@@ -576,11 +576,11 @@ var targetPage = new Vue({
                 dataType: 'json',
                 url: '/api/team/?user_id=' + COMMON.UserViewedId,
                 success: function (data) {
-                    console.log(data)
+                    // console.log(data)
                     that.list_surbodinates_user_viewed = data;
                     this.has_manage = that.list_surbodinates_user_viewed.length > 0
-                    console.log("=============surbodinate user==========")
-                    console.log(this.has_manage)
+                    // console.log("=============surbodinate user==========")
+                    // console.log(this.has_manage)
                 }
             })
         },
@@ -592,12 +592,12 @@ var targetPage = new Vue({
         this.storage_user = this.getHistoryStorageByEmail(COMMON.UserRequestEmail)
         this.get_surbodinate_user_viewed();
         this.setCurrentUser(COMMON.UserViewedId, COMMON.UserName)
-        console.log("======> show enable target<===========")
-        console.log(COMMON.UserIsAdmin)
-        console.log(COMMON.UserIsSuperUser)
-        console.log(COMMON.AllowEditMonthlyTarget)
-        console.log(COMMON.EditToDate)
-        console.log(COMMON.EnableRquireTarget)
+        // console.log("======> show enable target<===========")
+        // console.log(COMMON.UserIsAdmin)
+        // console.log(COMMON.UserIsSuperUser)
+        // console.log(COMMON.AllowEditMonthlyTarget)
+        // console.log(COMMON.EditToDate)
+        // console.log(COMMON.EnableRquireTarget)
 
         setInterval(function(){
             $('#launcher').hide();
