@@ -591,7 +591,6 @@ var targetPage = new Vue({
         this.isShowMonth = true;
         this.storage_user = this.getHistoryStorageByEmail(COMMON.UserRequestEmail)
         this.get_surbodinate_user_viewed();
-        this.getCurrentQuarter()
         this.setCurrentUser(COMMON.UserViewedId, COMMON.UserName)
         console.log("======> show enable target<===========")
         console.log(COMMON.UserIsAdmin)
