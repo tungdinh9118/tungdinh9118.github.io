@@ -66,6 +66,7 @@ var targetPage = new Vue({
         allow_edit_monthly_target:COMMON.AllowEditMonthlyTarget,
         is_superuser:COMMON.UserIsSuperUser,
         nameKPIEdit: "",
+        get_current_quarter:"",
         selected_kpi:{},
         dialogFormVisible: false,
         dialogFormVisible_1: false,
@@ -243,7 +244,7 @@ var targetPage = new Vue({
             // Step 4: update to localStorage again
             self.setHistoryStorageByEmail(COMMON.UserRequestEmail, _storage)
 
-            self.getListKpi()
+            self.getCurrentQuarter()
             self.refreshHistoryData()
         },
         arraySpanMethod: function ({row, column, rowIndex, columnIndex}) {// merge cac cell cua row category
@@ -280,7 +281,7 @@ var targetPage = new Vue({
             var tempTableData = {
                 kpi_id: '',
                 disable_edit:'',
-                current_quarter: '',
+                current_quarter:'',
                 ten_KPI: '',
                 year: '',
                 months_target: {},
@@ -305,8 +306,8 @@ var targetPage = new Vue({
             tempTableData.score_calculation_type = item.score_calculation_type == undefined ? "" : item.score_calculation_type
             // biến sử dung truyền khi request lên server
             tempTableData.disable_edit = !(this.is_superuser || (item.enable_edit && this.allow_edit_monthly_target) || this.is_admin);
-            tempTableData.current_quarter = item.quarter
             tempTableData.kpi_id = item.id
+            tempTableData.current_quarter = self.get_current_quarter
             tempTableData.months_target = self.getMonthsTarget(item) == undefined ? "" : self.getMonthsTarget(item);
             tempTableData.yeardata = item.year_data == undefined ? "" : item.year_data;
             return tempTableData = tempTableData == undefined ? {} : tempTableData;
@@ -348,25 +349,45 @@ var targetPage = new Vue({
             if (item.year_data != undefined) {
                 temp_months_target = item.year_data.months_target == undefined ? temp_months_target : item.year_data.months_target;
             }
-            if (item.quarter == 1) {
+            if (this.get_current_quarter == 1) {
                 temp_months_target.quarter_1.month_1 = item.month_1_target == undefined ? "" : item.month_1_target;
                 temp_months_target.quarter_1.month_2 = item.month_2_target == undefined ? "" : item.month_2_target;
                 temp_months_target.quarter_1.month_3 = item.month_3_target == undefined ? "" : item.month_3_target;
-            } else if (item.quarter == 2) {
+            } else if (this.get_current_quarter  == 2) {
                 temp_months_target.quarter_2.month_1 = item.month_1_target == undefined ? "" : item.month_1_target;
                 temp_months_target.quarter_2.month_2 = item.month_2_target == undefined ? "" : item.month_2_target;
                 temp_months_target.quarter_2.month_3 = item.month_3_target == undefined ? "" : item.month_3_target;
-            } else if (item.quarter == 3) {
+            } else if (this.get_current_quarter  == 3) {
                 temp_months_target.quarter_3.month_1 = item.month_1_target == undefined ? "" : item.month_1_target;
                 temp_months_target.quarter_3.month_2 = item.month_2_target == undefined ? "" : item.month_2_target;
                 temp_months_target.quarter_3.month_3 = item.month_3_target == undefined ? "" : item.month_3_target;
-            } else if (item.quarter == 4) {
+            } else if (this.get_current_quarter  == 4) {
                 temp_months_target.quarter_4.month_1 = item.month_1_target == undefined ? "" : item.month_1_target;
                 temp_months_target.quarter_4.month_2 = item.month_2_target == undefined ? "" : item.month_2_target;
                 temp_months_target.quarter_4.month_3 = item.month_3_target == undefined ? "" : item.month_3_target;
             } else {
             }
             return temp_months_target
+        },
+        getCurrentQuarter: function() {
+            var self = this
+            cloudjetRequest.ajax({
+                url: "/api/quarter/",
+                dataType: "json",
+                type: "GET",
+                data: {
+                    get_current_quarter: true
+                },
+                success: function (res) {
+                    console.log("quarter")
+                    console.log(res);
+                    self.get_current_quarter = res.fields.quarter
+                    console.log(this.get_current_quarter)
+                    self.getListKpi()
+                },
+                error: function (a, b, c) {
+                }
+            })
         },
         updateTarget: function (kpi) { // update target khi edit tung field kpi
             var tempMonth_1 = "";
@@ -387,15 +408,15 @@ var targetPage = new Vue({
                 tempMonth_1 = kpi.months_target.quarter_1.month_1;
                 tempMonth_2 = kpi.months_target.quarter_1.month_2;
                 tempMonth_3 = kpi.months_target.quarter_1.month_3;
-            } else if (that.edit_target_data.current_quarter == 2) {
+            } else if (kpi.current_quarter == 2) {
                 tempMonth_1 = kpi.months_target.quarter_2.month_1;
                 tempMonth_2 = kpi.months_target.quarter_2.month_2;
                 tempMonth_3 = kpi.months_target.quarter_2.month_3;
-            } else if (that.edit_target_data.current_quarter == 3) {
+            } else if (kpi.current_quarter == 3) {
                 tempMonth_1 = kpi.months_target.quarter_3.month_1;
                 tempMonth_2 = kpi.months_target.quarter_3.month_2;
                 tempMonth_3 = kpi.months_target.quarter_3.month_3;
-            } else if (that.edit_target_data.ccurrent_quarter == 4) {
+            } else if (kpi.current_quarter == 4) {
                 tempMonth_1 = kpi.months_target.quarter_4.month_1;
                 tempMonth_2 = kpi.months_target.quarter_4.month_2;
                 tempMonth_3 = kpi.months_target.quarter_4.month_3;
@@ -520,7 +541,6 @@ var targetPage = new Vue({
                     $("#ico-clear").show();
                     $("#ico-search").hide();
                     $("#popup-progress").hide();
-                    if(is_admin){
                     cloudjetRequest.ajax({
                         method: "GET",
                         dataType: 'json',
@@ -539,9 +559,6 @@ var targetPage = new Vue({
                             $(".arrow-up").show();
                         }
                     })
-                    }else{
-
-                    }
                 } else {
                     $("#list_user_suggest").show();
                     that.list_user_searched = [];
@@ -574,6 +591,7 @@ var targetPage = new Vue({
         this.isShowMonth = true;
         this.storage_user = this.getHistoryStorageByEmail(COMMON.UserRequestEmail)
         this.get_surbodinate_user_viewed();
+        this.getCurrentQuarter()
         this.setCurrentUser(COMMON.UserViewedId, COMMON.UserName)
         console.log("======> show enable target<===========")
         console.log(COMMON.UserIsAdmin)
