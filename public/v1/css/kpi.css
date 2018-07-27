@@ -2613,6 +2613,20 @@ a:hover {
     display: inline-block;
     /*margin-right:-15px;*/
 }
+ #target #list_user_suggest .list-group-item:hover, #target #list_user_suggest .list-group-item:focus{
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+ #target #list_user_suggest .no-hover:hover {
+    background: #fff;
+    cursor: unset;
+}
+ #target .no-data a {
+     background: #fff;
+    cursor: unset;
+    color: #ccc;
+ }
+
  #target .search-target-staff .no-data,#target .search-target-staff #list_user_suggest ,#target .search-target-staff #result_searched{
     width: 300px;
     max-height: 205px;
