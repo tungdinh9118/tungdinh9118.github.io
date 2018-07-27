@@ -1286,6 +1286,7 @@ div.btn-wrapper .btn {
     background: #333333;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
     border:none;
+    /*z-index: 9999999;*/
 }
 
 #navbar .nav-left .one ul {
@@ -2474,6 +2475,9 @@ a:hover {
 .tbl-target th.bold{
     font-weight: bold;
 }
+/*.tbl-target thead tr .el-table_1_column_1,.tbl-target thead tr .el-table_1_column_2,.tbl-target thead tr .el-table_1_column_6,.tbl-target thead tr .el-table_1_column_10,.tbl-target thead tr .el-table_1_column_14,.tbl-target thead tr .el-table_1_column_18{*/
+    /*font-weight: bold !important;*/
+/*}*/
 
 .tbl-target thead tr th.target_tbl_name{
     width: 320px;
@@ -2718,6 +2722,7 @@ a:hover {
     padding: 0px 20px ;
 }
 .modal-edit-target .el-dialog__footer{
+    margin: 30px 0px 0px 0px;
     padding: 10px 20px;
     text-align: right;
     -webkit-box-sizing: border-box;
@@ -2754,7 +2759,7 @@ a:hover {
 #target .error-msg {
     color: #d9534f;
     font-size: 12px;
-    margin-left: 10px;
+    /*margin-left: 10px;*/
     margin-top: 10px;
 }
 .modal-edit-target .material-icons.font-20{
@@ -2808,4 +2813,7 @@ a:hover {
 }
 .is-row-months .input-target-cell{
     margin: 5px 10px 5px 0px !important;
+}
+.modal-edit-target .el-input--small .el-input__inner{
+    height: 40px !important;
 }

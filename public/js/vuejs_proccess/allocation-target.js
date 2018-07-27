@@ -61,6 +61,7 @@ var targetPage = new Vue({
     delimiters: ['${', '}$'],
     el: '#target',
     data: {
+        kpi_select_not_edit :{},
         enableFollowTarget: COMMON.EnableRquireTarget,
         is_admin:COMMON.UserIsAdmin,
         allow_edit_monthly_target:COMMON.AllowEditMonthlyTarget,
@@ -124,6 +125,9 @@ var targetPage = new Vue({
             })
             return result;
 
+        },
+        saveKpiSelected: function (kpi_select) {
+            this.kpi_select_not_edit = JSON.parse(JSON.stringify(kpi_select))
         },
         checkUserExistedInSearchHistory: function (userID, searchHistoryArray) {
             var that = this;
@@ -428,15 +432,15 @@ var targetPage = new Vue({
                 dataType: "json",
                 data: JSON.stringify({
                     id: kpi.kpi_id,
-                    month_1_target: tempMonth_1 == ""? null : tempMonth_1,
-                    month_2_target: tempMonth_2 == ""? null : tempMonth_2,
-                    month_3_target: tempMonth_3 == ""? null : tempMonth_3,
+                    month_1_target: tempMonth_1 === ""? null : parseFloat(tempMonth_1),
+                    month_2_target: tempMonth_2 === ""? null : parseFloat(tempMonth_2),
+                    month_3_target: tempMonth_3 === ""? null : parseFloat(tempMonth_3),
                     score_calculation_type: kpi.score_calculation_type,
-                    year_target: kpi.year == ""? null : kpi.year,
-                    quarter_one_target: kpi.quarter_1 == ""? null : kpi.quarter_1,
-                    quarter_two_target: kpi.quarter_2 == ""? null : kpi.quarter_2,
-                    quarter_three_target: kpi.quarter_3 == ""? null : kpi.quarter_3,
-                    quarter_four_target: kpi.quarter_4 == ""? null : kpi.quarter_4,
+                    year_target: kpi.year === ""? null : parseFloat(kpi.year),
+                    quarter_one_target: kpi.quarter_1 === ""? null : parseFloat(kpi.quarter_1),
+                    quarter_two_target: kpi.quarter_2 === ""? null : parseFloat(kpi.quarter_2),
+                    quarter_three_target: kpi.quarter_3 === ""? null : parseFloat(kpi.quarter_3),
+                    quarter_four_target: kpi.quarter_4 === ""? null : parseFloat(kpi.quarter_4),
                     year_data: kpi.year_data
                 }),
                 success: function (result) {
@@ -446,10 +450,12 @@ var targetPage = new Vue({
                     $('.el-popover').hide()
                 },
                 error: function () {
+                    $('.el-popover').hide()
                 }
             })
         },
-        cancel: function () {
+        cancel: function (kpi_select) {
+            kpi_select = Object.assign(kpi_select, this.kpi_select_not_edit)
             $('.el-popover').hide()
         },
         getListKpi: function () { // sap xep kpi theo category
