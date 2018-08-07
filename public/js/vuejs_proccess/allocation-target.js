@@ -297,6 +297,8 @@ var targetPage = new Vue({
                 score_calculation_type: "",
                 year_data: {},
                 visible2: false,
+                refer_to:'',
+                name_kpi_parent:"",
             };
             // console.log(item.name)
             tempTableData.ten_KPI = item.name == undefined ? "" : item.name;
@@ -308,6 +310,7 @@ var targetPage = new Vue({
             tempTableData.edit = "";
             tempTableData.isGroup = item.isGroup == undefined ? false : true
             tempTableData.score_calculation_type = item.score_calculation_type == undefined ? "" : item.score_calculation_type
+            tempTableData.refer_to = item.refer_to
             // biến sử dung truyền khi request lên server
             tempTableData.disable_edit = !(this.is_superuser || (item.enable_edit && this.allow_edit_monthly_target) || this.is_admin);
             tempTableData.kpi_id = item.id
@@ -472,27 +475,7 @@ var targetPage = new Vue({
                     self.groupMore = []
                     if (self.kpiList != null) {
                         for (var i = 0; i < self.kpiList.length; i++) {
-                            //
-                            // if (self.kpiList[i].score_calculation_type == "most_recent") {
-                            //     self.kpiList[i].score_calculation_type = gettext("Latest month")
-                            // } else if (self.kpiList[i].score_calculation_type == "average") {
-                            //     self.kpiList[i].score_calculation_type = gettext("Average 3 months")
-                            // } else {
-                            //     self.kpiList[i].score_calculation_type = gettext("Sum 3 months")
-                            // }
-                            var temp = self.createItem(self.kpiList[i]);
-                            if (self.kpiList[i].bsc_category == 'financial') {
-                                self.groupFinancial.push(temp)
-                            } else if (self.kpiList[i].bsc_category == 'customer') {
-                                self.groupCustomer.push(temp)
-                            } else if (self.kpiList[i].bsc_category == 'internal') {
-                                self.groupInternal.push(temp)
-                            } else if (self.kpiList[i].bsc_category == 'learninggrowth') {
-                                self.groupLearn.push(temp)
-                            } else if (self.kpiList[i].bsc_category == 'more') {
-                                self.groupMore.push(temp)
-                            } else {
-                            }
+                            self.createdKpiForCategory(self.kpiList[i])
                         }
                     }
                     // console.log("==========>>>><<<<<<<<==========")
@@ -535,6 +518,36 @@ var targetPage = new Vue({
                 }
 
             })
+        },
+        createdKpiForCategory: function (kpi) {
+            var self = this
+            var temp = []
+            temp.push(self.createItem(kpi));
+            var email_parent = kpi.owner_email
+            if(kpi.children.length >0){
+                for(var i = 0; i < kpi.children.length; i++){
+                    if(email_parent === kpi.children[i].owner_email){
+                        temp.push(self.createItem(kpi.children[i]));
+                    }
+                }
+            }
+            temp = temp.map(function (element) {
+                element.name_kpi_parent = kpi.name
+                return element
+            })
+            if (kpi.bsc_category == 'financial') {
+                //self.groupFinancial.push(temp)
+                self.groupFinancial.push.apply(self.groupFinancial, self.groupFinancial.concat.apply([], temp));
+            } else if (kpi.bsc_category == 'customer') {
+                self.groupCustomer.push.apply(self.groupCustomer, self.groupCustomer.concat.apply([], temp));
+            } else if (kpi.bsc_category == 'internal') {
+                self.groupInternal.push.apply(self.groupInternal, self.groupInternal.concat.apply([], temp));
+            } else if (kpi.bsc_category == 'learninggrowth') {
+                self.groupLearn.push.apply(self.groupLearn, self.groupLearn.concat.apply([], temp));
+            } else if (kpi.bsc_category == 'more') {
+                self.groupMore.push.apply(self.groupMore, self.groupMore.concat.apply([], temp));
+            } else {
+            }
         },
         search_user_limit: function () {
             var that = this;

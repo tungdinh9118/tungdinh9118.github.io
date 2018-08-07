@@ -323,15 +323,15 @@ var Bonus = Vue.extend({
             exscore_list = exscore_list.slice(1,exscore_list.length);
 
 
-                sum_list_res = exscore_lib_list.concat(exscore_list);
-                return sum_list_res;
-            },
-            sort_with_group: function(list_data){
-                var that = this;
-                var group_container = {};
-                var _sum_list = [];
-                var sum_list = [];
-                // Extract exscore with category
+            sum_list_res = exscore_lib_list.concat(exscore_list);
+            return sum_list_res;
+        },
+        sort_with_group: function(list_data){
+            var that = this;
+            var group_container = {};
+            var _sum_list = [];
+            var sum_list = [];
+            // Extract exscore with category
 
             // Get unique group list
             var _sum_list_index = 0;
@@ -986,13 +986,10 @@ var v = new Vue({
         }
     },
     watch: {
-        parentKPIs: function(val,oldVal){
-                            this.getListGroupV2();
-
-        },
         kpi_list: {
             handler: function (val, oldVal) {
                 this.calculate_total_weight();
+                this.getListGroupV2();
                 // this.getListGroup();
             }
             //,deep: true <-- slow
@@ -1117,32 +1114,34 @@ var v = new Vue({
             //debugger;
             var self = this;
             var listGroup = [];
+            var result = {}
             var index = 0;
-            console.log("parent kpi", self.parentKPIs);
-            for(var kpi_id in self.parentKPIs){
+            console.log("parent kpi", self.getKPIParent());
+            for(var kpi_id in self.getKPIParent()){
 
                 console.log("elm:", kpi_id);
                 var group = {
                     name: self.kpi_list[kpi_id].refer_group_name,
                     slug: self.kpi_list[kpi_id].kpi_refer_group,
                     category: self.kpi_list[kpi_id].bsc_category,
-                    refer_to: null || self.kpi_list[kpi_id].refer_to, // if this KPI is assigned to user
+                    refer_to: self.kpi_list[kpi_id].refer_to, // if this KPI is assigned to user
                     id: self.kpi_list[kpi_id].group_kpi
                 }
                 //
                 var matchedGroup = self.findGroupByID(group.id, listGroup);
                 // if found group by id that does not exist in current listGroup -> push into list Group
-                if (matchedGroup == -1){
-                    self.$set('list_group['+ index + ']', group)
+                if (matchedGroup === -1){
+                    result[index] = group
                     index++;
                     listGroup.push(group);
                 }
-
             }
+            self.$set('list_group',result)
             // self.list_group = listGroup;
             // console.log("====================== list group ===================")
             // console.log(this.list_group)
         },
+
         delete_all_kpis: function () {
             cloudjetRequest.ajax({
                 method: "POST",
@@ -1199,7 +1198,7 @@ var v = new Vue({
             var self = this;
             var url = `/api/v2/kpilib/search/?${kpi_lib.query_search_kpi_lib}`;
             if(page != 1 && self.next_url_kpi_lib){
-               url = updateQueryStringParameter(self.next_url_kpi_lib, 'page', page)
+                url = updateQueryStringParameter(self.next_url_kpi_lib, 'page', page)
             }
             self.searched_kpis = [];
             cloudjetRequest.ajax({
@@ -1209,7 +1208,7 @@ var v = new Vue({
                     self.searched_kpis = data.results;
                     self.next_url_kpi_lib = data.next;
                     if(self.organization.enable_kpi_lib == true)
-                    kpi_lib.isLoading = false;
+                        kpi_lib.isLoading = false;
                     kpi_lib.total_page = data.count;
                 }
             });
@@ -2316,6 +2315,7 @@ var v = new Vue({
                     console.log("success");
                     that.get_current_employee_performance();
                     that.$set('kpi_list['+kpi.id+ ']',data)
+                    that.getListGroupV2()
                     //$('.group-header-kpi-name' + kpi.id).text(kpi.refer_group_name);
                     if (typeof callback == "function") {
                         callback(0);
@@ -2384,11 +2384,6 @@ var v = new Vue({
                     success: function (res) {
                         that.get_current_employee_performance();
                         $ancestors = that.get_root_kpi_wrapper(kpi_id);
-                        if ($ancestors.length > 0) {
-                            $($ancestors).reload_kpi_anchor();
-                        } else {
-                            $(elm).reload_kpi_anchor();
-                        }
                         // close modal and alter message success
                         $('#modalReason').modal('hide');
                         //update new old_weight value
@@ -2822,36 +2817,36 @@ var v = new Vue({
 
         // Done
         handleFile_action_plan:function (e){
-                $('#kpi_action_plan-modal .form-start').hide();
-                var width = 1;
-                var file = $('#file-upload-action-plan-input')[0].files[0];
-                var file_name = $('#file-upload-action-plan-input')[0].files[0].name;
-                that.action_plan_filename = file_name;
-                var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.docx|\.pdf|\.xls|\.xlsx|\.doc|\.bmp)$/i;
-                if(!allowedExtensions.exec(file_name) || file.size/1024/1024 > 5) {
-                    that.status_upload_action_plan = false;
-                    return false;
-                }
-                else{
-                    that.status_upload_action_plan = true;
-                    var id = setInterval(frame, 10);
-                }
-                function frame() {
-                    if (width >= 100) {
-                        clearInterval(id);
-                        $("#board-upload-action-plan .ico-circle-check").css('color','#7ed321');
-                        $("#board-upload-action-plan .file-upload-progress-bar-wrapper .file-upload-progress-bar").hide();
-                        $("#board-upload-action-plan .title-loading").hide();
-                        $("#board-upload-action-plan .action-plan-descr").show();
-                        $("#board-upload-action-plan .btn-start-over").show();
-                        $("#board-upload-action-plan .btn-save-upload").show();
+            $('#kpi_action_plan-modal .form-start').hide();
+            var width = 1;
+            var file = $('#file-upload-action-plan-input')[0].files[0];
+            var file_name = $('#file-upload-action-plan-input')[0].files[0].name;
+            that.action_plan_filename = file_name;
+            var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.docx|\.pdf|\.xls|\.xlsx|\.doc|\.bmp)$/i;
+            if(!allowedExtensions.exec(file_name) || file.size/1024/1024 > 5) {
+                that.status_upload_action_plan = false;
+                return false;
+            }
+            else{
+                that.status_upload_action_plan = true;
+                var id = setInterval(frame, 10);
+            }
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    $("#board-upload-action-plan .ico-circle-check").css('color','#7ed321');
+                    $("#board-upload-action-plan .file-upload-progress-bar-wrapper .file-upload-progress-bar").hide();
+                    $("#board-upload-action-plan .title-loading").hide();
+                    $("#board-upload-action-plan .action-plan-descr").show();
+                    $("#board-upload-action-plan .btn-start-over").show();
+                    $("#board-upload-action-plan .btn-save-upload").show();
 
-                    } else {
-                        width++;
-                        $("#board-upload-action-plan .file-upload-percentage").text(width+'%');
-                        $("#board-upload-action-plan .file-upload-progress-bar-wrapper .file-upload-progress-bar").css('width', width + '%');
-                    }
+                } else {
+                    width++;
+                    $("#board-upload-action-plan .file-upload-percentage").text(width+'%');
+                    $("#board-upload-action-plan .file-upload-progress-bar-wrapper .file-upload-progress-bar").css('width', width + '%');
                 }
+            }
         },
 
         get_current_quarter: function () {
@@ -4108,7 +4103,7 @@ var v = new Vue({
             var self = this;
             var url = '/api/v2/kpilib/';
             if(page && page != 1 && self.next_url_kpi_lib){
-               url = updateQueryStringParameter(self.next_url_kpi_lib,'page', page);
+                url = updateQueryStringParameter(self.next_url_kpi_lib,'page', page);
             }
             self.searched_kpis = [];
             cloudjetRequest.ajax({
@@ -4119,7 +4114,7 @@ var v = new Vue({
                     self.next_url_kpi_lib = data.next;
                     if(page==1)kpi_lib.count_search = data.count;
                     if(self.organization.enable_kpi_lib == true)
-                    kpi_lib.isLoading = false;
+                        kpi_lib.isLoading = false;
                     kpi_lib.total_page = data.count;
                 }
             });
@@ -4275,14 +4270,14 @@ function format(number) {
 }
 
 function updateQueryStringParameter(uri, key, value) {
-  var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-  var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-  if (uri.match(re)) {
-    return uri.replace(re, '$1' + key + "=" + value + '$2');
-  }
-  else {
-    return uri + separator + key + "=" + value;
-  }
+    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+        return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    else {
+        return uri + separator + key + "=" + value;
+    }
 }
 
 $(function () {

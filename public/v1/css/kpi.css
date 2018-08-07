@@ -2574,7 +2574,7 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
  /*=========target page=========*/
 .target-page{
     text-align: center;
-/*=========target page=========*/
+}
 
 .page-title {
     font-size: 18px;
@@ -2961,6 +2961,24 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
     font-size: 12px;
     /*margin-left: 10px;*/
     margin-top: 10px;
+}
+#target .el-table .sub-link{
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    top: -2px;
+    font-size: 10px;
+    padding: 0px 3px;
+    color: #008b8b;
+    border-radius: 4px;
+    border: 2px solid #008b8b
+}
+#target .el-table .kpi-name{
+    display: inline-block;
+}
+#target .content-kpi-name{
+    text-align: left;
+    padding-bottom: 2px;
 }
 .modal-edit-target .material-icons.font-20{
     position: relative;
