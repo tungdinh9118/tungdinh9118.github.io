@@ -2819,7 +2819,26 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 #target .title-target{
     text-align: center;
 }
-
+#target .export-excel-target{
+    text-align: center;
+    display: inline-block;
+   position: absolute;
+    top:70px;
+    right: 0px;
+    padding-right: 20px;
+}
+#target .export-excel-target .btn-export-excel-target{
+    background: #ffffff;
+    box-shadow: none;
+    border: 1px solid #dedede;
+    border-radius: 3px;
+    padding: 6px 12px;
+}
+#target .export-excel-target .btn-export-excel-target i{
+    font-size: 20px !important;
+    padding-right: 8px;
+    top:4px;
+}
 #target #list_user_suggest .list-group-item {
     border: 0px;
     padding-left: 20px;
