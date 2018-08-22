@@ -1,4 +1,4 @@
-var makeid = function () {
+function makeid() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -7,8 +7,9 @@ var makeid = function () {
 
     return text;
 }
-//https://gist.github.com/mathewbyrne/1280286#gistcomment-2614193
-var slugify = function (text) {
+function slugify(text) {
+    //https://gist.github.com/mathewbyrne/1280286#gistcomment-2614193
+
     text = text.toString().toLowerCase().trim();
 
     const sets = [
@@ -74,17 +75,17 @@ function formatDateToTimeString(date){
     // 01, 02, 03, ... 29, 30, 31
     var hh = date.getHours()
     // 01, 02, 03, ... 10, 11, 12
-    var mm = ((date.getMinutes() + 1) < 10 ? '0' : '') + (date.getMinutes() + 1);
+    var mm = ((date.getMinutes() + 1) < 10 ? '0' : '') + (date.getMinutes());
     // 1970, 1971, ... 2015, 2016, ...
-    var ss =((date.getSeconds() + 1) < 10 ? '0' : '') + (date.getSeconds() + 1);
+    var ss =((date.getSeconds() + 1) < 10 ? '0' : '') + (date.getSeconds());
     // create the format you want
     return (hh + ":" + mm + ":" + ss);
 }
 
 function getDateStandard(date){
-     // 01, 02, 03, ... 29, 30, 31
+    // 01, 02, 03, ... 29, 30, 31
     var dd = (date.getDate() < 10 ? '0' : '') + date.getDate();
-    // 01, 02, 03, ... 10, 11, 12
+    // 01, 02, 03, ... 10, 11, 12completed_date
     var MM = ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1);
     // 1970, 1971, ... 2015, 2016, ...
     var yyyy = date.getFullYear();
@@ -156,7 +157,7 @@ function extractPermission(userActor,userActorSubordinates,taskObjectData){
     }
 }
 
-// utils for modal
+/* istanbul ignore next */
 function initModalHidden(modalSelector,callback){ // required jquery
     $(modalSelector).on('hidden.bs.modal',function(event){
         console.log('dismiss modal')
@@ -169,4 +170,19 @@ function initModalHidden(modalSelector,callback){ // required jquery
         }
     })
 
+}
+
+/* istanbul ignore next */
+// If we're running under Node,
+if (typeof exports !== 'undefined') {
+  exports.extractFileName = extractFileName;
+  exports.formatDateToTimeString = formatDateToTimeString;
+  exports.extractPermission = extractPermission;
+  exports.isManagerOrAdmin = isManagerOrAdmin;
+  exports.formatDateToString = formatDateToString;
+  exports.getDateStandard = getDateStandard;
+  exports.cloneObject = cloneObject;
+  exports.slugify = slugify;
+  exports.makeid = makeid;
+  exports.initModalHidden = initModalHidden;
 }

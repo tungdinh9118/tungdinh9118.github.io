@@ -394,7 +394,7 @@ var targetPage = new Vue({
     methods: {
         refreshHistoryData: function () {
             var self = this;
-            self.$set(self, 'storage_user', self.getHistoryStorageByEmail(this.user_profile_actor.email))
+            self.$set(self, 'storage_user', self.getHistoryStorageByEmail(this.emailActor))
         },
         cloneObject: function (objectOriginal) {
             return JSON.parse(JSON.stringify(objectOriginal))
@@ -518,7 +518,7 @@ var targetPage = new Vue({
             self.tableData = []
             self.currentUserId = userId;
 
-            var _storage = self.getHistoryStorageByEmail(this.user_profile_actor.email)
+            var _storage = self.getHistoryStorageByEmail(this.emailActor)
 
             // Step 3: Update search history
 
@@ -540,7 +540,7 @@ var targetPage = new Vue({
 
 
             // Step 4: update to localStorage again
-            self.setHistoryStorageByEmail(this.user_profile_actor.email, _storage)
+            self.setHistoryStorageByEmail(this.emailActor, _storage)
 
             self.getCurrentQuarter();
             self.getUserProfile();
@@ -663,8 +663,8 @@ var targetPage = new Vue({
                     month_3: ''
                 }
             }
-            if (item.year_data != undefined) {
-                temp_months_target = item.year_data.months_target == undefined ? temp_months_target : item.year_data.months_target;
+            if (item.year_data != undefined && item.year_data.months_target) {
+                Object.assign(temp_months_target, item.year_data.months_target);
             }
             var i = this.get_current_quarter
             temp_months_target['quarter_' + i].month_1 = item.month_1_target == undefined ? "" : item.month_1_target;
@@ -684,6 +684,7 @@ var targetPage = new Vue({
             })
         },
         getProfileActor: function () {
+            var self = this
             cloudjetRequest.ajax({
                 type: "GET",
                 url: '/api/profile/?user_id=' + self.actorId,
@@ -1636,22 +1637,12 @@ var targetPage = new Vue({
     },
     created: function () {
         window.targetApp = this;
-        var self = this;
         this.option = $('#change-style-drop').children().eq(0).text();
         this.isShowMonth = true;
         this.getOrg();
-        async.waterfall([
-            function firstStep(done) {
-                self.user_profile_actor = self.getProfileActor()
-
-                done(null, self.user_profile_actor);
-            },
-            function secondStep(previousResult, done) {
-                self.setCurrentUser(self.actorId, self.nameActor);
-                self.storage_user = self.getHistoryStorageByEmail(self.emailActor);
-                done(null);
-            }
-        ]),
+        this.getProfileActor()
+        this.setCurrentUser(self.actorId, self.nameActor);
+        this.storage_user = self.getHistoryStorageByEmail(self.emailActor);
         this.get_surbodinate_user_viewed();
         setInterval(function(){
             $('#launcher').hide();
