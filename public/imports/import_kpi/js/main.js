@@ -127,8 +127,8 @@ methods: {
     hideUnusedTableHead: function(){
         console.log("triggered this hiding function")
         setTimeout(function(){
-            $($('#home-template > div:nth-child(3) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').siblings('th')[0]).attr('colspan',2)
-            $('#home-template > div:nth-child(3) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').hide()
+            $($('#import-kpi-page > div:nth-child(3) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').siblings('th')[0]).attr('colspan',2)
+            $('#import-kpi-page > div:nth-child(3) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').hide()
         },100)
     },
     getOrg: function () {
@@ -983,8 +983,8 @@ methods: {
                 setTimeout(function () {
                     $('#edit-import-kpi').modal('hide');
                     swal({
-                        title: '{% trans "Success" %}',
-                        text: '{% trans "Edit import KPI success" %}!',
+                        title: gettext("Success"),
+                        text: gettext("Edit import KPI success!"),
                         type: "success",
                         timer: 2000,
                         confirmButtonColor: "#43ABDB"
