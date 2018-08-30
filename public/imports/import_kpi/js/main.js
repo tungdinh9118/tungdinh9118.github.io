@@ -1091,7 +1091,7 @@ methods: {
         var kpi_data_import = that.convertNewStructData(kpi)
         cloudjetRequest.ajax({
             type: "POST",
-            url: "api/kpis/import/add",
+            url: "/api/kpis/import/add",
             data: JSON.stringify(kpi_data_import),
             success: function (data) {
                 //console.log('yes, we can!');
