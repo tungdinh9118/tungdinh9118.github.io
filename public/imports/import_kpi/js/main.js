@@ -862,7 +862,10 @@ methods: {
                     kpi.validated = false;
                     kpi.msg = kpi.msg + "\n" + gettext("Name must not be empty");
                 }
-
+                if (kpi.goal == "") {
+                    kpi.validated = false;
+                    kpi.msg = kpi.msg + "\n" + gettext("KPI targets must not be empty");
+                }
                 if (kpi.msg.trim() == '\n') {
                     kpi.msg = kpi.msg.slice(2, kpi.msg.length);
                     kpi.msg = kpi.msg.charAt(0).toUpperCase() + kpi.msg.slice(1);
@@ -1088,7 +1091,7 @@ methods: {
         var kpi_data_import = that.convertNewStructData(kpi)
         cloudjetRequest.ajax({
             type: "POST",
-            url: "/api/kpis/import/add",
+            url: "api/kpis/import/add",
             data: JSON.stringify(kpi_data_import),
             success: function (data) {
                 //console.log('yes, we can!');
