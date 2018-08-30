@@ -675,7 +675,7 @@ methods: {
         var p = self.method.indexOf(kpi.score_calculation_type.trim().toLowerCase());
         if (p > 2 & p<6){
             self.method_save = self.method[p-3];
-        }else if( 0 <= p && p<2){
+        }else if( 0 <= p && p<=2){
             self.method_save = self.method[p];
         }
         else{
