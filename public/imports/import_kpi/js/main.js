@@ -607,22 +607,21 @@ methods: {
 
         // year target bang voi tong target cac quy
         kpi.year = !$.isNumeric(kpi.year)?null:parseFloat(kpi.year)
-        var yearTargetValid = sum_year == null
-        var isTotalyear = sum_q === null
+        var yearTargetValid =  kpi.year == sum_q
         if(!yearTargetValid){
             kpi.check_error_year = true
         }
         //bao loi khi thang khong theo phuong phap phan quy
         for(var i = 1;i<5; i++){
             kpi['q' + i] = !$.isNumeric(kpi['q' + i])?null:parseFloat(kpi['q' + i])
-            if((kpi['q' + i] == totalQuarterArray[i -1]) == false){
+            if(!(kpi['q' + i] == totalQuarterArray[i -1])){
                 kpi['check_error_quarter_' + i] = true
             }
         }
         var quarterSumsIsNotNull = totalQuarterArray.reduce(function(prevVal,element){
             return prevVal && element === null
         },true)
-        if (quarterSumsIsNotNull && isTotalyear){
+        if (quarterSumsIsNotNull){
             kpi.check_error_year = false
         }
         return kpi
@@ -676,7 +675,7 @@ methods: {
         var p = self.method.indexOf(kpi.score_calculation_type.trim().toLowerCase());
         if (p > 2 & p<6){
             self.method_save = self.method[p-3];
-        }else if( 0<p && p<2){
+        }else if( 0 <= p && p<2){
             self.method_save = self.method[p];
         }
         else{
@@ -969,14 +968,14 @@ methods: {
         kpi.check_error_quarter_4 = false;
     },
     confirm_edit_kpi: function (kpi) {
-        var that = this;
-        that.resetErrorMsg(that.kpis[kpi.index])
+        var self = this;
+        self.resetErrorMsg(kpi.data)
         // {#                              that.data_edit_kpi.check_error = true;#}
         kpi.data.weight = kpi.data.weight;
-        that.kpis[kpi.index] = kpi.data;
+        self.kpis[kpi.index] = kpi.data;
         kpi.data.msg = '';
-        that.validate_kpi(kpi.index)
-        that.data_edit_kpi.data = that.kpis[kpi.index]
+        self.validate_kpi(kpi.index)
+        self.data_edit_kpi.data = self.kpis[kpi.index]
         setTimeout(function () {
             if (!$('.text-muted').length) {
                 $("body.bg-sm").removeAttr("style");
@@ -994,7 +993,7 @@ methods: {
             }
         }, 1000)
 
-        if(that.method.indexOf(kpi.data.score_calculation_type.trim().toLowerCase())!=-1) kpi.data.score_calculation_type = that.trans_method(kpi.data.score_calculation_type);
+        if(self.method.indexOf(kpi.data.score_calculation_type.trim().toLowerCase())!=-1) kpi.data.score_calculation_type = self.trans_method(kpi.data.score_calculation_type);
 
     },
     format_number_edit: function (keys, id) {
