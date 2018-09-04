@@ -717,9 +717,14 @@ Vue.component('kpi-editable', {
     },
     ready: function () {
         this.edit_value = this.kpi[this.field];
+        this.hover_text()
     },
     methods: {
-
+        hover_text: function(){
+            var self = this;
+            $('#hover-'+ self.field +'-' + self.kpi.id).qtip({
+            });
+        },
         edit_toggle: function () {
             if (!this.can_edit) {
                 return;
@@ -747,6 +752,7 @@ Vue.component('kpi-editable', {
                 data: JSON.stringify(data),
                 success: function (data) {
                     _this.kpi[_this.field] = data[_this.field];
+
                 }
             })
 
@@ -2742,7 +2748,8 @@ var v = new Vue({
                     contentType: false,
                     success: function (response) {
                         console.log(response);
-                        alert('Post action plan successfully!');
+                        var mesage = gettext("Post action plan successfully!");
+                        alert(mesage);
                         // The unshift() method adds new items to the beginning of an array, and returns the new length.
                         that.list_action_plan_file.unshift(response);
                         // that.list_action_plan_file[0].avatar = COMMON.UserAvatar;
