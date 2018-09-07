@@ -4174,22 +4174,7 @@ var v = new Vue({
         },
         init_data_for_kpilib: function(){
             if(self.organization.enable_kpi_lib == true) {
-                kpi_lib.options = [];
-                this.DEPARTMENTS.forEach(function(item){
-                    var category = {};
-                    category.label=`${item.name} (${item.count})`;
-                    category.value=item.id;
-                    category.children=[];
-                    if(item.childs.length){
-                        item.childs.forEach(function(child){
-                            var sub_category = {};
-                            sub_category.label = `${child.name} (${child.count})`;
-                            sub_category.value = child.id;
-                            category.children.push(sub_category);
-                        })
-                    }
-                    kpi_lib.options.push(category)
-                });
+                kpi_lib.options = kpi_lib.format_functions(this.DEPARTMENTS);
                 //kpi_lib.options = this.options_category;
                 kpi_lib.parent_cate = this.parent_category;
                 kpi_lib.child_cate = this.child_category;
