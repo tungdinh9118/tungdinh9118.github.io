@@ -2086,6 +2086,8 @@ span.bonus-score {
 .kpi-panel .feature-box .fa, .kpi-panel .feature-box .material-icons{
     font-size: 36px;
     /*padding-top: 10px;*/
+    height: 36px;
+    width: 36px;
     color: #008b8b;
 }
 
@@ -3772,6 +3774,12 @@ button.close{
         font-size: 30px;
         color: #337ab7;
         font-weight: bold;
+    }
+
+    .kpi-panel .feature-box .fa, .kpi-panel .feature-box .material-icons{
+        font-size: 36px;
+        padding-top: 10px;
+        color: #008b8b;
     }
 
     #kpi-container {
