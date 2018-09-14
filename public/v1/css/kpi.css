@@ -901,7 +901,7 @@ div.btn-wrapper .btn {
 }
 
 .pd-t-0 {
-    padding-top: 0px !important;
+    padding-top: 0px;
 }
 
 .pd-t-15 {
@@ -3258,12 +3258,9 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 [v-cloak] {
     display: none;
 }
-.justify-content-sm-center {
+#company-kpi-snapshot .kpi-panel .justify-content-sm-center {
     display: flex;
     border-collapse: inherit;
     flex-wrap:wrap ;
     flex-grow: inherit;
-}
-.td-border-none{
-    border: none;
 }

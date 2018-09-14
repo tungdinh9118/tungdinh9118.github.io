@@ -3776,12 +3776,11 @@ button.close{
         font-weight: bold;
     }
 
-    .kpi-panel .feature-box .fa, .kpi-panel .feature-box .material-icons{
+    #company-kpi-snapshot .kpi-panel .feature-box .fa, .kpi-panel .feature-box .material-icons{
         font-size: 36px;
         padding-top: 10px;
         color: #008b8b;
     }
-
     #kpi-container {
         min-width: 900px !important;
     }
