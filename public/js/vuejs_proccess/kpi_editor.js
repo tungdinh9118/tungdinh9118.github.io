@@ -705,6 +705,29 @@ Vue.component('tag-search', {
     }
 });
 
+function setToolTipKPI(el, content){
+    $(el).qtip({
+        content: {
+            text: content.replace(/(?:\r\n|\r|\n)/g, '<br/>')
+        },
+        style: {
+            classes: 'qtip-green'
+        },
+    });
+}
+
+Vue.directive('settooltipkpi', {
+    params: ['content'],
+    paramWatchers: {
+    content: function (val, oldVal) {
+        setToolTipKPI($(this.el),this.params.content);
+    }
+    },
+    bind:function () {
+        setToolTipKPI($(this.el),this.params.content);
+    }
+});
+
 Vue.component('kpi-editable', {
     delimiters: ["${", "}$"],
     props: ['kpi', 'field', 'can_edit'],
@@ -717,14 +740,9 @@ Vue.component('kpi-editable', {
     },
     ready: function () {
         this.edit_value = this.kpi[this.field];
-        this.hover_text()
     },
     methods: {
-        hover_text: function(){
-            var self = this;
-            $('#hover-'+ self.field +'-' + self.kpi.id).qtip({
-            });
-        },
+
         edit_toggle: function () {
             if (!this.can_edit) {
                 return;
@@ -752,7 +770,6 @@ Vue.component('kpi-editable', {
                 data: JSON.stringify(data),
                 success: function (data) {
                     _this.kpi[_this.field] = data[_this.field];
-
                 }
             })
 

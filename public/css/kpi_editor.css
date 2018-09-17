@@ -2083,7 +2083,7 @@ span.bonus-score {
     color: #007777;
 }
 
-.kpi-panel .feature-box .fa, .kpi-panel .feature-box .material-icons{
+#company-kpi-snapshot .kpi-panel .feature-box .justify-content-sm-center .fa,#company-kpi-snapshot .kpi-panel .feature-box .justify-content-sm-center .material-icons{
     font-size: 36px;
     /*padding-top: 10px;*/
     height: 36px;
@@ -3733,6 +3733,14 @@ button.close{
         font-size: 18px;
     }
 }
+@media (max-width: 1310px) {
+    .reponsive-table{
+        min-width: 450px;
+    }
+    .material-icons{
+        font-size: 18px;
+    }
+}
 
 @media (max-width: 1199px){
     .kpi-editor-content{
@@ -3776,9 +3784,11 @@ button.close{
         font-weight: bold;
     }
 
-    #company-kpi-snapshot .kpi-panel .feature-box .fa, .kpi-panel .feature-box .material-icons{
+    #company-kpi-snapshot .kpi-panel .feature-box .justify-content-sm-center .fa,#company-kpi-snapshot .kpi-panel  .feature-box .justify-content-sm-center .material-icons{
         font-size: 36px;
         padding-top: 10px;
+        height: 36px;
+        width: 36px;
         color: #008b8b;
     }
     #kpi-container {
