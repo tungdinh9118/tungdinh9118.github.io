@@ -154,8 +154,8 @@ var importKpiPosition = new Vue({
         hideUnusedTableHead: function () {
             console.log("triggered this hiding function")
             setTimeout(function () {
-                $($('#import-kpi-page > div.input-upload-file > div:nth-child(3) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').siblings('th')[0]).attr('colspan', 2)
-                $('#import-kpi-page > div.input-upload-file> div:nth-child(3) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').hide()
+                $($('#import-kpi-page > div.input-upload-file > div:nth-child(2) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').siblings('th')[0]).attr('colspan', 2)
+                $('#import-kpi-page > div.input-upload-file> div:nth-child(2) > div.tb-import-kpi > div > div.el-table__fixed > div.el-table__fixed-header-wrapper > table > thead > tr:nth-child(1) > th.el-table__expand-column.is-leaf').hide()
             }, 100)
         },
         getOrg: function () {
@@ -843,7 +843,7 @@ var importKpiPosition = new Vue({
                 kpi.msg = kpi.msg.slice(2, kpi.msg.length);
                 kpi.msg = kpi.msg.charAt(0).toUpperCase() + kpi.msg.slice(1);
             }
-
+            kpi.msg = kpi.msg.trim();
 
             console.log("===============xxxxxxxxx============")
             console.log(kpi.msg)
