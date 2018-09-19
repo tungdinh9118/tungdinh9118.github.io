@@ -490,6 +490,7 @@ var importKpiPosition = new Vue({
                                             "q4": q4,
                                             'year': year,
                                             "weight": weight.replace('%', ''),
+                                            "not_correct_type_kpi":false,
                                             "check_error_year": false,
                                             "check_error_quarter_1": false,
                                             "check_error_quarter_2": false,
@@ -707,21 +708,12 @@ var importKpiPosition = new Vue({
             if (self.enable_allocation_target) {
                 kpi = that.validateTargetScoreFollowAllocationTarget(kpi)
             }
-            kpi.bsc_category = kpi.type_kpi;
+            kpi.bsc_category = kpi.type_kpi.toString();
             kpi.weight = kpi.weight.toString()
             if (!kpi.score_calculation_type) {
                 kpi.score_calculation_type = ""
             }
-            if (!kpi.bsc_category) {
-                kpi.bsc_category = ""
-            }else{
-                var is_bsc_categoty = self.getCategory(kpi.bsc_category.trim());
-                if (is_bsc_categoty == "no category"){
-                    kpi.msg = kpi.msg + "\n" + gettext('Type KPI format is not correct');
-                }else{
-                    kpi.bsc_category = is_bsc_categoty;
-                }
-            }
+
             if (!kpi.unit) {
                 kpi.unit = ""
             }
@@ -733,6 +725,18 @@ var importKpiPosition = new Vue({
             kpi.status = null;
             var messages = '';
             kpi.validated = true;
+            if (kpi.bsc_category.trim() == '') {
+                kpi.validated = false;
+                kpi.msg = kpi.msg + "\n" + gettext("KPI code must not be empty");
+            }else{
+                var is_bsc_categoty = self.getCategory(kpi.bsc_category.trim());
+                if (is_bsc_categoty == "no category"){
+                    kpi.not_correct_type_kpi = true;
+                    kpi.msg = kpi.msg + "\n" + gettext("KPI code format is not correct");
+                }else{
+                    kpi.bsc_category = is_bsc_categoty;
+                }
+            }
             if (that.method.indexOf(kpi.score_calculation_type.trim().toLowerCase()) == -1) {
                 kpi.validated = false;
                 that.check_file = false;
@@ -756,11 +760,6 @@ var importKpiPosition = new Vue({
                 kpi.validated = false;
                 kpi.msg = kpi.msg + "\n" + gettext("Unit is not formatted correctly");
             }
-            if (kpi.bsc_category.trim() == '') {
-                kpi.validated = false;
-                kpi.msg = kpi.msg + "\n" + gettext("KPI code must not be empty");
-            }
-
 
             if (kpi.measurement.trim() == '') {
                 kpi.validated = false;
