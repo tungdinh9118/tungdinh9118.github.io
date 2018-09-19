@@ -2,17 +2,6 @@ var selected_position = Vue.extend({
     type: 'selected_position',
     delimiters: ['${', '}$'],
     template: $('#cjs-component-selected-position').html(),
-    // props: [
-    //     listPosition
-    // ],
-    // watch:{
-    //     listPosition:  function(val){
-    //                 var self = this;
-    //                 if (val.user !== undefined){
-    //                     self.fetchSubordinate()
-    //                 }
-    //             }
-    // },
     data: function () {
         return {
             value: '',
@@ -54,14 +43,6 @@ Vue.component('cjs-component-selected-position', selected_position);
             data_edit_kpi: {},
             method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         }
-    },
-    mounted: function () {
-        // {#            console.log(this.showmodal)#}
-        // {#            this.old_data = this.kpi#}
-    },
-    created: function () {
-        // {#            console.log("======><><><><><><><kpppppppppppppppppppppppi><><><><><><><<><=======")#}
-        // {#            this.edit_target_data = this.kpi#}
     },
     watch: {
         kpi: {
@@ -588,11 +569,7 @@ var importKpiPosition = new Vue({
         init: function () {
 
             that = this;
-             that.getOrg()
-
-            //  document.getElementById('drop').addEventListener('drop', that.handleDrop, false);
-
-
+            that.getOrg()
         },
         getCategory: function(category){
             category = category.toString();
@@ -617,7 +594,6 @@ var importKpiPosition = new Vue({
             // Initialize pre condition
 
             var quarterNeedTocheckSample = [1, 2, 3, 4]
-            // {#                            var intQuarterNumber = parseInt(quarterNumber)#}
             var quarterNeedToCheck = []
 
             // Process conditions
@@ -754,8 +730,6 @@ var importKpiPosition = new Vue({
             }
             kpi.msg = '';
             that.check_file = true;
-            // console.log('yes, we can!');
-            // router.push('/');
             kpi.status = null;
             var messages = '';
             kpi.validated = true;
@@ -784,13 +758,17 @@ var importKpiPosition = new Vue({
             }
             if (kpi.bsc_category.trim() == '') {
                 kpi.validated = false;
-                kpi.msg = kpi.msg + "\n" + gettext("Type must not be empty");
+                kpi.msg = kpi.msg + "\n" + gettext("KPI code must not be empty");
             }
 
 
             if (kpi.measurement.trim() == '') {
                 kpi.validated = false;
                 kpi.msg = kpi.msg + "\n" + gettext("Measurement must not empty");
+            }
+            if (kpi.weight.trim() == '') {
+                kpi.validated = false;
+                kpi.msg = kpi.msg + "\n" + gettext("Weight must not empty");
             }
 
             if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
@@ -1049,8 +1027,6 @@ var importKpiPosition = new Vue({
                             kpi: kpi_data_import
                         }),
                         success: function (data) {
-                            //console.log('yes, we can!');
-                            // router.push('/');
                             kpi.status = "success";
                             that.$set(that.kpis, index, kpi);
                             kpi.score_calculation_type = that.method[p];
