@@ -742,10 +742,15 @@ var importKpiPosition = new Vue({
                 that.check_file = false;
                 kpi.msg = kpi.msg + "\n" + gettext("Score calculation type format is not correct");
             }
-            if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
+            if (operator.indexOf(kpi.operator) == -1 && kpi.operator.trim()) {
                 kpi.validated = false;
                 that.check_file = false;
                 kpi.msg = kpi.msg + "\n" + gettext('Operator format is not correct');
+            }
+            if ( kpi.operator.trim() == '') {
+                kpi.validated = false;
+                that.check_file = false;
+                kpi.msg = kpi.msg + "\n" + gettext('Operator must not empty');
             }
             scores.forEach(function (score) {
                 if (isNaN(kpi[score])) {
