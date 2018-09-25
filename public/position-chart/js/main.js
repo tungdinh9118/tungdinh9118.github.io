@@ -5,7 +5,7 @@ var selected_position = Vue.extend({
     data: function () {
         return {
             value: '',
-            position_id:"",
+            search_staff: '',
             group_position:[]
         }
     },
@@ -13,25 +13,24 @@ var selected_position = Vue.extend({
       $('.el-input__suffix .el-select__caret').show()
     },
     methods:{
-        search_position: function (query) {
+        search_position: function (queryString, callback) {
             var that = this;
-            if(query != ''){;
+            var query = that.search_staff || '';
             cloudjetRequest.ajax({
                 method: "GET",
                 url: "/api/v2/position/search/?query=" + query,
                 success: function (res) {
-                     that.group_position = res;
+                    callback(res);
                 }
             });
-            }else {
-                that.group_position = []
-            }
         },
-        handleSelect: function () {
+        handleSelect: function (item) {
             var self = this;
-            console.log(self.position_id);
+            console.log(item);
+            self.search_staff = item.name;
             // importKpiPosition.getPositionKpiId(item.id)
-            self.$emit('get-id-position',self.position_id);
+            self.$emit('get-id-position',item.id);
+            search_position(item.id);
         },
     }
 });
@@ -943,13 +942,12 @@ var importKpiPosition = new Vue({
                 q3: kpi.q3,
                 q4: kpi.q4,
                 bsc_category: kpi.bsc_category,
-                check_goal: kpi.check_goal,
                 group_name: kpi.goal,
                 kpilib_unique_id:'',
                 name: kpi.kpi,
                 unit: kpi.unit,
                 current_goal: kpi.measurement,
-                score_calculation_type: kpi.method,
+                score_calculation_type: kpi.score_calculation_type,
                 operator: kpi.operator,
                 weight: kpi.weight,
                 code: kpi.code,
