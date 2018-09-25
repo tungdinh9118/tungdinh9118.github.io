@@ -26,8 +26,8 @@ var selected_position = Vue.extend({
             console.log(item);
             self.search_staff = item.name;
             self.position_id = item.id;
-            importKpiPosition.getPositionKpiId(item.id)
-            // self.$emit('getIdposition',item.id);
+            // importKpiPosition.getPositionKpiId(item.id)
+            self.$emit('get-id-position',item.id);
             search_position(item.id);
         },
     }
