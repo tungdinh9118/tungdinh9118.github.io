@@ -5,30 +5,33 @@ var selected_position = Vue.extend({
     data: function () {
         return {
             value: '',
-            search_staff: '',
-            position_id:""
+            position_id:"",
+            group_position:[]
         }
     },
+    created: function () {
+      $('.el-input__suffix .el-select__caret').show()
+    },
     methods:{
-        search_position: function (queryString, callback) {
+        search_position: function (query) {
             var that = this;
-            var query = that.search_staff || '';
+            if(query != ''){;
             cloudjetRequest.ajax({
                 method: "GET",
                 url: "/api/v2/position/search/?query=" + query,
                 success: function (res) {
-                    callback(res);
+                     that.group_position = res;
                 }
             });
+            }else {
+                that.group_position = []
+            }
         },
-        handleSelect: function (item) {
+        handleSelect: function () {
             var self = this;
-            console.log(item);
-            self.search_staff = item.name;
-            self.position_id = item.id;
+            console.log(self.position_id);
             // importKpiPosition.getPositionKpiId(item.id)
-            self.$emit('get-id-position',item.id);
-            search_position(item.id);
+            self.$emit('get-id-position',self.position_id);
         },
     }
 });
@@ -575,6 +578,10 @@ var importKpiPosition = new Vue({
         getCategory: function(category){
             category = category.toString();
             var first_word_category = category[0].toUpperCase();
+            var suffixes_category = category.slice(1, category.length);
+            if(isNaN(suffixes_category)){
+                return "no category"
+            }
             for( key in this.group_bsc_category){
                 if (first_word_category == key){
                     return this.group_bsc_category[key]
@@ -734,6 +741,7 @@ var importKpiPosition = new Vue({
                     kpi.not_correct_type_kpi = true;
                     kpi.msg = kpi.msg + "\n" + gettext("KPI code format is not correct");
                 }else{
+                    kpi.not_correct_type_kpi = false;
                     kpi.bsc_category = is_bsc_categoty;
                 }
             }
@@ -937,6 +945,7 @@ var importKpiPosition = new Vue({
                 bsc_category: kpi.bsc_category,
                 check_goal: kpi.check_goal,
                 group_name: kpi.goal,
+                kpilib_unique_id:'',
                 name: kpi.kpi,
                 unit: kpi.unit,
                 current_goal: kpi.measurement,
