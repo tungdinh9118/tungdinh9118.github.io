@@ -2825,6 +2825,7 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 
 .target-page .el-table .cell {
     line-height: 1.29;
+    word-break: break-word;
 }
 
 #target .search-target-staff {
