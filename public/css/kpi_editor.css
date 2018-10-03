@@ -766,13 +766,25 @@ ul#content-nav > li.active[data-href="#tab-other"] ~ li.nav-color-style {
 .kpiprogress-wrapper .kpiprogresspercentage-wrapper {
     float: left;
     vertical-align: middle;
-    width: 315px;
+    width: 305px;
     text-align: left;
     padding: 4px;
     font-size: 12px;
 
 }
-
+#personal-kpis .kpiprogress-wrapper .wait_approve_edit_message{
+    float:left;
+    line-height: 20px;
+    text-transform: uppercase;
+    font-weight:bold;
+    color: #337ab7;
+    font-size: 12px;
+    border-radius: 3px;
+    border:1px solid #abd8ff;
+    padding: 1px 6px 0px 6px;
+    margin-top:3px;
+    cursor:pointer;
+}
 .kpiprogress-wrapper .kpiprogressreview-wrapper {
     float: right;
     vertical-align: middle;
@@ -4529,9 +4541,10 @@ button.close{
 #evidence .btn-evidences-1[disabled]:hover{
     color:#333!important;
 }
-#complate-review-modal .modal-footer .capture_download_btn{
-    float:left;
-    cursor:pointer!important;
+#complate-review-modal .modal-footer .capture_download_btn {
+    color: #d64f00;
+    float: left;
+    cursor: pointer !important;
 }
 #option-choose-kpi .nav-tabs>li.active>button{
     background-color: transparent;

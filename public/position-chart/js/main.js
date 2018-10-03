@@ -28,7 +28,6 @@ var selected_position = Vue.extend({
             var self = this;
             console.log(item);
             self.search_staff = item.name;
-            // importKpiPosition.getPositionKpiId(item.id)
             self.$emit('get-id-position',item.id);
             search_position(item.id);
         },
@@ -49,19 +48,14 @@ Vue.component('cjs-component-selected-position', selected_position);
     watch: {
         kpi: {
             handler: function (newVal, oldVal) {
-                // {#                    console.log("triggered change kpi object")#}
-                // {#                    console.log(newVal)#}
                     this.data_edit_kpi = JSON.parse(JSON.stringify(newVal))
             },
             deep: true
         },
-        // showmodal: function (val) {
-        //     this.showmodal = val
-        // },
 
     },
     beforeDestroy: function () {
-        //            this.$off('dismiss')
+        //  not thing
     },
     methods: {
         triggeredCloseModal: function () {
@@ -834,7 +828,6 @@ var importKpiPosition = new Vue({
             }
             kpi.msg = kpi.msg.trim();
 
-            console.log("===============xxxxxxxxx============")
             console.log(kpi.msg)
             if (kpi.msg != '') {
                 self.addRowError(kpi._uuid)
@@ -855,9 +848,6 @@ var importKpiPosition = new Vue({
         },
         to_string: function (value) {
             return value != null ? value.toString() : null;
-        },
-        check_kpi_child: function (code) {
-            return code.indexOf('.') != -1;
         },
         check_format_operator: function (_operator) {
             var operator = ['<=', '>=', '='];
@@ -886,9 +876,6 @@ var importKpiPosition = new Vue({
                 that.data_edit_kpi.data.weight = parseFloat(that.data_edit_kpi.data.weight);
             }
             that.data_edit_kpi.index = index;
-            console.log("======>>>>>>>>>>>><<<<<<<<<thssg")
-            console.log(that.data_edit_kpi)
-            console.log(that.dialogFormVisible)
             setTimeout(function () {
                 $('#edit-import-kpi-position-chart').modal('show');
                 $('.modal-dialog .modal-body').attr('style', 'max-height:' + parseInt(screen.height * 0.6) + 'px !important; overflow-y: auto');
@@ -904,7 +891,6 @@ var importKpiPosition = new Vue({
         confirm_edit_kpi: function (kpi) {
             var self = this;
             self.resetErrorMsg(kpi.data)
-            // {#                              that.data_edit_kpi.check_error = true;#}
             self.kpis[kpi.index] = kpi.data;
             kpi.data.msg = '';
             self.validate_kpi(kpi.index)
@@ -929,18 +915,13 @@ var importKpiPosition = new Vue({
             if (self.method.indexOf(kpi.data.score_calculation_type.trim().toLowerCase()) != -1) kpi.data.score_calculation_type = self.trans_method(kpi.data.score_calculation_type);
 
         },
-        format_number_edit: function (keys, id) {
-            if (isNaN(keys.key)) {
-                data_edit_kpi.data[id] = data_edit_kpi.data[id].slice(0, -1);
-            }
-        },
         convertNewStructData: function (kpi) {
             var data_import_kpi = {
                 year_target: kpi.year,
-                q1: kpi.q1,
-                q2: kpi.q2,
-                q3: kpi.q3,
-                q4: kpi.q4,
+                quarter_1_target: kpi.q1,
+                quarter_2_target: kpi.q2,
+                quarter_3_target: kpi.q3,
+                quarter_4_target: kpi.q4,
                 bsc_category: kpi.bsc_category,
                 group_name: kpi.goal,
                 kpilib_unique_id:'',
@@ -950,29 +931,30 @@ var importKpiPosition = new Vue({
                 score_calculation_type: kpi.score_calculation_type,
                 operator: kpi.operator,
                 weight: kpi.weight,
-                code: kpi.code,
+                kpi_code: kpi.type_kpi,
                 data_source: kpi.data_source,
+                refer_relationship: [],
                 year_data: {
                     months_target: {
                         quarter_1: {
-                            month_1: kpi.t1,
-                            month_2: kpi.t2,
-                            month_3: kpi.t3
+                            month_1_target: kpi.t1,
+                            month_2_target: kpi.t2,
+                            month_3_target: kpi.t3
                         },
                         quarter_2: {
-                            month_1: kpi.t4,
-                            month_2: kpi.t5,
-                            month_3: kpi.t6
+                            month_1_target: kpi.t4,
+                            month_2_target: kpi.t5,
+                            month_3_target: kpi.t6
                         },
                         quarter_3: {
-                            month_1: kpi.t7,
-                            month_2: kpi.t8,
-                            month_3: kpi.t9
+                            month_1_target: kpi.t7,
+                            month_2_target: kpi.t8,
+                            month_3_target: kpi.t9
                         },
                         quarter_4: {
-                            month_1: kpi.t10,
-                            month_2: kpi.t11,
-                            month_3: kpi.t12
+                            month_1_target: kpi.t10,
+                            month_2_target: kpi.t11,
+                            month_3_target: kpi.t12
                         }
                     }
                 }
@@ -1043,7 +1025,6 @@ var importKpiPosition = new Vue({
                             kpi.score_calculation_type = that.method[p];
                         },
                         error: function (jqXHR) {
-                            //alert('failed');
                             requestcenterHideNotification();
                             var html = ''
                             if (jqXHR.responseJSON['exception']) {
