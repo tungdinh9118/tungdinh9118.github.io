@@ -770,7 +770,6 @@ Vue.component('kpi-editable', {
                 data: JSON.stringify(data),
                 success: function (data) {
                     _this.kpi[_this.field] = data[_this.field];
-                    _this.kpi['is_approved'] = data['is_approved'];
                 }
             })
 
@@ -798,7 +797,6 @@ function findRootKPI(kpi_id,kpi_list){
 var v = new Vue({
     el: '#container',
     data: {
-        confirm_complete:false,
         evidences: {},
         filename: '',
         action_plan_filename:'',
@@ -934,7 +932,6 @@ var v = new Vue({
         //datatemp for kpilib
         visible: false,
         // end data temp for kpi lib
-        postponed_button: true,
     },
     validators: {
         numeric: { // `numeric` custom validator local registration
@@ -1024,7 +1021,6 @@ var v = new Vue({
             handler: function (val, oldVal) {
                 this.calculate_total_weight();
                 this.getListGroupV2();
-                this.check_disable_result();
                 // this.getListGroup();
             }
             //,deep: true <-- slow
@@ -1069,6 +1065,12 @@ var v = new Vue({
         }
     },
     created: function(){
+        try{
+            ELEMENT.locale(ELEMENT.lang[COMMON.LanguageCode]);
+        }
+        catch (e){
+            console.log(e);
+        }
     },
     methods: {
         getKPIParent: function(){
@@ -1265,39 +1267,12 @@ var v = new Vue({
         can_edit_current_month: function (current_month, monthly_review_lock){ //check whether currrent month is allowed to edit
             return monthly_review_lock == "allow_all"?true: current_month==monthly_review_lock
         },
-        is_manager: function(){
-            var is_manager = COMMON.ManagerIdOfVieweedUser == COMMON.UserId;
-            return is_manager
-        },
-        check_disable_result: function(){
-            var self = this;
-            cloudjetRequest.ajax({
-                type: 'GET',
-                url: `/api/v2/user/${COMMON.UserViewedId}/approve/?month=${self.organization.monthly_review_lock}`,
-                success: function(data){
-                    if (data){
-                       if (self.is_manager() && data.confirmed_date){
-                           self.confirm_complete = true
-                       }else if(COMMON.UserId == COMMON.UserViewedId && data.finished_date ){
-                           self.confirm_complete = true
-                       }else {
-                           self.confirm_complete = false
-                       };
-                    }
-                }
-            })
-        },
-
-        disable_review_kpi: function(current_month){
-            // Truong hop user hoac quan ly da xac nhan thi khong cho phep chinh sua
-            if (this.confirm_complete) {
-                return true;
-            }
+        disable_review_kpi: function(parent_id, current_month){
             if (this.is_user_system) return false;
             var is_manager = COMMON.UserId != COMMON.UserViewedId;
             var current_month_locked = !(this.can_edit_current_month(current_month, this.organization.monthly_review_lock));
             if (is_manager){ // if current Login user is parent of user viewed
-                return ( !this.organization.allow_manager_review || current_month_locked) // manager can edit if enable_to_edit not pass
+                return ( !this.organization.allow_manager_review || current_month_locked ) // manager can edit if enable_to_edit not pass
             }
             else {
                 return ( !this.organization.allow_employee_review || current_month_locked ) // employee can edit(review) kpi only if not pass self_review_date
@@ -3437,13 +3412,11 @@ var v = new Vue({
                             that.$set('kpi_list[' + kpi.id + '].latest_score', data.score)
                             that.$set('kpi_list[' + kpi.id + '].real', data.real)
 
-                            that.$set('kpi_list[' + kpi.id + '].is_approved', data.kpi.is_approved);
-                            that.$set('kpi_list[' + kpi.id + '].operator', data.kpi.operator);
-
                             that.kpi_list[kpi.id].latest_score = data.score; //JSON.parse(data);
                             that.kpi_list[kpi.id].real = data.real; //JSON.parse(data);
                             that.get_current_employee_performance();
                             that.triggeredReloadTargetPerformance(kpi.id)
+
                             success_requestcenter(gettext("Update successful!"));
                         },
                         error: function () {
@@ -3464,11 +3437,8 @@ var v = new Vue({
         },
 
         complete_review_modal: function () {
-            // $('#complate-review-modal').modal();
-            // this.count_zero_score_kpi();
-            modal_complete_review.complete_review_modal_1(COMMON.UserViewedId, this.organization, this.employee_performance, this.month_1_name,
-                this.month_2_name, this.month_3_name, this.total_weight,this.quarter_by_id);
-
+            $('#complate-review-modal').modal();
+            this.count_zero_score_kpi();
         },
 
         edit_weight_modal: function (){
@@ -3893,7 +3863,7 @@ var v = new Vue({
             that = this;
             $('#complate-review-modal').modal('hide');
             var temp = $('#btn-complete-review').html();
-            $('#btn-complete-review').html(gettext('Đang tải! Vui lòng chờ ... '));
+            $('#btn-complete-review').html(gettext('Downloading! Please wait ... '));
             cloudjetRequest.ajax({
                 type: 'post',
                 url: COMMON.LinkRDisAPI + "?key=confirm-kpi-quarter" + that.quarter_by_id.id,
@@ -4192,7 +4162,6 @@ var v = new Vue({
                     that.kpi_list = dictResult;
                     // that.parentKPIs = JSON.parse(JSON.stringify(dictResult));
                     console.log(that.kpi_list);
-                    that.postponed_button = false
                 },
                 error: function (a, b, c) {
 
