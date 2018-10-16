@@ -3760,7 +3760,6 @@ button.close{
         width: 450px;
     }
 }
-/*@media (min-width: 1200px) {*/
 @media (min-width: 1300px) {
     .reponsive-table{
         min-width: 570px;
@@ -3770,7 +3769,6 @@ button.close{
     }
 }
 
-/*@media (max-width: 1199px){*/
 @media (max-width: 1299px){
     .kpi-editor-content{
         padding: 0px;
