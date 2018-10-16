@@ -2825,7 +2825,6 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 
 .target-page .el-table .cell {
     line-height: 1.29;
-    word-break: break-word;
 }
 
 #target .search-target-staff {
@@ -3264,19 +3263,4 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
     border-collapse: inherit;
     flex-wrap:wrap ;
     flex-grow: inherit;
-}
-
-#contain-comment .observing_display {
-    border-top: 1px solid #D3D3D3 ;
-}
-
-#contain-comment .admin-comment {
-    padding-left: 2px;
-    margin-top: 4px;
-    border: 1px solid;
-    border-radius: 3px;
-    background-color: #c2c8cc;
-    font-size: 10px;
-    width: 47px;
-    height: 15px;
 }

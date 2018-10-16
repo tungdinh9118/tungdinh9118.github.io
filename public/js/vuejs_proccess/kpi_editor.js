@@ -388,120 +388,6 @@ var Bonus = Vue.extend({
 Vue.component('bonus',Bonus);
 
 
-var absolute_result_cpn = Vue.extend({
-    type: 'absolute_result',
-    template: $('#absolute-result').html(),
-    props: [
-        'kpi',
-        'quarter',
-        'month_1',
-        'month_2',
-        'month_3',
-        'show_btn',
-    ],
-
-    data: function () {
-        return {
-            uuid: makeid(),
-            sum_month_1: 0,
-            sum_month_2: 0,
-            sum_month_3: 0,
-            show_text: '',
-        }
-    },
-    watch: {
-        'show_btn': {
-            handler: function(value, old_value){
-                this.show_btn = value;
-            }
-        },
-        'kpi':{
-            handler: function(value, old_value){
-                this.sum_abs_result(); // tinh toan
-                this.init_popup()
-            },
-            deep: true, // deep watch
-        }
-    },
-    ready: function() {
-
-        this.sum_abs_result(); // tinh toan
-
-        this.init_popup(); // render
-        if (window.ab_rs === undefined) {
-                window.ab_rs = {}
-            }
-        window.ab_rs[this.uuid] = this;
-    },
-    methods: {
-        init_popup: function(){
-            this.$nextTick(function () {
-                // DOM is now updated
-                // `this` is bound to the current instance
-                var self = this;
-                $('#span-hover-in-' + self.uuid).qtip({
-                    content: {
-                        text: $('#table-popup-' + self.uuid).html()
-                    },
-                    style: {
-                        classes: 'qtip-white absolute_result_popup',
-                    },
-                    position: {
-                        my: 'bottom center',
-                        at: 'top left',
-                        target: $('#span-hover-in-' + self.uuid) // my target
-                    },
-                    show: {
-                        event: 'click'
-                    },
-                    hide: 'unfocus'
-                });
-          })
-        },
-        sum_abs_result: function () {
-            var that = this;
-            var count_score_month_1 = 0;                // dem so luong thang 1 cua kpi con co danh gia
-            var count_score_month_2 = 0;
-            var count_score_month_3 = 0;
-            if (that.kpi && that.kpi['children'] != undefined){
-                that.kpi.children.forEach(function (child) {
-                    if (isNaN(child.month_1) == false && child.month_1 !='' && child.month_1 !=null){
-                        that.sum_month_1 += child.month_1;
-                        count_score_month_1++;
-                    }
-                    if (isNaN(child.month_2) == false && child.month_2 !='' && child.month_2 !=null){
-                        that.sum_month_2 += child.month_2;
-                        count_score_month_2++;
-                    }
-                    if (isNaN(child.month_3) == false && child.month_3 !='' && child.month_3 !=null){
-                        that.sum_month_3 += child.month_3;
-                        count_score_month_3++;
-                    }
-                });
-                if (count_score_month_1 == 0){
-                    that.sum_month_1 = ''
-                };
-                if (count_score_month_2 == 0){
-                    that.sum_month_2 = ''
-                };
-                if (count_score_month_3 == 0){
-                    that.sum_month_3 = ''
-                }
-            }
-        }
-    },
-});
-Vue.component('cjs-absolute-result', absolute_result_cpn);
-
-function makeid() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for (var i = 0; i < 5; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-    }
 
 
 function kpi_ready(kpi_id, controller_prefix, ready) {
@@ -1046,8 +932,6 @@ var v = new Vue({
         //datatemp for kpilib
         visible: false,
         // end data temp for kpi lib
-        postponed_button: true,
-        data_abs_result: {},    // data  used show modal absolute result.
     },
     validators: {
         numeric: { // `numeric` custom validator local registration
@@ -1181,15 +1065,18 @@ var v = new Vue({
         }
     },
     created: function(){
+        try{
+            ELEMENT.locale(ELEMENT.lang[COMMON.LanguageCode]);
+        }
+        catch (e){
+            console.log(e);
+        }
     },
     methods: {
-
-
         getKPIParent: function(){
             var self  = this;
             return getKPIParent(self.kpi_list,[]);
         },
-
         constructOldWeight: function(){
             var self = this;
             for(var kpi_id in self.kpi_list){
