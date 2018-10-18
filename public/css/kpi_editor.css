@@ -766,13 +766,25 @@ ul#content-nav > li.active[data-href="#tab-other"] ~ li.nav-color-style {
 .kpiprogress-wrapper .kpiprogresspercentage-wrapper {
     float: left;
     vertical-align: middle;
-    width: 315px;
+    width: 305px;
     text-align: left;
     padding: 4px;
     font-size: 12px;
 
 }
-
+#personal-kpis .kpiprogress-wrapper .wait_approve_edit_message{
+    float:left;
+    line-height: 20px;
+    text-transform: uppercase;
+    font-weight:bold;
+    color: #337ab7;
+    font-size: 12px;
+    border-radius: 3px;
+    border:1px solid #abd8ff;
+    padding: 1px 6px 0px 6px;
+    margin-top:3px;
+    cursor:pointer;
+}
 .kpiprogress-wrapper .kpiprogressreview-wrapper {
     float: right;
     vertical-align: middle;
@@ -2006,7 +2018,19 @@ span.comment-sign.toggle-auto:hover {
 .text-left, .table-per-result.table-bordered tbody tr td.text-left{
     text-align: left!important;
 }
-
+.table-per-result.table-bordered tbody tr .extrascore{
+    color: darkcyan;
+}
+.table-per-result.table-bordered tbody tr .extrascore img{
+    width:15px;
+    vertical-align: top;
+}
+.table-per-result.table-bordered tbody tr td  span.minus_score{
+    color:#7ed321;
+}
+.table-per-result.table-bordered tbody tr td  span.plus_score{
+    color:#d9534f;
+}
 .com-name{
     font-size: 16px;
     color: #008b8b;
@@ -3736,7 +3760,6 @@ button.close{
         width: 450px;
     }
 }
-/*@media (min-width: 1200px) {*/
 @media (min-width: 1300px) {
     .reponsive-table{
         min-width: 570px;
@@ -3746,7 +3769,6 @@ button.close{
     }
 }
 
-/*@media (max-width: 1199px){*/
 @media (max-width: 1299px){
     .kpi-editor-content{
         padding: 0px;
@@ -4517,9 +4539,10 @@ button.close{
 #evidence .btn-evidences-1[disabled]:hover{
     color:#333!important;
 }
-#complate-review-modal .modal-footer .capture_download_btn{
-    float:left;
-    cursor:pointer!important;
+#complate-review-modal .modal-footer .capture_download_btn {
+    color: #d64f00;
+    float: left;
+    cursor: pointer !important;
 }
 #option-choose-kpi .nav-tabs>li.active>button{
     background-color: transparent;
