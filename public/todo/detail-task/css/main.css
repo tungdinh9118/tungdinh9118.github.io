@@ -128,9 +128,7 @@
 .color-danger{
     color: #d9534f;
 }
-.color-success{
-    color: #008b8b;
-}
+
 /* detail-display-block */
 .detail-display-block .dropdown-menu{
     min-width: 165px;
