@@ -670,6 +670,7 @@ methods: {
 
     },
     validateTargetScoreFollowAllocationTarget: function (kpi) {
+        // Hàm này chỉ chạy khi hệ thống có bật Ràng buộc chỉ tiêu tháng/quý/năm theo phương pháp đo
         var self = this
         var check_score_calculation_type = true
         var p = self.method.indexOf(kpi.score_calculation_type.trim().toLowerCase());
@@ -974,7 +975,7 @@ methods: {
         var self = this;
         self.resetErrorMsg(kpi.data)
         // {#                              that.data_edit_kpi.check_error = true;#}
-        kpi.data.weight = kpi.data.weight;
+        // kpi.data.weight = kpi.data.weight; ?? không cần thiết
         self.kpis[kpi.index] = kpi.data;
         kpi.data.msg = '';
         self.validate_kpi(kpi.index)
@@ -996,7 +997,11 @@ methods: {
             }
         }, 1000)
 
-        if(self.method.indexOf(kpi.data.score_calculation_type.trim().toLowerCase())!=-1) kpi.data.score_calculation_type = self.trans_method(kpi.data.score_calculation_type);
+        // Không cần thiết vì đã có filter xử lý việc này => tránh lỗi chuyển data kpi.score_calculation_type
+        // qua tiếng việt rồi lại qua tiếng anh chỉ để show lên xem
+        //
+        // if(self.method.indexOf(kpi.data.score_calculation_type.trim().toLowerCase())!=-1)
+        //     kpi.data.score_calculation_type = self.trans_method(kpi.data.score_calculation_type);
 
     },
     format_number_edit: function (keys, id) {
@@ -1017,7 +1022,7 @@ methods: {
             kpi_id: kpi.kpi_id,
             unit: kpi.unit,
             measurement: kpi.measurement,
-            score_calculation_type: kpi.method,
+            score_calculation_type: kpi.score_calculation_type,
             operator: kpi.operator,
             weight: kpi.weight,
             email: kpi.email,
@@ -1056,12 +1061,13 @@ methods: {
         if (index == undefined) {
             return;
         }
-        //   console.log(index);
-
         var kpi = that.kpis[index];
 
         kpi.status = "adding";
-        if ((kpi.score_calculation_type.trim().toLowerCase() == '' || kpi.score_calculation_type.trim().toLowerCase() == 'most recent') && that.check_kpi_child(kpi.kpi_id)) kpi.score_calculation_type = 'most_recent';
+        if ((kpi.score_calculation_type.trim().toLowerCase() == ''
+            || kpi.score_calculation_type.trim().toLowerCase() == 'most recent')
+            && that.check_kpi_child(kpi.kpi_id))
+            kpi.score_calculation_type = 'most_recent';
         that.$set(that.kpis, index, kpi);
 
         var p = that.method.indexOf(kpi.score_calculation_type.trim().toLowerCase());
