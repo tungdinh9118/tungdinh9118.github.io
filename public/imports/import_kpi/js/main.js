@@ -968,13 +968,13 @@ methods: {
         }
         else if (that.method.indexOf(that.data_edit_kpi.data.score_calculation_type.trim().toLowerCase())>-1){
             that.method_save = that.data_edit_kpi.data.score_calculation_type;
-            p = that.method.indexOf(that.data_edit_kpi.data.score_calculation_type.trim().toLowerCase());
-            if(p > 2 & p<6){
+            var p = that.method.indexOf(that.data_edit_kpi.data.score_calculation_type.trim().toLowerCase());
+            if(p > 2 && p<6){
                 that.data_edit_kpi.data.score_calculation_type = that.method[p-3];
             }
-            if(0 <= p && p<=2){
+            else if(0 <= p && p<=2){
                 that.data_edit_kpi.data.score_calculation_type = that.method[p];
-            }else{
+            }else {
                 that.data_edit_kpi.data.score_calculation_type = ""
             }
         }
@@ -1092,11 +1092,13 @@ methods: {
         that.$set(that.kpis, index, kpi);
 
         var p = that.method.indexOf(kpi.score_calculation_type.trim().toLowerCase());
-        if (p > 2){
+        if (p > 2 && p <6){
             that.method_save = that.method[p-3];
         }
-        else{
+        else if( 0 <= p && p <= 2){
             that.method_save = that.method[p];
+        }else {
+            that.method_save = "";
         }
         kpi.score_calculation_type = that.method_save;
         var kpi_data_import = that.convertNewStructData(kpi)

@@ -35,13 +35,13 @@ var Bonus = Vue.extend({
             }
             that.$set('current_quarter',current_quarter)
         },
-        'fetch_exscore_lib': function(){
-            var that = this
-            // Fetch data from $parent
-            that.$set('lib_data_dict',that.$parent.exscore_lib_data)
-            that.render_exscore_lib()
-            that.$emit('fetch_user_exscore_group')
-        },
+        // 'fetch_exscore_lib': function(){
+        //     var that = this
+        //     // Fetch data from $parent
+        //     that.$set('lib_data_dict',that.$parent.exscore_lib_data)
+        //     that.render_exscore_lib()
+        //     that.$emit('fetch_user_exscore_group')
+        // },
         'fetch_exscore': function(){
             var that = this
             // Fetch data from $parent
@@ -154,7 +154,7 @@ var Bonus = Vue.extend({
         },
         restoreExscoreLib: function(){
             var that = this
-            that.$emit('fetch_exscore_lib')
+            // that.$emit('fetch_exscore_lib')
         },
         searchExscoreLib: function(){
             var that = this
@@ -1095,7 +1095,7 @@ var v = new Vue({
             moreLink: '<a href="#"> <i class="fa fa-angle-double-right"></i> ' + gettext("Read more") + '</a>',
             lessLink: '<a href="#"> <i class="fa fa-angle-double-up"></i> ' + gettext("Less") + '</a>'
         });
-        this.fetch_exscore_lib();
+        // this.fetch_exscore_lib();
         this.fetch_exscore();
         this.fetch_current_user_profile();
         var p = JSON.parse(localStorage.getItem('history_search_u'));
@@ -2164,20 +2164,20 @@ var v = new Vue({
                 }
             });
         },
-        fetch_exscore_lib: function () {
-            var that = this;
-            cloudjetRequest.ajax({
-                type: 'GET',
-                url: '/api/v2/exscore/lib/',
-                success: function (data) {
-                    that.$set('exscore_lib_data', data)
-                    that.$children.map(function (elem, index, children) {
-                        elem.$emit('fetch_exscore_lib')
-                    })
-                }
-
-            })
-        },
+        // fetch_exscore_lib: function () {
+        //     var that = this;
+        //     cloudjetRequest.ajax({
+        //         type: 'GET',
+        //         url: '/api/v2/exscore/lib/',
+        //         success: function (data) {
+        //             that.$set('exscore_lib_data', data)
+        //             that.$children.map(function (elem, index, children) {
+        //                 elem.$emit('fetch_exscore_lib')
+        //             })
+        //         }
+        //
+        //     })
+        // },
         fetch_exscore: function () {
             var that = this;
             cloudjetRequest.ajax({
@@ -3368,7 +3368,7 @@ var v = new Vue({
                 success: function (data) {
                     that.kpi_list[kpi.id] = Object.assign(that.kpi_list[kpi.id], data);
                     that.get_current_employee_performance();
-
+                    that.$forceUpdate();
                     for (i = 1; i <= 4; i++) {
                         $('#qtip' + kpi.id + '_' + i).qtip({
                             content: {

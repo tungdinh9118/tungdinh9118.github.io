@@ -1433,17 +1433,16 @@ div.btn-wrapper .btn {
 }
 
 @media only screen and (max-width: 1199px) {
-    .navbar-brand {
-        display: none;
-    }
-
     #nav-right {
         margin-right: 0px;
     }
 
     #navbar .nav-left li a {
-        padding-left: 5px;
-        padding-right: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    #navbar .nav-icon-btn{
+        display: none;
     }
 }
 

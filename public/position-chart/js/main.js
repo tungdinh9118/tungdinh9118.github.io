@@ -919,10 +919,10 @@ var importKpiPosition = new Vue({
             else if (that.method.indexOf(that.data_edit_kpi.data.score_calculation_type.trim().toLowerCase()) > -1) {
                 that.method_save = that.data_edit_kpi.data.score_calculation_type;
                 p = that.method.indexOf(that.data_edit_kpi.data.score_calculation_type.trim().toLowerCase());
-                if (p > 2 & p<6) {
+                if (p > 2 && p<6) {
                     that.data_edit_kpi.data.score_calculation_type = that.method[p - 3];
                 }
-                if (0 <= p && p<=2) {
+                else if (0 <= p && p<=2) {
                     that.data_edit_kpi.data.score_calculation_type = that.method[p];
                 }else{
                     that.data_edit_kpi.data.score_calculation_type = ""
