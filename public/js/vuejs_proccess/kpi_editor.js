@@ -463,6 +463,9 @@ var absolute_result_cpn = Vue.extend({
             var count_score_month_1 = 0;                // dem so luong thang 1 cua kpi con co danh gia
             var count_score_month_2 = 0;
             var count_score_month_3 = 0;
+            that.sum_month_1 = 0;
+            that.sum_month_2 = 0;
+            that.sum_month_3 = 0;
             if (that.kpi && that.kpi['children'] != undefined){
                 that.kpi.children.forEach(function (child) {
                     if (isNaN(child.month_1) == false && child.month_1 !='' && child.month_1 !=null){
@@ -3534,7 +3537,6 @@ var v = new Vue({
                 }
 
                 //console.log(that.kpi_list[kpi.id].month_2_target);
-
                 this.update_timeout = setTimeout(function () {
                     cloudjetRequest.ajax({
                         type: "POST",
@@ -3570,6 +3572,7 @@ var v = new Vue({
 
                             that.kpi_list[kpi.id].latest_score = data.score; //JSON.parse(data);
                             that.kpi_list[kpi.id].real = data.real; //JSON.parse(data);
+                            that.kpi_list[kpi.id].target = data.kpi.target; //JSON.parse(data);
                             that.get_current_employee_performance();
                             that.triggeredReloadTargetPerformance(kpi.id)
 
