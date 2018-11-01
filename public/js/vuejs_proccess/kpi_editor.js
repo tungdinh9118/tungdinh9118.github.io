@@ -35,13 +35,13 @@ var Bonus = Vue.extend({
             }
             that.$set('current_quarter',current_quarter)
         },
-        // 'fetch_exscore_lib': function(){
-        //     var that = this
-        //     // Fetch data from $parent
-        //     that.$set('lib_data_dict',that.$parent.exscore_lib_data)
-        //     that.render_exscore_lib()
-        //     that.$emit('fetch_user_exscore_group')
-        // },
+        'fetch_exscore_lib': function(){
+            var that = this
+            // Fetch data from $parent
+            that.$set('lib_data_dict',that.$parent.exscore_lib_data)
+            that.render_exscore_lib()
+            that.$emit('fetch_user_exscore_group')
+        },
         'fetch_exscore': function(){
             var that = this
             // Fetch data from $parent
@@ -154,7 +154,7 @@ var Bonus = Vue.extend({
         },
         restoreExscoreLib: function(){
             var that = this
-            // that.$emit('fetch_exscore_lib')
+            that.$emit('fetch_exscore_lib')
         },
         searchExscoreLib: function(){
             var that = this
@@ -388,123 +388,6 @@ var Bonus = Vue.extend({
 Vue.component('bonus',Bonus);
 
 
-var absolute_result_cpn = Vue.extend({
-    type: 'absolute_result',
-    template: $('#absolute-result').html(),
-    props: [
-        'kpi',
-        'quarter',
-        'month_1',
-        'month_2',
-        'month_3',
-        'show_btn',
-    ],
-
-    data: function () {
-        return {
-            uuid: makeid(),
-            sum_month_1: 0,
-            sum_month_2: 0,
-            sum_month_3: 0,
-            show_text: '',
-        }
-    },
-    watch: {
-        'show_btn': {
-            handler: function(value, old_value){
-                this.show_btn = value;
-            }
-        },
-        'kpi':{
-            handler: function(value, old_value){
-                this.sum_abs_result(); // tinh toan
-                this.init_popup()
-            },
-            deep: true, // deep watch
-        }
-    },
-    ready: function() {
-
-        this.sum_abs_result(); // tinh toan
-
-        this.init_popup(); // render
-        if (window.ab_rs === undefined) {
-                window.ab_rs = {}
-            }
-        window.ab_rs[this.uuid] = this;
-    },
-    methods: {
-        init_popup: function(){
-            this.$nextTick(function () {
-                // DOM is now updated
-                // `this` is bound to the current instance
-                var self = this;
-                $('#span-hover-in-' + self.uuid).qtip({
-                    content: {
-                        text: $('#table-popup-' + self.uuid).html()
-                    },
-                    style: {
-                        classes: 'qtip-white absolute_result_popup',
-                    },
-                    position: {
-                        my: 'bottom center',
-                        at: 'top left',
-                        target: $('#span-hover-in-' + self.uuid) // my target
-                    },
-                    show: {
-                        event: 'click'
-                    },
-                    hide: 'unfocus'
-                });
-          })
-        },
-        sum_abs_result: function () {
-            var that = this;
-            var count_score_month_1 = 0;                // dem so luong thang 1 cua kpi con co danh gia
-            var count_score_month_2 = 0;
-            var count_score_month_3 = 0;
-            that.sum_month_1 = 0;
-            that.sum_month_2 = 0;
-            that.sum_month_3 = 0;
-            if (that.kpi && that.kpi['children'] != undefined){
-                that.kpi.children.forEach(function (child) {
-                    if (isNaN(child.month_1) == false && child.month_1 !='' && child.month_1 !=null){
-                        that.sum_month_1 += child.month_1;
-                        count_score_month_1++;
-                    }
-                    if (isNaN(child.month_2) == false && child.month_2 !='' && child.month_2 !=null){
-                        that.sum_month_2 += child.month_2;
-                        count_score_month_2++;
-                    }
-                    if (isNaN(child.month_3) == false && child.month_3 !='' && child.month_3 !=null){
-                        that.sum_month_3 += child.month_3;
-                        count_score_month_3++;
-                    }
-                });
-                if (count_score_month_1 == 0){
-                    that.sum_month_1 = ''
-                };
-                if (count_score_month_2 == 0){
-                    that.sum_month_2 = ''
-                };
-                if (count_score_month_3 == 0){
-                    that.sum_month_3 = ''
-                }
-            }
-        }
-    },
-});
-Vue.component('cjs-absolute-result', absolute_result_cpn);
-
-function makeid() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for (var i = 0; i < 5; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-    }
 
 
 function kpi_ready(kpi_id, controller_prefix, ready) {
@@ -825,7 +708,7 @@ Vue.component('tag-search', {
 function setToolTipKPI(el, content){
     $(el).qtip({
         content: {
-            text: content.replace(/(?:\r\n|\r|\n)/g, '<br/>')
+            text: content ? content.replace(/(?:\r\n|\r|\n)/g, '<br/>') : ''
         },
         style: {
             classes: 'qtip-green'
@@ -887,7 +770,6 @@ Vue.component('kpi-editable', {
                 data: JSON.stringify(data),
                 success: function (data) {
                     _this.kpi[_this.field] = data[_this.field];
-                    _this.kpi['is_approved'] = data['is_approved'];
                 }
             })
 
@@ -915,7 +797,6 @@ function findRootKPI(kpi_id,kpi_list){
 var v = new Vue({
     el: '#container',
     data: {
-        confirm_complete:false,
         evidences: {},
         filename: '',
         action_plan_filename:'',
@@ -1051,8 +932,6 @@ var v = new Vue({
         //datatemp for kpilib
         visible: false,
         // end data temp for kpi lib
-        postponed_button: true,
-        data_abs_result: {},    // data  used show modal absolute result.
     },
     validators: {
         numeric: { // `numeric` custom validator local registration
@@ -1098,7 +977,7 @@ var v = new Vue({
             moreLink: '<a href="#"> <i class="fa fa-angle-double-right"></i> ' + gettext("Read more") + '</a>',
             lessLink: '<a href="#"> <i class="fa fa-angle-double-up"></i> ' + gettext("Less") + '</a>'
         });
-        // this.fetch_exscore_lib();
+        this.fetch_exscore_lib();
         this.fetch_exscore();
         this.fetch_current_user_profile();
         var p = JSON.parse(localStorage.getItem('history_search_u'));
@@ -1142,7 +1021,6 @@ var v = new Vue({
             handler: function (val, oldVal) {
                 this.calculate_total_weight();
                 this.getListGroupV2();
-                this.check_disable_result();
                 // this.getListGroup();
             }
             //,deep: true <-- slow
@@ -1187,6 +1065,12 @@ var v = new Vue({
         }
     },
     created: function(){
+        try{
+            ELEMENT.locale(ELEMENT.lang[COMMON.LanguageCode]);
+        }
+        catch (e){
+            console.log(e);
+        }
     },
     methods: {
         getKPIParent: function(){
@@ -1383,52 +1267,12 @@ var v = new Vue({
         can_edit_current_month: function (current_month, monthly_review_lock){ //check whether currrent month is allowed to edit
             return monthly_review_lock == "allow_all"?true: current_month==monthly_review_lock
         },
-        is_manager: function(){
-            var is_manager = COMMON.ManagerIdOfVieweedUser == COMMON.UserId;
-            return is_manager
-        },
-        is_admin: function(){
-            if(COMMON.IsAdmin == "True"){
-                return true
-            }else if(COMMON.IsSupperUser == "True"){
-                return true
-            }else {
-                return false
-            }
-        },
-        is_user: function(){
-            var is_user = COMMON.UserViewedId == COMMON.UserId;
-            return is_user
-        },
-        check_disable_result: function(){
-            var self = this;
-            cloudjetRequest.ajax({
-                type: 'GET',
-                url: `/api/v2/user/${COMMON.UserViewedId}/approve/?month=${self.organization.monthly_review_lock}`,
-                success: function(data){
-                    if (data){
-                       if (self.is_manager() && data.confirmed_date){
-                           self.confirm_complete = true
-                       }else if(COMMON.UserId == COMMON.UserViewedId && data.finished_date ){
-                           self.confirm_complete = true
-                       }else {
-                           self.confirm_complete = false
-                       };
-                    }
-                }
-            })
-        },
-
-        disable_review_kpi: function(current_month){
-            // Truong hop user hoac quan ly da xac nhan thi khong cho phep chinh sua
-            if (this.confirm_complete) {
-                return true;
-            }
+        disable_review_kpi: function(parent_id, current_month){
             if (this.is_user_system) return false;
             var is_manager = COMMON.UserId != COMMON.UserViewedId;
             var current_month_locked = !(this.can_edit_current_month(current_month, this.organization.monthly_review_lock));
             if (is_manager){ // if current Login user is parent of user viewed
-                return ( !this.organization.allow_manager_review || current_month_locked) // manager can edit if enable_to_edit not pass
+                return ( !this.organization.allow_manager_review || current_month_locked ) // manager can edit if enable_to_edit not pass
             }
             else {
                 return ( !this.organization.allow_employee_review || current_month_locked ) // employee can edit(review) kpi only if not pass self_review_date
@@ -2167,20 +2011,20 @@ var v = new Vue({
                 }
             });
         },
-        // fetch_exscore_lib: function () {
-        //     var that = this;
-        //     cloudjetRequest.ajax({
-        //         type: 'GET',
-        //         url: '/api/v2/exscore/lib/',
-        //         success: function (data) {
-        //             that.$set('exscore_lib_data', data)
-        //             that.$children.map(function (elem, index, children) {
-        //                 elem.$emit('fetch_exscore_lib')
-        //             })
-        //         }
-        //
-        //     })
-        // },
+        fetch_exscore_lib: function () {
+            var that = this;
+            cloudjetRequest.ajax({
+                type: 'GET',
+                url: '/api/v2/exscore/lib/',
+                success: function (data) {
+                    that.$set('exscore_lib_data', data)
+                    that.$children.map(function (elem, index, children) {
+                        elem.$emit('fetch_exscore_lib')
+                    })
+                }
+
+            })
+        },
         fetch_exscore: function () {
             var that = this;
             cloudjetRequest.ajax({
@@ -2517,13 +2361,15 @@ var v = new Vue({
         change_weight: function(kpi){
             var that = this;
             if(kpi.weight<=0){
+
                 swal({
                     type: 'error',
                     title: gettext("Unsuccessful"),
                     text: gettext('Please deactive this KPI before you change KPI\'s weight to 0'),
                     showConfirmButton: true,
-                    timer: 5000,
-                })
+                    timer: 5000
+                });
+
                 that.kpi_list[kpi.id].weight = that.cache_weight;
                 return false;
             }
@@ -2531,7 +2377,16 @@ var v = new Vue({
         },
         show_unique_code_modal: function (kpi) {
 
+            if (!kpi.unique_code){
+                kpi.unique_code = kpi.id + "_" + slugify(kpi.name).substring(0,10);
+                update_kpi(kpi);
+
+            }
+
+
             this.current_kpi = kpi;
+
+
             this.unique_code_cache = kpi.unique_code;
             $('#kpi-uniquecode').modal();
         },
@@ -3371,7 +3226,7 @@ var v = new Vue({
                 success: function (data) {
                     that.kpi_list[kpi.id] = Object.assign(that.kpi_list[kpi.id], data);
                     that.get_current_employee_performance();
-                    that.$forceUpdate();
+
                     for (i = 1; i <= 4; i++) {
                         $('#qtip' + kpi.id + '_' + i).qtip({
                             content: {
@@ -3537,6 +3392,7 @@ var v = new Vue({
                 }
 
                 //console.log(that.kpi_list[kpi.id].month_2_target);
+
                 this.update_timeout = setTimeout(function () {
                     cloudjetRequest.ajax({
                         type: "POST",
@@ -3567,12 +3423,8 @@ var v = new Vue({
                             that.$set('kpi_list[' + kpi.id + '].latest_score', data.score)
                             that.$set('kpi_list[' + kpi.id + '].real', data.real)
 
-                            that.$set('kpi_list[' + kpi.id + '].is_approved', data.kpi.is_approved);
-                            that.$set('kpi_list[' + kpi.id + '].operator', data.kpi.operator);
-
                             that.kpi_list[kpi.id].latest_score = data.score; //JSON.parse(data);
                             that.kpi_list[kpi.id].real = data.real; //JSON.parse(data);
-                            that.kpi_list[kpi.id].target = data.kpi.target; //JSON.parse(data);
                             that.get_current_employee_performance();
                             that.triggeredReloadTargetPerformance(kpi.id)
 
@@ -3596,11 +3448,8 @@ var v = new Vue({
         },
 
         complete_review_modal: function () {
-            // $('#complate-review-modal').modal();
-            // this.count_zero_score_kpi();
-            modal_complete_review.complete_review_modal_1(COMMON.UserViewedId, this.organization, this.employee_performance, this.month_1_name,
-                this.month_2_name, this.month_3_name, this.total_weight,this.quarter_by_id,this.current_quarter);
-
+            $('#complate-review-modal').modal();
+            this.count_zero_score_kpi();
         },
 
         edit_weight_modal: function (){
@@ -4025,7 +3874,7 @@ var v = new Vue({
             that = this;
             $('#complate-review-modal').modal('hide');
             var temp = $('#btn-complete-review').html();
-            $('#btn-complete-review').html(gettext('Đang tải! Vui lòng chờ ... '));
+            $('#btn-complete-review').html(gettext('Downloading! Please wait ... '));
             cloudjetRequest.ajax({
                 type: 'post',
                 url: COMMON.LinkRDisAPI + "?key=confirm-kpi-quarter" + that.quarter_by_id.id,
@@ -4277,29 +4126,16 @@ var v = new Vue({
         set_selected_kpilib: function (k) {
             this.selected_kpilib = k;
         },
-        average_3_month: function (employee_performance, include_exscore=false) {
+        average_3_month: function (employee_performance) {
             var count = 0;
             var total = 0;
-            var that = this;
-            ['month_1_score', 'month_2_score', 'month_3_score'].forEach(function (key, index) {
+            ['month_1_score', 'month_2_score', 'month_3_score'].forEach(function (key) {
                 // if (key != 'current' && employee_performance[key] > 0) { # remove key since it was not neccessary
-                console.log('====', index);
-
-                if (include_exscore == true){
-                    // total = total + this.exscore_score['1'].score + this.exscore_score['2'].score + this.exscore_score['3'].score
-                    if (employee_performance[key] + that.exscore_score[index +1].score > 0) {
-                        total += employee_performance[key] + that.exscore_score[index +1].score;
-                        count += 1;
-                    }
-                }else{
-                    if (employee_performance[key] > 0) {
+                if (employee_performance[key] > 0) {
                     total += employee_performance[key];
                     count += 1;
-                    }
                 }
-
-            });
-
+            })
 
             if (count > 0) {
                 return total / count;
@@ -4337,7 +4173,6 @@ var v = new Vue({
                     that.kpi_list = dictResult;
                     // that.parentKPIs = JSON.parse(JSON.stringify(dictResult));
                     console.log(that.kpi_list);
-                    that.postponed_button = false
                 },
                 error: function (a, b, c) {
 

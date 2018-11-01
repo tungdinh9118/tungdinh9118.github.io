@@ -1,4 +1,4 @@
-.justify-content-sm-center#ballsWaveG {
+#ballsWaveG {
     position: fixed;
     width: 128px;
     height: 30px;
@@ -1433,16 +1433,17 @@ div.btn-wrapper .btn {
 }
 
 @media only screen and (max-width: 1199px) {
+    .navbar-brand {
+        display: none;
+    }
+
     #nav-right {
         margin-right: 0px;
     }
 
     #navbar .nav-left li a {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    #navbar .nav-icon-btn{
-        display: none;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 }
 
@@ -2824,7 +2825,6 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 
 .target-page .el-table .cell {
     line-height: 1.29;
-    word-break: break-word;
 }
 
 #target .search-target-staff {
@@ -3261,89 +3261,6 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 #company-kpi-snapshot .kpi-panel .justify-content-sm-center {
     display: flex;
     border-collapse: inherit;
-    justify-content: space-around;
+    flex-wrap:wrap ;
     flex-grow: inherit;
-}
-
-#contain-comment .observing_display {
-    border-top: 1px solid #D3D3D3 ;
-}
-
-#contain-comment .admin-comment,.note-content .admin-comment{
-    padding-left: 2px;
-    margin-top: 4px;
-    border: 1px solid;
-    border-radius: 3px;
-    background-color: #c2c8cc;
-    font-size: 10px;
-    padding: 2px 4px;
-    display: inline-block;
-}
-#contain-comment .admin-comment label,.note-content .admin-comment label{
-    margin-bottom: 0px;
-}
-
-#btn-complete-review-editor .evaluation-approval {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
-}
-#btn-complete-review-editor .check-circle-outline {
-    margin: 0px 2px 5px 0px;
-    border-radius: 16px;
-    background-color: #fff;
-    color: #008b8b;
-}
-#btn-complete-review-editor .btn-evaluation-approval {
-    min-width: 201px;
-    height: 40px;
-}
-#kpiscore-help .title-modal-score-help{
-    font-size: 20px;
-    font-weight: bold;
-}
-
-#kpiscore-help .resize-modal{
-    width: 955px;
-}
-
-#kpiscore-help .resize-body{
-    max-height: 700px;
-}
-.table-score-help tbody tr th{
-    border-bottom: None!important;
-    background-color: #ffffff;
-    vertical-align: middle;
-}
-
-.table-score-help tbody tr td{
-    border-bottom: None!important;
-    padding: 10px;
-}
-
-.table-score-help tbody .financial-score-help{
-    background-color: #fdf5e6;
-}
-
-.table-score-help tbody .customer-score-help{
-    background-color: #f1f8fd;
-}
-
-.table-score-help tbody .internal-score-help{
-    background-color: #fef1f1;
-}
-.table-score-help tbody .learn-score-help{
-    background-color: #e6f4eb;
-}
-.table-score-help tbody .other-score-help{
-    background-color: #f9f9f9;
-}
-
-.table-score-help tbody .sum-score-help{
-    background-color: #337ab7;
-    color: #ffffff;
-}
-
-#kpiscore-help .header-no-line{
-    border-bottom: None!important;
 }
