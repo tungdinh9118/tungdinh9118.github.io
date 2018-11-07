@@ -80,6 +80,12 @@ el: '#home-template',
 },
 data: function () {
     return {
+        infor_msg_box:{
+            show_infor_msg: false,
+            type_msg:'',//success or error
+            tite_msg:'',// thêm kpi thất bại
+            array_msg:[]// [mã kpi quá 100 ký tư, mục tiêu kpi quá 300 ký tự]
+        },
         enable_allocation_target:  false,
         alert_import_kpi: true,
         id_row_error: [],
@@ -197,6 +203,17 @@ methods: {
             return gettext('most_recent');
         }
         return str;
+    },
+    trigger_close_msg_box: function(){
+        // reset infor msg box
+        var self = this
+        var msg_box = {
+            show_infor_msg: false,
+            type_msg:'',
+            tite_msg:'',
+            array_msg:[]
+        }
+        self.infor_msg_box = Object.assign(self.infor_msg_box, msg_box)
     },
     handleDropFile: function (e) {
         e.stopPropagation();
@@ -501,6 +518,7 @@ methods: {
                                         "check_error_quarter_3": false,
                                         "check_error_quarter_4": false,
                                         "index": "",
+                                        "msg":"",
                                         "_uuid": makeid()
 
 
@@ -680,7 +698,7 @@ methods: {
             self.method_save = self.method[p];
         }
         else{
-            self.method_save = self.method[p];
+            self.method_save = "";
             check_score_calculation_type = false
         }
         kpi.score_calculation_type = self.method_save;
@@ -983,16 +1001,14 @@ methods: {
         setTimeout(function () {
             if (!$('.text-muted').length) {
                 $("body.bg-sm").removeAttr("style");
+                $('#edit-import-kpi').modal('hide')
+                self.infor_msg_box.show_infor_msg = true;
+                self.infor_msg_box.type_msg = "success";
+                self.infor_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
+                self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
                 setTimeout(function () {
-                    $('#edit-import-kpi').modal('hide');
-                    swal({
-                        title: gettext("Success"),
-                        text: gettext("Edit import KPI success!"),
-                        type: "success",
-                        timer: 2000,
-                        confirmButtonColor: "#43ABDB"
-                    });
-                }, 200)
+                    self.infor_msg_box.show_infor_msg = false;
+                },2000)
                 return;
             }
         }, 1000)
@@ -1011,11 +1027,11 @@ methods: {
     },
     convertNewStructData: function(kpi){
         var data_import_kpi= {
-            year_target: kpi.year,
-            q1: kpi.q1,
-            q2: kpi.q2,
-            q3: kpi.q3,
-            q4: kpi.q4,
+            year_target: parseFloat(kpi.year) || null,
+            q1: parseFloat(kpi.q1) || null,
+            q2: parseFloat(kpi.q2) || null,
+            q3: parseFloat(kpi.q3) || null,
+            q4: parseFloat(kpi.q4) || null,
             check_goal: kpi.check_goal,
             goal: kpi.goal,
             kpi: kpi.kpi,
@@ -1030,24 +1046,24 @@ methods: {
             year_data: {
                 months_target: {
                     quarter_1: {
-                        month_1: kpi.t1,
-                        month_2: kpi.t2,
-                        month_3: kpi.t3
+                        month_1: parseFloat(kpi.t1) || null,
+                        month_2: parseFloat(kpi.t2) || null,
+                        month_3: parseFloat(kpi.t3) || null
                     },
                     quarter_2: {
-                        month_1: kpi.t4,
-                        month_2: kpi.t5,
-                        month_3: kpi.t6
+                        month_1: parseFloat(kpi.t4) || null,
+                        month_2: parseFloat(kpi.t5) || null,
+                        month_3: parseFloat(kpi.t6) || null
                     },
                     quarter_3: {
-                        month_1: kpi.t7,
-                        month_2: kpi.t8,
-                        month_3: kpi.t9
+                        month_1: parseFloat(kpi.t7) || null,
+                        month_2: parseFloat(kpi.t8) || null,
+                        month_3: parseFloat(kpi.t9) || null
                     },
                     quarter_4: {
-                        month_1: kpi.t10,
-                        month_2: kpi.t11,
-                        month_3: kpi.t12
+                        month_1: parseFloat(kpi.t10) || null,
+                        month_2: parseFloat(kpi.t11) || null,
+                        month_3: parseFloat(kpi.t12) || null
                     }
                 }
             }
@@ -1079,21 +1095,6 @@ methods: {
         }
         kpi.score_calculation_type = that.method_save;
 
-        if (that.to_string(kpi.q1) == '') {
-            kpi.q1 = null;
-        }
-        if (that.to_string(kpi.q2) == '') {
-            kpi.q2 = null;
-        }
-        if (that.to_string(kpi.q3) == '') {
-            kpi.q3 = null;
-        }
-        if (that.to_string(kpi.q4) == '') {
-            kpi.q4 = null;
-        }
-        if (that.to_string(kpi.year) == '') {
-            kpi.year = null;
-        }
         var kpi_data_import = that.convertNewStructData(kpi)
         cloudjetRequest.ajax({
             type: "POST",
@@ -1109,20 +1110,22 @@ methods: {
             error: function (jqXHR) {
                 //alert('failed');
                 requestcenterHideNotification();
-                var html = ''
-                if (jqXHR.responseJSON['exception']) {
-                    html = '<ol class="text-left">\n';
-                    Object.keys(jqXHR.responseJSON['exception']).forEach(function (key) {
-                        html += '<li>"' + key + '": ' + jqXHR.responseJSON['exception'][key] + '</li>\n';
-                    });
-                    html += '</ol>\n';
+                var title_msg_error = "Thêm KPI thất bại"
+                if (jqXHR.responseJSON){
+                    if (jqXHR.responseJSON['exception']) {
+                        var msg_error
+                        Object.keys(jqXHR.responseJSON['exception']).forEach(function (key) {
+                            msg_error =  key + ' : ' + jqXHR.responseJSON['exception'][key];
+                            self.infor_msg_box.array_msg.push(msg_error)
+                        });
+                    }
+                    // if(jqXHR.responseJSON['message']){
+                    //     title_msg_error = jqXHR.responseJSON['message']
+                    // }
                 }
-                swal({
-                    title: '<h4 class>' + jqXHR.responseJSON['message'] + '</h4>',
-                    html: html,
-                    type: 'error',
-                    animation: false
-                });
+                self.infor_msg_box.show_infor_msg = true;
+                self.infor_msg_box.type_msg = "error";
+                self.infor_msg_box.tite_msg = title_msg_error
                 try {
                     kpi.msg = jqXHR.responseJSON['message'];
                 } catch (err) {
