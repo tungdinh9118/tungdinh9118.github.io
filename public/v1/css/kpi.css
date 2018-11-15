@@ -3065,6 +3065,7 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 }
 #target .el-table .kpi-name{
     /*display: inline-block;*/
+    word-break: break-word;
 }
 #target .content-kpi-name{
     text-align: left;
