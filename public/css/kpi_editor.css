@@ -2006,6 +2006,19 @@ span.comment-sign.toggle-auto:hover {
 .text-left, .table-per-result.table-bordered tbody tr td.text-left{
     text-align: left!important;
 }
+.table-per-result.table-bordered tbody tr .extrascore{
+    color: darkcyan;
+}
+.table-per-result.table-bordered tbody tr .extrascore img{
+    width:15px;
+    vertical-align: top;
+}
+.table-per-result.table-bordered tbody tr td  span.minus_score{
+    color:#7ed321;
+}
+.table-per-result.table-bordered tbody tr td  span.plus_score{
+    color:#d9534f;
+}
 
 .com-name{
     font-size: 16px;

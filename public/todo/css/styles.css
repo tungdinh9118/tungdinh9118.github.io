@@ -317,6 +317,7 @@ table.nocolor, table.nocolor tr, table.nocolor td {
     font-weight: normal;
     line-height: 1.29;
     color: #333333;
+    white-space: pre-line;
 }
 .task-infor .row-detail-task .task-description .text{
     font-size: 10px;

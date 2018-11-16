@@ -298,9 +298,8 @@ function remove_person(node, delete_kpis) {
                         st.onClick(st.root);
                     }
 
-                    if(node.data.type){
-                        peopleApp.get_list_backup_user();
-                    }
+                    peopleApp.get_list_backup_user();
+
                     st.removeSubtree(node.id, true, 'animate', {
                         hideLabels: false,
                         onComplete: function () {
@@ -406,7 +405,6 @@ function bind_avatar_upload(node) {
     $('#id-btn-upload').click(function () {
         $("#id-avatar-upload").click();
     });
-
     $("#id-avatar-upload").data('ajaxUploader-setup', false);
     $("#id-avatar-upload").ajaxfileupload({
         action: "/performance/people/",
@@ -424,7 +422,6 @@ function bind_avatar_upload(node) {
                 $('.progress-striped').hide();
                 $('.progress-striped .bar').css('width', '60%');
             } else {
-                console.log(response);
             }
             //alert(JSON.stringify(response));
         },
