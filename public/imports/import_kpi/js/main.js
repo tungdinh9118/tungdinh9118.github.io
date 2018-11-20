@@ -1060,9 +1060,15 @@ methods: {
                 $("body.bg-sm").removeAttr("style");
                 $('#edit-import-kpi').modal('hide')
                 self.infor_msg_box.show_infor_msg = true;
-                self.infor_msg_box.type_msg = "success";
-                self.infor_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
-                self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
+                if(self.data_edit_kpi.data.msg){
+                    self.infor_msg_box.type_msg = "error";
+                    self.infor_msg_box.tite_msg = "Chỉnh sửa KPI không thành công"
+                    self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI không thành công !")
+                }else{
+                    self.infor_msg_box.type_msg = "success";
+                    self.infor_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
+                    self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
+                }
                 setTimeout(function () {
                     self.infor_msg_box.show_infor_msg = false;
                 },2000)
