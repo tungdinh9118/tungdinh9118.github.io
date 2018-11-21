@@ -40,6 +40,7 @@ Vue.component('edit-import-kpi-modal', {
             }
             return false;
         },
+
     },
     beforeDestroy: function () {
         //            this.$off('dismiss')
@@ -60,6 +61,30 @@ Vue.component('edit-import-kpi-modal', {
             var self = this
                 self.$emit('comfirm',self.data_edit_kpi)
         },
+        check_kpi_id_error: function (value) {
+            try {
+                value = value.trim()
+            } catch (err) {
+            }
+            if (value && this.list_kpi_id.indexOf(value[0].toLowerCase()) == -1){
+                return true
+            }else if( value && value.slice(1, value.length).length >0){
+                var end_code_kpi_id = value.slice(1, value.length)
+                var res = end_code_kpi_id.split(".");
+                var is_kpi_id = res.reduce(function(prevVal, element){
+                    if(isFinite(element) && res.indexOf("")== -1){
+                        return true
+                    }else {
+                        return false
+                    }
+                },false)
+                if(!is_kpi_id){
+                    return true
+                }
+            }else {
+                return false
+            }
+        }
         check_number: function(e){
             var _number = String.fromCharCode(e.keyCode);
             if ('0123456789.'.indexOf(_number) !== -1) {
@@ -100,7 +125,6 @@ el: '#home-template',
 },
 data: function () {
     return {
-        dissable_btn_add:false,
         infor_msg_box:{
             show_infor_msg: false,
             type_msg:'',//success or error
@@ -813,19 +837,7 @@ methods: {
                 kpi.status = null;
                 if (responseJSON['status'] == 'ok') {
                     kpi.validated = true;
-                    if (self.method.indexOf(kpi.score_calculation_type.trim().toLowerCase()) == -1){
-                        kpi.validated = false;
-                        kpi.status = responseJSON['status'];
-                        self.check_file = false;
-                        kpi.msg = kpi.msg + "\n" + gettext("Score calculation type format is not correct");
-                    }
-
-                    if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
-                        kpi.validated = false;
-                        kpi.status = responseJSON['status'];
-                        self.check_file = false;
-                        kpi.msg = kpi.msg + "\n" + gettext('Operator format is not correct');
-                    }
+                    kpi.status = responseJSON['status'];
                     if (kpi.code.trim()==''){
                         kpi.validated = false;
                         kpi.msg = kpi.msg + "\n" +gettext("Code must not be empty");
@@ -845,29 +857,56 @@ methods: {
                     kpi.validated = false;
                     kpi.msg = responseJSON['message'];
                     self.check_file = false;
-
-                    if (kpi.unit.trim()==''){
-                        kpi.validated = false;
-                        kpi.msg = kpi.msg + "\n" + gettext("Unit is not formatted correctly");
-                    }
                     if (kpi.code.trim()==''){
                         kpi.validated = false;
                         kpi.msg = kpi.msg + "\n" +gettext("Code must not be empty");
                     }
-                    if (kpi.kpi_id.trim()==''){
-                        kpi.validated = false;
-                        kpi.msg = kpi.msg + "\n" +gettext("Type must not be empty");
+                }
+                if (kpi.unit.trim()==''){
+                    kpi.validated = false;
+                    kpi.msg = kpi.msg + "\n" + gettext("Unit is not formatted correctly");
+                }
+                if (kpi.kpi_id.trim()==''){
+                    kpi.validated = false;
+                    kpi.msg = kpi.msg + "\n" +gettext("Type must not be empty");
+                }
+                if (kpi.kpi_id.trim() && list_kpi_id.indexOf(kpi.kpi_id.trim()[0].toLowerCase()) == -1){
+                    kpi.validated = false;
+                    kpi.msg = kpi.msg + "\n" + "Loại KPI không đúng"
+                }else if( kpi.kpi_id.trim() && kpi.kpi_id.trim().slice(1, kpi.kpi_id.trim().length).length >0){
+                    var end_code_kpi_id = kpi.kpi_id.trim().slice(1, kpi.kpi_id.trim().length)
+                    var res = end_code_kpi_id.split(".");
+                    var is_kpi_id = res.reduce(function(prevVal, element){
+                        if(isFinite(element) && res.indexOf("")== -1){
+                            return true
+                        }else {
+                            return false
+                        }
+                    },false)
+                    if(!is_kpi_id){
+                       kpi.msg = kpi.msg + "\n" + "Loại KPI không đúng"
                     }
-                    if (kpi.kpi_id.trim() && list_kpi_id.indexOf(kpi.kpi_id.trim()[0].toLowerCase()) == -1){
-                        kpi.validated = false;
-                        kpi.msg = kpi.msg + "\n" + "Loại KPI không đúng"
-                    }
+                }
+                if (kpi.measurement.trim()==''){
+                    kpi.validated = false;
+                    kpi.msg = kpi.msg + "\n" + gettext("Measurement must not empty");
+                }
 
-                    if (kpi.measurement.trim()==''){
-                        kpi.validated = false;
-                        kpi.msg = kpi.msg + "\n" + gettext("Measurement must not empty");
+                if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
+                    kpi.msg = kpi.msg + "\n" + gettext("Operator format is not correct");
+                }
+                if (that.method.indexOf(kpi.score_calculation_type.trim().toLowerCase()) == -1){
+                    kpi.validated = false;
+                    kpi.status = responseJSON['status'];
+                    that.check_file = false;
+                    kpi.msg = kpi.msg + "\n" + gettext("Score calculation type format is not correct");
+                }
+                scores.forEach(function (score) {
+                    if (isNaN(kpi[score])) {
+                        messages += score.toUpperCase() + ', '
                     }
-
+                });
+                if (messages) {
                     if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
                         kpi.msg = kpi.msg + "\n" + gettext("Operator format is not correct");
                     }
@@ -950,10 +989,8 @@ methods: {
                     kpi.msg = kpi.msg.slice(2, kpi.msg.length);
                     kpi.msg = kpi.msg.charAt(0).toUpperCase() + kpi.msg.slice(1);
                 }
-
-
-                console.log("===============xxxxxxxxx============")
-                console.log(kpi.msg)
+                // console.log("===============xxxxxxxxx============")
+                // console.log(kpi.msg)
                 if(kpi.msg !== ''){
                     self.addRowError(kpi._uuid)
                 }else{
