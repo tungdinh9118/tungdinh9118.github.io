@@ -10,6 +10,7 @@ Vue.component('edit-import-kpi-modal', {
         return {
             data_edit_kpi: {},
             showmodal: false,
+            list_kpi_id: ['f', 'c', 'p', 'l', 'o'],
             method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         }
     },
@@ -33,13 +34,12 @@ Vue.component('edit-import-kpi-modal', {
         showmodal: function (val) {
             this.showmodal = val
         },
-         extractEmails: function (email) {
-             if (email) {
-                 return /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi.test(email);
-             }
-        return false;
-    },
-
+        extractEmails: function (email) {
+            if (email) {
+                return /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi.test(email);
+            }
+            return false;
+        },
     },
     beforeDestroy: function () {
         //            this.$off('dismiss')
@@ -100,6 +100,7 @@ el: '#home-template',
 },
 data: function () {
     return {
+        dissable_btn_add:false,
         infor_msg_box:{
             show_infor_msg: false,
             type_msg:'',//success or error
@@ -767,6 +768,7 @@ methods: {
         var operator = ['<=', '>=', '='];
         var scores = ['q1', 'q2', 'q3', 'q4'];
         var months = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']
+        var list_kpi_id = ['f', 'c', 'p', 'l', 'o']
         if (index == undefined) {
             return;
         }
@@ -855,6 +857,10 @@ methods: {
                     if (kpi.kpi_id.trim()==''){
                         kpi.validated = false;
                         kpi.msg = kpi.msg + "\n" +gettext("Type must not be empty");
+                    }
+                    if (kpi.kpi_id.trim() && list_kpi_id.indexOf(kpi.kpi_id.trim()[0].toLowerCase()) == -1){
+                        kpi.validated = false;
+                        kpi.msg = kpi.msg + "\n" + "Loại KPI không đúng"
                     }
 
                     if (kpi.measurement.trim()==''){
@@ -1160,6 +1166,7 @@ methods: {
         }
         kpi.score_calculation_type = that.method_save;
         var kpi_data_import = that.convertNewStructData(kpi)
+        $('.add_kpi_' + index).button('loading')
         cloudjetRequest.ajax({
             type: "POST",
             url: "/api/kpis/import/add",
@@ -1170,6 +1177,7 @@ methods: {
                 kpi.status = "success";
                 that.$set(that.kpis, index, kpi);
                 kpi.score_calculation_type = that.method[p];
+                $('.add_kpi_' + index).button('reset')
             },
             error: function (jqXHR) {
                 //alert('failed');
@@ -1196,6 +1204,7 @@ methods: {
                 }
                 kpi.status = "failed";
                 that.$set(that.kpis, index, kpi);
+                $('.add_kpi_' + index).button('reset')
             },
 
             contentType: "application/json"
