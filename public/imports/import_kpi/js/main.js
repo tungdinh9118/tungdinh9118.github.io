@@ -10,7 +10,7 @@ Vue.component('edit-import-kpi-modal', {
         return {
             data_edit_kpi: {},
             showmodal: false,
-            list_kpi_id: ['f', 'c', 'p', 'l', 'o'],
+                list_kpi_id: ['f', 'c', 'p', 'l', 'o'],
             method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         }
     },
@@ -84,7 +84,7 @@ Vue.component('edit-import-kpi-modal', {
             }else {
                 return false
             }
-        }
+        },
         check_number: function(e){
             var _number = String.fromCharCode(e.keyCode);
             if ('0123456789.'.indexOf(_number) !== -1) {
@@ -842,12 +842,6 @@ methods: {
                         kpi.validated = false;
                         kpi.msg = kpi.msg + "\n" +gettext("Code must not be empty");
                     }
-
-                    scores.forEach(function (score) {
-                        if (isNaN(kpi[score])) {
-                            messages += score.toUpperCase() + ', '
-                        }
-                    });
                     if (kpi.msg.trim()[0] == '\n') {
                         kpi.msg = kpi.msg.slice(2, kpi.msg.length);
                         kpi.msg = kpi.msg.charAt(0).toUpperCase() + kpi.msg.slice(1);
@@ -895,27 +889,11 @@ methods: {
                 if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
                     kpi.msg = kpi.msg + "\n" + gettext("Operator format is not correct");
                 }
-                if (that.method.indexOf(kpi.score_calculation_type.trim().toLowerCase()) == -1){
+                if (self.method.indexOf(kpi.score_calculation_type.trim().toLowerCase()) == -1){
                     kpi.validated = false;
                     kpi.status = responseJSON['status'];
-                    that.check_file = false;
+                    self.check_file = false;
                     kpi.msg = kpi.msg + "\n" + gettext("Score calculation type format is not correct");
-                }
-                scores.forEach(function (score) {
-                    if (isNaN(kpi[score])) {
-                        messages += score.toUpperCase() + ', '
-                    }
-                });
-                if (messages) {
-                    if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
-                        kpi.msg = kpi.msg + "\n" + gettext("Operator format is not correct");
-                    }
-                    if (self.method.indexOf(kpi.score_calculation_type.trim().toLowerCase()) == -1){
-                        kpi.validated = false;
-                        kpi.status = responseJSON['status'];
-                        self.check_file = false;
-                        kpi.msg = kpi.msg + "\n" + gettext("Score calculation type format is not correct");
-                    }
                 }
                 kpi.year = kpi.year == null? kpi.year : kpi.year.toString().replace(/,/g, '')
                 if (isNaN(kpi.year) ) {
