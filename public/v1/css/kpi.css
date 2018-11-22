@@ -3250,6 +3250,8 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 .btn-system {
     height: 34px;
     line-height: 10px !important;
+    background-color: #00b0ad;
+    border-color: #00b0ad;
 }
 
 .color_default {

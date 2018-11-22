@@ -3090,6 +3090,9 @@ var v = new Vue({
                 url: url,
                 type: 'post',
                 success: function (results) {
+                    results = results.filter(function (kpi){
+                            return kpi.weight > 0;
+                    });
 //                         results = jQuery.grep(results, function(item){
 //                            return (item.month_1_score ==0 || item.month_2_score ==0 || item.month_3_score==0 || item.latest_score==0)
 //                         });
@@ -3381,15 +3384,15 @@ var v = new Vue({
                 //console.log('#loading-gif' + kpi.id)
 //                $('#loading-gif' + kpi.id).toggleClass('loading-gif');
 
-                that.$set('kpi_list[' + kpi.id + '].month_1_target', kpi.month_1_target != '' ? kpi.month_1_target : kpi.get_target)
-                that.$set('kpi_list[' + kpi.id + '].month_2_target', kpi.month_2_target != '' ? kpi.month_2_target : kpi.get_target)
-                that.$set('kpi_list[' + kpi.id + '].month_3_target', kpi.month_3_target != '' ? kpi.month_3_target : kpi.get_target)
-                if (that.kpi_list[kpi.id].score_calculation_type == 'sum') {
-                    var month_1_target = kpi.month_1_target ? kpi.month_1_target : 0;
-                    var month_2_target = kpi.month_2_target ? kpi.month_2_target : 0;
-                    var month_3_target = kpi.month_3_target ? kpi.month_3_target : 0;
-                    that.$set('kpi_list[' + kpi.id + '].target', month_1_target + month_2_target + month_3_target)
-                }
+                // that.$set('kpi_list[' + kpi.id + '].month_1_target', kpi.month_1_target != '' ? kpi.month_1_target : kpi.get_target)
+                // that.$set('kpi_list[' + kpi.id + '].month_2_target', kpi.month_2_target != '' ? kpi.month_2_target : kpi.get_target)
+                // that.$set('kpi_list[' + kpi.id + '].month_3_target', kpi.month_3_target != '' ? kpi.month_3_target : kpi.get_target)
+                // if (that.kpi_list[kpi.id].score_calculation_type == 'sum') {
+                //     var month_1_target = kpi.month_1_target ? kpi.month_1_target : 0;
+                //     var month_2_target = kpi.month_2_target ? kpi.month_2_target : 0;
+                //     var month_3_target = kpi.month_3_target ? kpi.month_3_target : 0;
+                //     that.$set('kpi_list[' + kpi.id + '].target', month_1_target + month_2_target + month_3_target)
+                // }
 
                 //console.log(that.kpi_list[kpi.id].month_2_target);
 
@@ -3901,13 +3904,16 @@ var v = new Vue({
             });
 
             // $('<form></form>').attr('action', "{% url 'SimpleExport' org_user.id %}").appendTo('body').submit().remove();
+            this.capture_and_download();
 
-            window.open("/performance/report/#/?user_id=" + COMMON.OrgUserId + "&quarter_id=" + that.quarter_by_id.id);
+        },
+        capture_and_download: function(){
+            that = this;
+            var temp = $('#btn-complete-review').html();
 
+            var wd = window.open("/performance/report/#/?user_id=" + COMMON.OrgUserId + "&quarter_id=" + that.quarter_by_id.id);
 
-            // $('#download-fixed').hide();
             $("#complate-review-modal").on("hidden.bs.modal", function () {
-
                 html2canvas(document.body, {
                     onrendered: function (canvas) {
                         $('#btn-complete-review').html(temp);
@@ -3923,7 +3929,6 @@ var v = new Vue({
                 });
             });
         },
-
         get_reason_delay_kpi: function () {
             that = this;
             return that.reason_kpi;
@@ -4106,7 +4111,7 @@ var v = new Vue({
                     that.update_score(kpi);
                     break;
                 case 'month_target':
-                    that.update_month_target(kpi, (!kpi.enable_edit && !that.organization.allow_edit_monthly_target) || kpi.score_calculation_type == 'average');
+                    that.update_month_target(kpi, (!kpi.enable_edit && !that.organization.allow_edit_monthly_target));
                     break;
                 case 'score_calculation':
                     that.update_quarter_target(kpi);

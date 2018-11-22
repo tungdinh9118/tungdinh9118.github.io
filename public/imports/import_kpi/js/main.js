@@ -593,8 +593,8 @@ methods: {
                             async.waterfall(
                                 that.kpis.forEach(function (kpi, index) {
                                     kpi.index = index
-                                    that.validate_kpi(index);
-                                    console.log(that.kpis[index]);
+                                    kpi = that.validate_kpi(kpi);
+                                    // that.$set(that.kpis, index, kpi);
                                     return kpi
                                 })
                             )
@@ -787,17 +787,19 @@ methods: {
         }
         return kpi
     },
-    validate_kpi: function (index) {
+    validate_kpi: function (kpi) {
         var self = this
         var operator = ['<=', '>=', '='];
         var scores = ['q1', 'q2', 'q3', 'q4'];
         var months = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']
         var list_kpi_id = ['f', 'c', 'p', 'l', 'o']
-        if (index == undefined) {
-            return;
+        if (kpi.index == undefined) {
+            return kpi;
         }
-        var kpi = self.kpis[index];
-        kpi.weight =  self.to_string(kpi.weight)
+        if (self.enable_allocation_target){
+            kpi = that.validateTargetScoreFollowAllocationTarget(kpi)
+        }
+        kpi.weight = kpi.weight.toString()
         if(!kpi.score_calculation_type){
             kpi.score_calculation_type = ""
         }
@@ -974,8 +976,8 @@ methods: {
                 }else{
                     self.removeRowError(kpi._uuid)
                 }
-                self.$set(self.kpis, index, kpi);
-                self.$set(self.data_edit_kpi, 'msg', kpi.msg);
+                //self.$set(self.kpis, index, kpi);
+                //self.$set(self.data_edit_kpi, 'msg', kpi.msg);
                 try{
                     // auto scroll to error messages
                     setTimeout(function(){
@@ -984,6 +986,8 @@ methods: {
                 }catch(err){
 
                 }
+                self.$set(that.data_edit_kpi, 'data', kpi)
+                return kpi
 
             },
             error: function (jqXHR, textStatus) {
@@ -999,7 +1003,8 @@ methods: {
                 }else{
                     self.removeRowError(kpi._uuid)
                 }
-                self.$set(self.kpis, index, kpi);
+                return kpi
+                // that.$set(that.kpis, index, kpi);
             },
             complete: function (data) {
                 self.check_total++;
@@ -1014,7 +1019,7 @@ methods: {
             contentType: "application/json"
 
         });
-        self.$set(self.kpis, index, kpi);
+        //self.$set(self.kpis, index, kpi);
     },
     to_string: function (value) {
         return value != null ? value.toString() : null;
@@ -1069,34 +1074,32 @@ methods: {
     },
     confirm_edit_kpi: function (kpi) {
         var self = this;
+        var kpi_validate = {}
         self.resetErrorMsg(kpi.data)
-        // {#                              that.data_edit_kpi.check_error = true;#}
-        // kpi.data.weight = kpi.data.weight; ?? không cần thiết
-        self.kpis[kpi.index] = kpi.data;
         kpi.data.msg = '';
-        self.validate_kpi(kpi.index)
-        self.data_edit_kpi.data = self.kpis[kpi.index]
+        self.validate_kpi(kpi.data)
         setTimeout(function () {
             if (!$('.text-muted').length) {
                 $("body.bg-sm").removeAttr("style");
-                $('#edit-import-kpi').modal('hide')
                 self.infor_msg_box.show_infor_msg = true;
                 if(self.data_edit_kpi.data.msg){
                     self.infor_msg_box.type_msg = "error";
                     self.infor_msg_box.tite_msg = "Chỉnh sửa KPI không thành công"
                     self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI không thành công !")
                 }else{
+                    $('#edit-import-kpi').modal('hide')
                     self.infor_msg_box.type_msg = "success";
                     self.infor_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
                     self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
+                    self.$set(that.kpis, self.data_edit_kpi.data.index, self.data_edit_kpi.data);
+                    setTimeout(function () {
+                        self.infor_msg_box.show_infor_msg = false;
+                    },2000)
                 }
-                setTimeout(function () {
-                    self.infor_msg_box.show_infor_msg = false;
-                },2000)
+
                 return;
             }
         }, 1000)
-
         // Không cần thiết vì đã có filter xử lý việc này => tránh lỗi chuyển data kpi.score_calculation_type
         // qua tiếng việt rồi lại qua tiếng anh chỉ để show lên xem
         //
