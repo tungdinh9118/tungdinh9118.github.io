@@ -933,6 +933,10 @@
     font-weight: 500;
     border: 1px solid #3e8b8b;
 }
+.cloudjet-uploader-compact__button .material-icons[data-v-2ba9eb15] {
+    bottom: -2px;
+    left: -2px;
+}
 .cloudjet-uploader-compact__button-text[data-v-2ba9eb15] {
     background: #008b8b;
     border-radius: 3px;
