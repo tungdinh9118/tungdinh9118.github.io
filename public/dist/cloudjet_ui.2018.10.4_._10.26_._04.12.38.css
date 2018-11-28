@@ -661,7 +661,7 @@
     min-height: 46px;
 }
 .notification-item__content-action[data-v-059df97e] {
-    word-break: break-all !important;
+    word-break: break-word !important;
 }
 .notification-item__content-action > a[data-v-059df97e] {
       background: none !important;
