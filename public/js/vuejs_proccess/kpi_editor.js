@@ -1740,6 +1740,20 @@ var v = new Vue({
             return data;
 
         },
+        resetErrorWhenShow: function() {
+            $('#error-input-1').css('display','none');
+            $('#error-input-2').css('display','none');
+            $('#error-input-3').css('display','none');
+            $('#error-input-4').css('display','none');
+        },
+        check_number: function(e){
+            var _number = String.fromCharCode(e.keyCode);
+            if ('0123456789.'.indexOf(_number) !== -1) {
+                return _number;
+            }
+            e.preventDefault();
+            return false;
+        },
         update_adjusting_chart: function () {
             var self = this;
             console.log('triggered')
@@ -1939,7 +1953,76 @@ var v = new Vue({
             self.init_adjust(kpi_id);
             console.log(self.adjusting_kpi)
             $('#performance-level-adjust').modal();
-            resetErrorWhenShow();
+            self.resetErrorWhenShow();
+        },
+        checkInput1: function (input_1,target) {
+            var id = $('.row.col-sm-12.evaluate-chart').attr('id');
+            if(input_1 >= target || input_1 < 0 ) {
+                if( id == '<=')
+                    $('#error-input-1').css('display','');
+                else
+                    $('#error-input-3').css('display','');
+            }
+            else {
+                if( id == '<=')
+                    $('#error-input-1').css('display','none');
+                else
+                    $('#error-input-3').css('display','none');
+            }
+        },
+        check_paste: function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+        },
+        checkInput3: function(input_3,target) {
+            var id = $('.row.col-sm-12.evaluate-chart').attr('id');
+            if(input_3 <= target ) {
+                if( id == '<=')
+                    $('#error-input-2').css('display','');
+                else
+                    $('#error-input-4').css('display','');
+            }
+            else {
+                if( id == '<=')
+                    $('#error-input-2').css('display','none');
+                else
+                    $('#error-input-4').css('display','none');
+            }
+        },
+        triggerClickTab: function(current_tab,e){
+            var self = this
+            self.$set('adjusting_kpi.adjusting_month',current_tab);
+            self.update_adjusting_chart();
+            self.checkConditon(e);
+        },
+        checkConditionInput1: function() {
+            var self = this
+            var current_tab = $('.row.col-sm-12.evaluate-chart').find('.tab-pane.fade.in.active');
+            var target = parseFloat(current_tab.find('#input-2').val());
+            var input_1 =  parseFloat(current_tab.find('#input-1').val());
+            self.checkInput1(input_1,target);
+            self.update_adjusting_chart()
+        },
+        checkConditionInput3: function() {
+            var self = this
+            var current_tab = $('.row.col-sm-12.evaluate-chart').find('.tab-pane.fade.in.active');
+            var target = parseFloat(current_tab.find('#input-2').val());
+            var input_3 = parseFloat(current_tab.find('#input-3').val());
+            self.checkInput3(input_3,target);
+            self.update_adjusting_chart()
+        },
+        checkConditon: function (e) {
+            var self = this
+            $('#error-input-1').css('display','none');
+            $('#error-input-2').css('display','none');
+            $('#error-input-3').css('display','none');
+            $('#error-input-4').css('display','none');
+            var id = $(e).find('a').attr('href');
+            var input_1 = parseFloat($(id).find('#input-1').val());
+            var target = parseFloat($(id).find('#input-2').val());
+            var input_3 = parseFloat($(id).find('#input-3').val());
+            self.checkInput1(input_1,target);
+            self.checkInput3(input_3,target);
         },
         formatTime: function (time) {
             if (COMMON.LanguageCode == 'en'){
