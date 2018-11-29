@@ -1747,7 +1747,11 @@ var v = new Vue({
             $('#error-input-4').css('display','none');
         },
         check_number: function(e){
-            var _number = String.fromCharCode(e.keyCode);
+            var charCode = e.which || e.keyCode; //It will work in chrome and firefox.
+            var _number = String.fromCharCode(charCode);
+            if (e.key !== undefined && e.charCode === 0) {
+                return;
+            }
             if ('0123456789.'.indexOf(_number) !== -1) {
                 return _number;
             }
