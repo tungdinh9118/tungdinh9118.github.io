@@ -4,18 +4,16 @@ function extractEmails(text) {
 }
 Vue.component('edit-import-kpi-modal', {
     delimiters: ['${', '}$'],
-    props: ['kpi', 'showmodal'],
+    props: ['kpi',],
     template: $('#edit-import-kpi-modal').html(),
     data: function () {
         return {
             data_edit_kpi: {},
-            showmodal: false,
-                list_kpi_id: ['f', 'c', 'p', 'l', 'o'],
+            list_kpi_id: ['f', 'c', 'p', 'l', 'o'],
             method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         }
     },
     mounted: function () {
-        // {#            console.log(this.showmodal)#}
         // {#            this.old_data = this.kpi#}
     },
     created: function () {
@@ -30,9 +28,6 @@ Vue.component('edit-import-kpi-modal', {
                     this.data_edit_kpi = JSON.parse(JSON.stringify(newVal))
             },
             deep: true
-        },
-        showmodal: function (val) {
-            this.showmodal = val
         },
         extractEmails: function (email) {
             if (email) {
@@ -140,7 +135,6 @@ data: function () {
         error_add: '',
         check_error_upload: false,
         check_file: true,
-        dialogFormVisible: false,
         data_edit_kpi: {
             data: {},
             index: -1,
@@ -171,10 +165,6 @@ filters: {
 
 },
 methods: {
-        triggeredDismissModal: function(){
-            // console.log('triggered show modal')
-            this.dialogFormVisible = false
-        },
     hideUnusedTableHead: function(){
         console.log("triggered this hiding function")
         setTimeout(function(){
@@ -643,7 +633,7 @@ methods: {
     },
     init: function () {
 
-         var that = this;
+        var that = this;
         that.getOrg()
 
         //  document.getElementById('drop').addEventListener('drop', that.handleDrop, false);
@@ -696,18 +686,6 @@ methods: {
         }
         return kpi
     },
-    // validateIsSumQuarter: function (kpi,sum_p,totalQuarterArray,sum_year) {//sum_q1,sum_q2,sum_q3,sum_q4 or average_q1,average_q2,average_q3,average_q4
-    //     var self = this;
-    //     return kpi = self.checkValidate(kpi,sum_p,totalQuarterArray,sum_year)
-    // },
-    // validateIsMostRecent: function (kpi,most_recent_q,totalQuarterArray,sum_year) {
-    //     var self = this;
-    //     return kpi = self.checkValidate(kpi,most_recent_q,totalQuarterArray,sum_year)
-    // },
-    // validateIsAverage: function (kpi,average_q,totalQuarterArray,sum_year) {
-    //     var self = this;
-    //     return kpi = self.checkValidate(kpi,average_q,totalQuarterArray,sum_year)
-    // },
     calculationScore: function(score){
         var self = this
         var year = score.year
@@ -797,7 +775,7 @@ methods: {
             return kpi;
         }
         if (self.enable_allocation_target){
-            kpi = that.validateTargetScoreFollowAllocationTarget(kpi)
+            kpi = self.validateTargetScoreFollowAllocationTarget(kpi)
         }
         kpi.weight = kpi.weight.toString()
         if(!kpi.score_calculation_type){
@@ -969,15 +947,13 @@ methods: {
                     kpi.msg = kpi.msg.slice(2, kpi.msg.length);
                     kpi.msg = kpi.msg.charAt(0).toUpperCase() + kpi.msg.slice(1);
                 }
-                // console.log("===============xxxxxxxxx============")
-                // console.log(kpi.msg)
                 if(kpi.msg !== ''){
                     self.addRowError(kpi._uuid)
                 }else{
                     self.removeRowError(kpi._uuid)
                 }
-                //self.$set(self.kpis, index, kpi);
-                //self.$set(self.data_edit_kpi, 'msg', kpi.msg);
+                // self.$set(self.kpis, index, kpi);
+                // self.$set(self.data_edit_kpi, 'msg', kpi.msg);
                 try{
                     // auto scroll to error messages
                     setTimeout(function(){
@@ -986,7 +962,7 @@ methods: {
                 }catch(err){
 
                 }
-                self.$set(that.data_edit_kpi, 'data', kpi)
+                self.$set(self.data_edit_kpi, 'data', kpi)
                 return kpi
 
             },
@@ -1019,7 +995,7 @@ methods: {
             contentType: "application/json"
 
         });
-        //self.$set(self.kpis, index, kpi);
+        // self.$set(self.kpis, index, kpi);
     },
     to_string: function (value) {
         return value != null ? value.toString() : null;
@@ -1056,10 +1032,6 @@ methods: {
             that.data_edit_kpi.data.weight = parseFloat(that.data_edit_kpi.data.weight);
         }
         that.data_edit_kpi.index = index;
-        console.log("======>>>>>>>>>>>><<<<<<<<<thssg")
-        console.log(that.data_edit_kpi)
-        that.dialogFormVisible = true
-        console.log(that.dialogFormVisible)
         setTimeout(function () {
             $('#edit-import-kpi').modal('show');
             $('.modal-dialog .modal-body').attr('style', 'max-height:' + parseInt(screen.height * 0.6) + 'px !important; overflow-y: auto');
@@ -1091,7 +1063,7 @@ methods: {
                     self.infor_msg_box.type_msg = "success";
                     self.infor_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
                     self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
-                    self.$set(that.kpis, self.data_edit_kpi.data.index, self.data_edit_kpi.data);
+                    self.$set(self.kpis, self.data_edit_kpi.data.index, self.data_edit_kpi.data);
                     setTimeout(function () {
                         self.infor_msg_box.show_infor_msg = false;
                     },2000)
@@ -1159,30 +1131,30 @@ methods: {
         return data_import_kpi
     },
     add_kpi: function (index) {
-        var that = this;
+        var self = this;
         $('#error_modal').modal('hide');
         if (index == undefined) {
             return;
         }
-        var kpi = that.kpis[index];
+        var kpi = self.kpis[index];
 
         kpi.status = "adding";
         if ((kpi.score_calculation_type.trim().toLowerCase() == ''
             || kpi.score_calculation_type.trim().toLowerCase() == 'most recent')
-            && that.check_kpi_child(kpi.kpi_id))
+            && self.check_kpi_child(kpi.kpi_id))
             kpi.score_calculation_type = 'most_recent';
-        that.$set(that.kpis, index, kpi);
+        self.$set(self.kpis, index, kpi);
 
-        var p = that.method.indexOf(kpi.score_calculation_type.trim().toLowerCase());
+        var p = self.method.indexOf(kpi.score_calculation_type.trim().toLowerCase());
         if (p > 2 && p <6){
-            that.method_save = that.method[p-3];
+            self.method_save = self.method[p-3];
         }
         else if( 0 <= p && p <= 2){
-            that.method_save = that.method[p];
+            self.method_save = self.method[p];
         }else {
-            that.method_save = "";
+            self.method_save = "";
         }
-        kpi.score_calculation_type = that.method_save;
+        kpi.score_calculation_type = self.method_save;
         var kpi_data_import = that.convertNewStructData(kpi)
         $('.add_kpi_' + index).button('loading')
         cloudjetRequest.ajax({
@@ -1193,8 +1165,8 @@ methods: {
                 //console.log('yes, we can!');
                 // router.push('/');
                 kpi.status = "success";
-                that.$set(that.kpis, index, kpi);
-                kpi.score_calculation_type = that.method[p];
+                self.$set(self.kpis, index, kpi);
+                kpi.score_calculation_type = self.method[p];
                 $('.add_kpi_' + index).button('reset')
             },
             error: function (jqXHR) {
@@ -1221,7 +1193,7 @@ methods: {
                 } catch (err) {
                 }
                 kpi.status = "failed";
-                that.$set(that.kpis, index, kpi);
+                self.$set(self.kpis, index, kpi);
                 $('.add_kpi_' + index).button('reset')
             },
 
