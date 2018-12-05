@@ -173,7 +173,7 @@ methods: {
         },100)
     },
     getOrg: function () {
-            self = this;
+            var self = this;
             cloudjetRequest.ajax({
                 method: "GET",
                 url: "/api/organization",
@@ -1166,7 +1166,7 @@ methods: {
             self.method_save = "";
         }
         kpi.score_calculation_type = self.method_save;
-        var kpi_data_import = that.convertNewStructData(kpi)
+        var kpi_data_import = self.convertNewStructData(kpi)
         $('.add_kpi_' + index).button('loading')
         cloudjetRequest.ajax({
             type: "POST",
