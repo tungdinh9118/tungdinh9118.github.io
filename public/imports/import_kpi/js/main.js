@@ -1,10 +1,6 @@
-
-function extractEmails(text) {
-    return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
-}
 Vue.component('edit-import-kpi-modal', {
     delimiters: ['${', '}$'],
-    props: ['kpi',],
+    props: ['kpi'],
     template: $('#edit-import-kpi-modal').html(),
     data: function () {
         return {
@@ -29,13 +25,6 @@ Vue.component('edit-import-kpi-modal', {
             },
             deep: true
         },
-        extractEmails: function (email) {
-            if (email) {
-                return /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi.test(email);
-            }
-            return false;
-        },
-
     },
     beforeDestroy: function () {
         //            this.$off('dismiss')
@@ -56,29 +45,14 @@ Vue.component('edit-import-kpi-modal', {
             var self = this
                 self.$emit('comfirm',self.data_edit_kpi)
         },
-        check_kpi_id_error: function (value) {
-            try {
-                value = value.trim()
-            } catch (err) {
-            }
-            if (value && this.list_kpi_id.indexOf(value[0].toLowerCase()) == -1){
-                return true
-            }else if( value && value.slice(1, value.length).length >0){
-                var end_code_kpi_id = value.slice(1, value.length)
-                var res = end_code_kpi_id.split(".");
-                var is_kpi_id = res.reduce(function(prevVal, element){
-                    if(isFinite(element) && res.indexOf("")== -1){
-                        return true
-                    }else {
-                        return false
-                    }
-                },false)
-                if(!is_kpi_id){
-                    return true
-                }
-            }else {
-                return false
-            }
+        isEmailFormatValid: function (email) {
+             if (email) {
+                 return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi.test(email);
+             }
+            return false;
+        },
+        checkTypeKPI: function(type_kpi){
+            return /^([fclopFCLOP]{1}[0-9]+)((\.[0-9]+)*)$/gi.test(type_kpi)
         },
         check_number: function(e){
             var _number = String.fromCharCode(e.keyCode);
@@ -120,7 +94,7 @@ el: '#home-template',
 },
 data: function () {
     return {
-        infor_msg_box:{
+        info_msg_box:{
             show_infor_msg: false,
             type_msg:'',//success or error
             tite_msg:'',// thêm kpi thất bại
@@ -248,7 +222,7 @@ methods: {
             tite_msg:'',
             array_msg:[]
         }
-        self.infor_msg_box = Object.assign(self.infor_msg_box, msg_box)
+        self.info_msg_box = Object.assign(self.info_msg_box, msg_box)
     },
     handleDropFile: function (e) {
         e.stopPropagation();
@@ -260,6 +234,9 @@ methods: {
             return;
         }
         this.handleFile(e);
+    },
+    checkTypeKPI: function(type_kpi){
+        return /^([fclopFCLOP]{1}[0-9]+)((\.[0-9]+)*)$/gi.test(type_kpi)
     },
     handleFile: function (e) {
          var that = this;
@@ -494,7 +471,7 @@ methods: {
 
 
                                     try {
-                                        var email = extractEmails(sheet["AA" + i].w)[0];
+                                        var email = isEmailFormatValid(sheet["AA" + i].w)[0];
                                     } catch (err) {
                                         var email = '';
                                     }
@@ -609,9 +586,9 @@ methods: {
         self.$set(self,'id_row_error',self.id_row_error)
     },
 
-    extractEmails: function (email) {
+    isEmailFormatValid: function (email) {
         if (email) {
-            return /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi.test(email);
+            return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi.test(email);
         }
         return false;
     },
@@ -822,22 +799,9 @@ methods: {
                     }
                 })
                 // check loại kpi phải thuộc ['f', 'c', 'p', 'l', 'o']
-                if (kpi.kpi_id.trim() && list_kpi_id.indexOf(kpi.kpi_id.trim()[0].toLowerCase()) == -1){
-                    kpi.validated = false;
-                    kpi.msg.push({
-                        'field_name': 'Loại KPI',
-                        'message': ' không đúng'
-                    });
-                }else if( kpi.kpi_id.trim() && kpi.kpi_id.trim().slice(1, kpi.kpi_id.trim().length).length >0){
-                    var end_code_kpi_id = kpi.kpi_id.trim().slice(1, kpi.kpi_id.trim().length)
-                    var res = end_code_kpi_id.split(".");
-                    var is_kpi_id = res.reduce(function(prevVal, element){
-                        if(isFinite(element) && res.indexOf("")== -1){
-                            return true
-                        }else {
-                            return false
-                        }
-                    },false)
+                if (kpi.kpi_id.trim()){
+                    var __kpi_id = kpi.kpi_id.trim()
+                    var is_kpi_id = self.checkTypeKPI(__kpi_id)
                     if(!is_kpi_id){
                         kpi.msg.push({
                             'field_name': 'Loại KPI',
@@ -975,7 +939,7 @@ methods: {
 
             },
             error: function (jqXHR, textStatus) {
-                kpi.status = message_request;
+                kpi.status = jqXHR.message_request;
                 kpi.msg = [];
                 try {
                     kpi.msg.push( {'field_name':"Validate failed: ",'message': jqXHR.responseJSON['message']})
@@ -1061,22 +1025,22 @@ methods: {
         setTimeout(function () {
             if (!$('.text-muted').length) {
                 $("body.bg-sm").removeAttr("style");
-                self.infor_msg_box.show_infor_msg = true;
+                self.info_msg_box.show_infor_msg = true;
                 if(self.data_edit_kpi.data.msg.length > 0){
-                    self.infor_msg_box.type_msg = "error";
-                    self.infor_msg_box.tite_msg = "Chỉnh sửa KPI không thành công"
+                    self.info_msg_box.type_msg = "error";
+                    self.info_msg_box.tite_msg = "Chỉnh sửa KPI không thành công"
                     self.data_edit_kpi.data.msg.forEach(function (field) {
-                        self.infor_msg_box.array_msg.push(field.field_name + ":" + field.message )
+                        self.info_msg_box.array_msg.push(field.field_name + ":" + field.message )
                     })
 
                 }else{
                     $('#edit-import-kpi').modal('hide')
-                    self.infor_msg_box.type_msg = "success";
-                    self.infor_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
-                    self.infor_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
+                    self.info_msg_box.type_msg = "success";
+                    self.info_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
+                    self.info_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
                     self.$set(self.kpis, self.data_edit_kpi.data.index, self.data_edit_kpi.data);
                     setTimeout(function () {
-                        self.infor_msg_box.show_infor_msg = false;
+                        self.info_msg_box.show_infor_msg = false;
                     },2000)
                 }
 
@@ -1189,20 +1153,23 @@ methods: {
                         var msg_error
                         Object.keys(jqXHR.responseJSON['exception']).forEach(function (key) {
                             msg_error =  key + ' : ' + jqXHR.responseJSON['exception'][key];
-                            self.infor_msg_box.array_msg.push(msg_error)
+                            self.info_msg_box.array_msg.push(msg_error)
                         });
                     }
                     // if(jqXHR.responseJSON['message']){
                     //     title_msg_error = jqXHR.responseJSON['message']
                     // }
                 }else{
-                    self.infor_msg_box.array_msg.push(jqXHR['message'])
+                    self.info_msg_box.array_msg.push(jqXHR['message'])
                 }
-                self.infor_msg_box.show_infor_msg = true;
-                self.infor_msg_box.type_msg = "error";
-                self.infor_msg_box.tite_msg = title_msg_error
+                self.info_msg_box.show_infor_msg = true;
+                self.info_msg_box.type_msg = "error";
+                self.info_msg_box.tite_msg = title_msg_error
                 try {
-                    kpi.msg = jqXHR['message'];
+                    kpi.msg.push({
+                        'field_name': '',
+                        'message': jqXHR['message']
+                    });
                 } catch (err) {
                 }
                 kpi.status = "failed";
