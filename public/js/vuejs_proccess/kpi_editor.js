@@ -2098,6 +2098,9 @@ Vue.component('kpi-progressbar', {
         update_quarter_target_and_ready:function(kpi, controller_prefix, ready){
             this.$root.$emit('update_quarter_target_and_ready_event', kpi, controller_prefix, ready);
         },
+        update_score_calculation_type_and_ready:function(kpi, controller_prefix, ready){
+            this.$root.$emit('update_score_calculation_type_and_ready_event', kpi, controller_prefix, ready);
+        },
 
 
         // use kpi.can_add_child_kpi instead
@@ -2290,6 +2293,7 @@ Vue.component('kpi-row', {
 
             var child_kpis = this.get_child_kpis_from_kpi_list(this.kpi.id);
             // alert('child_kpis inside kpi-row component changed: '+ child_kpis.length);
+            this.show_childs = child_kpis.length <= 0 ?false:this.show_childs
             return child_kpis;
         },
         btn_kpi_toggle_class:function(){
@@ -2365,9 +2369,14 @@ Vue.component('kpi-row', {
             var that = this;
             var jqXhr=null;
             // alert('get_children_kpis');
+                var child_kpis = this.get_child_kpis_from_kpi_list(that.kpi.id);
+                if (child_kpis.length > 0){
+                    this.is_child_kpis_loaded = true;
+                }else{
+                    this.is_child_kpis_loaded = false;
+                }
 
-            // this.show_childs = !this.show_childs;
-            if (this.is_child_kpis_loaded==true){
+            if (this.is_child_kpis_loaded == true){
                 // return this.child_kpis;
             }
             else{
@@ -2962,6 +2971,10 @@ var v = new Vue({
         this.$on('update_quarter_target_and_ready_event', function(kpi, controller_prefix, ready) {
             that.update_quarter_target_and_ready(kpi, controller_prefix, ready);
         });
+        this.$on('update_score_calculation_type_and_ready_event', function(kpi, controller_prefix, ready) {
+            that.update_score_calculation_type_and_ready(kpi, controller_prefix, ready);
+        });
+
         this.$on('change_category', function(kpi_id) {
             that.change_category(kpi_id);
         });
@@ -3148,7 +3161,7 @@ var v = new Vue({
             }
 
         },
-        confirm_toggle_weigth_kpi:function (kpi_id) {
+        confirm_toggle_weigth_kpi:function () {
 
             var that = this;
             var kpi_id = this.active_kpi_id;
@@ -3208,7 +3221,6 @@ var v = new Vue({
             if (that.kpi_list[kpi_id]) {
                 that.$delete(that.kpi_list, kpi_id);
             }
-
 
         },
         update_data_on_kpi_reloaded: function(kpi_data){
@@ -3281,7 +3293,7 @@ var v = new Vue({
 
             var jqXhr=this.add_kpi(false, kpi_data);
             // additional success callback function
-            jqXhr.success(function(){
+            jqXhr.done(function(){
                 that.$set(that.kpi_list[parent_kpi_id], 'has_child', true);
                 that.$set(that.kpi_list[parent_kpi_id], 'children_data', {'parent_score_auto': true});
                 // $('#btn-kpi-toggle'+kpi).children('i.fa').removeClass("fa-angle-double-right").addClass("fa-angle-double-down");
@@ -5666,6 +5678,7 @@ var v = new Vue({
                             that.kpi_list[kpi.id].real = data.real; //JSON.parse(data);
                             that.get_current_employee_performance();
                             that.triggeredReloadTargetPerformance(kpi.id)
+                            that.reload_kpi(kpi.id)
 
                             success_requestcenter(gettext("Update successful!"));
                         },
@@ -6350,6 +6363,10 @@ var v = new Vue({
         },
         update_quarter_target_and_ready: function(kpi, controller_prefix, ready) {
             this.update_quarter_target(kpi);
+            this.kpi_ready(kpi.id, controller_prefix, ready);
+        },
+        update_score_calculation_type_and_ready: function (kpi, controller_prefix, ready) {
+            this.update_score_calculation_type(kpi);
             this.kpi_ready(kpi.id, controller_prefix, ready);
         },
 
