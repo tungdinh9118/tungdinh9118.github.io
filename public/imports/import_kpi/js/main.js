@@ -1,3 +1,55 @@
+Vue.component('decimal-input-import', {
+    props: [
+        'value',
+        'inputclass',
+        'disabled',
+    ],
+    template: `
+        <input 
+            type="text" v-model="model"
+            v-bind:class="inputclass" 
+            v-on:keypress="check_number"
+            @paste.prevent
+            v-bind:disabled="disabled"
+        >
+    `,
+    computed: {
+        model:{
+            get: function(){
+                var val = this.value;
+                return val
+
+            },
+            set: function(val){
+                var newVal=val;
+                if (val === '') {
+                    newVal = '';
+                }
+                else {
+                    var number = val.split(",").join("");
+                    number = Number(number);
+                    newVal = $.isNumeric(number) ? parseFloat(number) : null ;
+                    // Toan note: ref https://stackoverflow.com/a/5963202/2599460
+                }
+
+                this.$emit('input', newVal);
+
+            },
+
+        }
+    },
+    methods: {
+        check_number: function (e){
+            var _number = String.fromCharCode(e.keyCode);
+            if ('0123456789.'.indexOf(_number) !== -1) {
+                return _number;
+            }
+            e.preventDefault();
+            return false;
+        },
+    }
+
+});
 Vue.component('edit-import-kpi-modal', {
     delimiters: ['${', '}$'],
     props: ['kpi'],
@@ -5,7 +57,6 @@ Vue.component('edit-import-kpi-modal', {
     data: function () {
         return {
             data_edit_kpi: {},
-            list_kpi_id: ['f', 'c', 'p', 'l', 'o'],
             method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         }
     },
@@ -53,26 +104,6 @@ Vue.component('edit-import-kpi-modal', {
         },
         checkTypeKPI: function(type_kpi){
             return /^([fclopFCLOP]{1}[0-9]+)((\.[0-9]+)*)$/gi.test(type_kpi)
-        },
-        check_number: function(e){
-            var _number = String.fromCharCode(e.keyCode);
-            if ('0123456789.'.indexOf(_number) !== -1) {
-                return _number;
-            }
-            e.preventDefault();
-            return false;
-        },
-        check_paste: function (evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-        },
-        valid_change: function (obj, prop) {
-            var val = parseFloat(obj[prop]);
-            if (isNaN(val)) {
-                Vue.set(obj, prop, null);
-            } else {
-                Vue.set(obj, prop, val);
-            }
         },
     }
 })
@@ -239,7 +270,7 @@ methods: {
         return /^([fclopFCLOP]{1}[0-9]+)((\.[0-9]+)*)$/gi.test(type_kpi)
     },
     handleFile: function (e) {
-         var that = this;
+        var that = this;
         that.kpis.length = 0;
         that.check_file = true;
         var files = e.target.files || e.dataTransfer.files;
@@ -282,35 +313,32 @@ methods: {
                                 try {
 
                                     try {
-                                        var kpi_id = sheet["A" + i].w;
+                                        var kpi_id = sheet["A" + i].v;
                                     } catch (err) {
                                         var kpi_id = '';
                                     }
 
-                                    var goal = '';
                                     try {
-                                        goal = sheet["B" + i].w;
+                                        var goal = sheet["B" + i].v;
 
                                         if (goal != undefined) {
-
+                                            goal = goal.toString();
                                             goal = goal.toUpperCase();
                                         }
 
                                     } catch (err) {
-
+                                        var goal = ''
                                     }
                                     var check_goal = "";
 
-
-                                    var kpi = '';
                                     try {
-                                        kpi = sheet["C" + i].w;
+                                        var kpi = sheet["C" + i].v;
                                     } catch (err) {
-
+                                        var kpi = ""
                                         last_goal_index = i;
                                     }
 
-                                    if (kpi.trim().length != 0 && (goal == undefined || goal == '')) {
+                                    if (kpi.toString().trim().length != 0 && (goal == undefined || goal == '')) {
 
                                         if (last_goal == "") {
                                             throw "KPI Goal is missing";
@@ -326,139 +354,139 @@ methods: {
 
 
                                     try {
-                                        var unit = sheet["D" + i].w;
+                                        var unit = sheet["D" + i].v;
                                     } catch (err) {
                                         var unit = '';
                                     }
 
 
                                     try {
-                                        var measurement = sheet["E" + i].w;
+                                        var measurement = sheet["E" + i].v;
                                     } catch (err) {
                                         var measurement = '';
                                     }
 
                                     try {
-                                        var datasource = sheet["F" + i].w;
+                                        var datasource = sheet["F" + i].v;
                                     } catch (err) {
                                         var datasource = '';
                                     }
 
                                     try {
-                                        var method = sheet["G" + i].w;
+                                        var method = sheet["G" + i].v;
                                     } catch (err) {
                                         var method = '';
                                     }
 
                                     try {
-                                        var operator = sheet["H" + i].w;
+                                        var operator = sheet["H" + i].v;
                                     } catch (err) {
                                         var operator = '';
                                     }
 
 
                                     try {
-                                        var year = sheet["I" + i].w;
+                                        var year = sheet["I" + i].v;
                                     } catch (err) {
                                         var year = '';
                                     }
 
 
                                     try {
-                                        var t1 = sheet["J" + i].w;
+                                        var t1 = sheet["J" + i].v;
                                     } catch (err) {
                                         var t1 = '';
                                     }
 
 
                                     try {
-                                        var t2 = sheet["K" + i].w;
+                                        var t2 = sheet["K" + i].v;
                                     } catch (err) {
                                         var t2 = '';
                                     }
 
 
                                     try {
-                                        var t3 = sheet["L" + i].w;
+                                        var t3 = sheet["L" + i].v;
                                     } catch (err) {
                                         var t3 = '';
                                     }
 
 
                                     try {
-                                        var q1 = sheet["M" + i].w;
+                                        var q1 = sheet["M" + i].v;
                                     } catch (err) {
                                         var q1 = '';
                                     }
 
                                     try {
-                                        var t4 = sheet["N" + i].w;
+                                        var t4 = sheet["N" + i].v;
                                     } catch (err) {
                                         var t4 = '';
                                     }
 
                                     try {
-                                        var t5 = sheet["O" + i].w;
+                                        var t5 = sheet["O" + i].v;
                                     } catch (err) {
                                         var t5 = '';
                                     }
 
                                     try {
-                                        var t6 = sheet["P" + i].w;
+                                        var t6 = sheet["P" + i].v;
                                     } catch (err) {
                                         var t6 = '';
                                     }
 
                                     try {
-                                        var q2 = sheet["Q" + i].w;
+                                        var q2 = sheet["Q" + i].v;
                                     } catch (err) {
                                         var q2 = '';
                                     }
 
                                     try {
-                                        var t7 = sheet["R" + i].w;
+                                        var t7 = sheet["R" + i].v;
                                     } catch (err) {
                                         var t7 = '';
                                     }
 
                                     try {
-                                        var t8 = sheet["S" + i].w;
+                                        var t8 = sheet["S" + i].v;
                                     } catch (err) {
                                         var t8 = '';
                                     }
 
                                     try {
-                                        var t9 = sheet["T" + i].w;
+                                        var t9 = sheet["T" + i].v;
                                     } catch (err) {
                                         var t9 = '';
                                     }
 
                                     try {
-                                        var q3 = sheet["U" + i].w;
+                                        var q3 = sheet["U" + i].v;
                                     } catch (err) {
                                         var q3 = '';
                                     }
 
                                     try {
-                                        var t10 = sheet["V" + i].w;
+                                        var t10 = sheet["V" + i].v;
                                     } catch (err) {
                                         var t10 = '';
                                     }
 
                                     try {
-                                        var t11 = sheet["W" + i].w;
+                                        var t11 = (sheet["W" + i].v);
                                     } catch (err) {
                                         var t11 = '';
                                     }
 
                                     try {
-                                        var t12 = sheet["X" + i].w;
+                                        var t12 = sheet["X" + i].v;
                                     } catch (err) {
                                         var t12 = '';
                                     }
 
                                     try {
-                                        var q4 = sheet["Y" + i].w;
+                                        var q4 = sheet["Y" + i].v;
                                     } catch (err) {
                                         var q4 = '';
                                     }
@@ -471,12 +499,12 @@ methods: {
 
 
                                     try {
-                                        var email = isEmailFormatValid(sheet["AA" + i].w)[0];
+                                        var email = isEmailFormatValid(sheet["AA" + i].v)[0];
                                     } catch (err) {
                                         var email = '';
                                     }
                                     try {
-                                        var code = sheet["AD" + i].w;
+                                        code = sheet["AD" + i].v;
                                     } catch (err) {
                                         var code = '';
                                     }
@@ -507,7 +535,7 @@ methods: {
                                         "q3": q3,
                                         "q4": q4,
                                         'year': year,
-                                        "weight": weight.replace('%',''),
+                                        "weight": weight,
                                         "email": email,
                                         "check_error_year": false,
                                         "check_error_quarter_1": false,
@@ -622,9 +650,9 @@ methods: {
 
         // year target bang voi tong target cac quy
         var year_target_input = !$.isNumeric(kpi.year) ? null : parseFloat(kpi.year).toFixed(15)
-        year_target_input = parseFloat(year_target_input) || null
+        //year_target_input = parseFloat(year_target_input) == 0?0: parseFloat(year_target_input) || null
         sum_q = !$.isNumeric(sum_q) ? null : parseFloat(sum_q).toFixed(15)
-        sum_q = parseFloat(sum_q) || null
+        //sum_q = parseFloat(sum_q) || null
         var yearTargetValid =  kpi.year == sum_q
         if(!yearTargetValid){
             kpi.check_error_year = true
@@ -632,9 +660,9 @@ methods: {
         //bao loi khi thang khong theo phuong phap phan quy
         for(var i = 1;i<5; i++){
             var quarter_target_input = !$.isNumeric(kpi['q' + i]) ? null : parseFloat(kpi['q' + i]).toFixed(15)
-            quarter_target_input = parseFloat(quarter_target_input) || null
+            //quarter_target_input = parseFloat(quarter_target_input) || null
             totalQuarterArray[i - 1] = !$.isNumeric(totalQuarterArray[i - 1]) ? null : parseFloat(totalQuarterArray[i - 1]).toFixed(15)
-            totalQuarterArray[i - 1] = parseFloat(totalQuarterArray[i - 1]) || null
+            //totalQuarterArray[i - 1] = parseFloat(totalQuarterArray[i - 1]) || null
             if (!(quarter_target_input == totalQuarterArray[i - 1])) {
                 kpi['check_error_quarter_' + i] = true
             }
@@ -731,7 +759,6 @@ methods: {
         var operator = ['<=', '>=', '='];
         var scores = ['q1', 'q2', 'q3', 'q4'];
         var months = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']
-        var list_kpi_id = ['f', 'c', 'p', 'l', 'o']
         var list_field_name_kpi = ['code','kpi_id','unit','measurement','weight','goal','kpi','score_calculation_type','operator']
         var object_trans_field = {
             'code':"Mã KPI",
@@ -752,6 +779,9 @@ methods: {
         }
         list_field_name_kpi.forEach(function (field) {
             kpi[field] = !kpi[field]?'':kpi[field].toString()
+            if(field == 'weight'){
+                kpi[field] = kpi[field].replace('%','')
+            }
         })
         kpi.msg = [];
         self.check_file = true;
@@ -1061,11 +1091,11 @@ methods: {
     },
     convertNewStructData: function(kpi){
         var data_import_kpi= {
-            year_target: parseFloat(kpi.year) || null,
-            q1: parseFloat(kpi.q1) || null,
-            q2: parseFloat(kpi.q2) || null,
-            q3: parseFloat(kpi.q3) || null,
-            q4: parseFloat(kpi.q4) || null,
+            year_target:$.isNumeric(kpi.year)?parseFloat(kpi.year): null,
+            q1: $.isNumeric(kpi.q1)?parseFloat(kpi.q1): null,
+            q2: $.isNumeric(kpi.q2)?parseFloat(kpi.q2): null,
+            q3: $.isNumeric(kpi.q3)?parseFloat(kpi.q3): null,
+            q4: $.isNumeric(kpi.q4)?parseFloat(kpi.q4): null,
             check_goal: kpi.check_goal,
             goal: kpi.goal,
             kpi: kpi.kpi,
@@ -1074,30 +1104,30 @@ methods: {
             measurement: kpi.measurement,
             score_calculation_type: kpi.score_calculation_type,
             operator: kpi.operator,
-            weight: parseFloat(kpi.weight) || null,
+            weight: $.isNumeric(kpi.weight)?parseFloat(kpi.weight): null,
             email: kpi.email,
             code: kpi.code,
             year_data: {
                 months_target: {
                     quarter_1: {
-                        month_1: parseFloat(kpi.t1) || null,
-                        month_2: parseFloat(kpi.t2) || null,
-                        month_3: parseFloat(kpi.t3) || null
+                        month_1: $.isNumeric(kpi.t1) ?parseFloat(kpi.t1): null,
+                        month_2: $.isNumeric(kpi.t2) ?parseFloat(kpi.t2): null,
+                        month_3: $.isNumeric(kpi.t3) ?parseFloat(kpi.t3): null
                     },
                     quarter_2: {
-                        month_1: parseFloat(kpi.t4) || null,
-                        month_2: parseFloat(kpi.t5) || null,
-                        month_3: parseFloat(kpi.t6) || null
+                        month_1: $.isNumeric(kpi.t4) ?parseFloat(kpi.t4): null,
+                        month_2: $.isNumeric(kpi.t5) ?parseFloat(kpi.t5): null,
+                        month_3: $.isNumeric(kpi.t6) ?parseFloat(kpi.t6): null
                     },
                     quarter_3: {
-                        month_1: parseFloat(kpi.t7) || null,
-                        month_2: parseFloat(kpi.t8) || null,
-                        month_3: parseFloat(kpi.t9) || null
+                        month_1: $.isNumeric(kpi.t7) ?parseFloat(kpi.t7): null,
+                        month_2: $.isNumeric(kpi.t8) ?parseFloat(kpi.t8): null,
+                        month_3: $.isNumeric(kpi.t9) ?parseFloat(kpi.t9): null
                     },
                     quarter_4: {
-                        month_1: parseFloat(kpi.t10) || null,
-                        month_2: parseFloat(kpi.t11) || null,
-                        month_3: parseFloat(kpi.t12) || null
+                        month_1: $.isNumeric(kpi.t10) ?parseFloat(kpi.t10): null,
+                        month_2: $.isNumeric(kpi.t11) ?parseFloat(kpi.t11): null,
+                        month_3: $.isNumeric(kpi.t12) ?parseFloat(kpi.t12): null
                     }
                 }
             }
@@ -1130,6 +1160,7 @@ methods: {
             self.method_save = "";
         }
         kpi.score_calculation_type = self.method_save;
+
         var kpi_data_import = self.convertNewStructData(kpi)
         $('.add_kpi_' + index).button('loading')
         cloudjetRequest.ajax({
