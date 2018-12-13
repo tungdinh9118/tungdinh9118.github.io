@@ -1861,8 +1861,6 @@ Vue.component('kpi-owner', {
                 return false;
             }
 
-            this.update_assigned_user_data(selected_item);
-            // assign/kpi/
             var data={
                 user: to_user_id
             };
