@@ -375,6 +375,15 @@ methods: {
                                 if (A == undefined) {
                                     A = sheet["D" + (i + 1)];
                                 }
+                                if (A == undefined) {
+                                    A = sheet["A" + (i + 1)];
+                                }
+                                if (A == undefined) {
+                                    A = sheet["AA" + (i + 1)];
+                                }
+                                if (A == undefined) {
+                                    A = sheet["Z" + (i + 1)];
+                                }
                             }
                             async.waterfall(
                                 that.kpis.forEach(function (kpi, index) {
