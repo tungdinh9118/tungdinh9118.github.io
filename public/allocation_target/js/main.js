@@ -1,7 +1,7 @@
 Array.prototype.insert = function (index, item) {
     this.splice(index, 0, item);
 };
-function format(number) {
+function format_number(number) {
 
     var decimalSeparator = ".";
     var thousandSeparator = ",";
@@ -219,7 +219,7 @@ Vue.component('decimal-input-edit-target', {
 
 });
 Vue.filter('decimalDisplay',  function (val) {
-    return (val === 0) ? 0 : (val == null || val === '') ? '' : format(val);
+    return (val === 0) ? 0 : (val == null || val === '') ? '' : format_number(val);
 });
 Vue.component('modal-edit-target', {
         delimiters: ['${', '}$'],
