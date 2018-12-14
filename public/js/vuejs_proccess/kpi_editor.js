@@ -1161,11 +1161,9 @@ Vue.component('decimal-input', {
         <input 
             type="text" v-model="model"
             v-bind:class="inputclass" 
-            v-bind:title="title"
             v-on:keypress="check_number"
             @paste.prevent
-            v-bind:disabled="disabled"
-            v-bind:data-lpignore="datalpignore">
+            v-tooltip="model">
     `,
     computed: {
         model:{
@@ -1226,7 +1224,7 @@ Vue.component('evidence-button', {
     },
     template: `  
         <button
-        v-bind:title="title"
+        v-tooltip="title"
         v-bind:disabled="disabled"
         v-bind:class="'btn btn-default KPI_BTN_EVD ' + (evidence_count ? ' evidence-exist btn-evidences-2': ' btn-evidences-1')"
         v-on:click="showModal_e(month, kpi_id)"
