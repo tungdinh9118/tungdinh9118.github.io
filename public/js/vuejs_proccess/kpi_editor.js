@@ -193,7 +193,7 @@ Vue.config.delimiters = ['${', '}$'];
 Vue.filter('dateFormat', function (value) {
     var language_code = COMMON.LanguageCode;
     if (value) {
-        if (language_code == 'en') return moment(value).format('DD/MM/YYYY')
+        if (language_code == 'en') return moment(value).format('DD/MMM/YYYY')
         if (language_code == 'vi') return moment(value).format('DD/MM/YYYY')
     }
 });
