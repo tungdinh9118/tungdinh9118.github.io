@@ -839,10 +839,10 @@ methods: {
         if (kpi.index == undefined) {
             return kpi;
         }
-        if (self.enable_allocation_target){
+        kpi.msg = [];
+         if (self.enable_allocation_target){
             kpi = self.validateTargetScoreFollowAllocationTarget(kpi)
         }
-        kpi.msg = [];
         self.check_file = true;
         var quarter_error = [];// mảng lưu quý bị lỗi
         var months_error = [];// mảng lưu tháng bị lỗi
