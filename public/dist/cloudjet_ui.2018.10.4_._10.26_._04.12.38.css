@@ -307,6 +307,9 @@
 .nav > li[data-v-1e2a6852] {
     font-size: 12px;
 }
+.nav li[data-v-1e2a6852]{
+    cursor: pointer;
+}
 
 
 
