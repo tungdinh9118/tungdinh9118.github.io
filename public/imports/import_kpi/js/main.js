@@ -181,7 +181,7 @@ data: function () {
         organization:{},
         file: {},
         check_total: 0,
-        method: ["sum", "average", "most_recent", "tổng", "trung bình", "tháng/quý gần nhất"],
+        method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         method_save: '',
 
     }
@@ -604,8 +604,14 @@ methods: {
             } catch (err) {
                  email = '';
             }
-
+            var code = '';
+            try {
+                code = String(sheet["AD" + row].v);
+            } catch (err) {
+                code = '';
+            }
              kpi = {
+                "code": code,
                 "kpi_id": kpi_id,
                 "check_goal": check_goal,
                 "goal": goal,
@@ -818,8 +824,9 @@ methods: {
         var operator = ['<=', '>=', '='];
         var scores = ['q1', 'q2', 'q3', 'q4'];
         var months = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']
-        var list_field_name_kpi = ['kpi_id','unit','measurement','weight','goal','kpi','score_calculation_type','operator']
+        var list_field_name_kpi = ['code','kpi_id','unit','measurement','weight','goal','kpi','score_calculation_type','operator']
         var object_trans_field = {
+            'code':"Mã KPI",
             'kpi_id':"Loại KPI",
             'unit': "Đơn vị",
             'measurement': "Phương pháp đo lường",
@@ -832,10 +839,10 @@ methods: {
         if (kpi.index == undefined) {
             return kpi;
         }
-        if (self.enable_allocation_target){
+        kpi.msg = [];
+         if (self.enable_allocation_target){
             kpi = self.validateTargetScoreFollowAllocationTarget(kpi)
         }
-        kpi.msg = [];
         self.check_file = true;
         var quarter_error = [];// mảng lưu quý bị lỗi
         var months_error = [];// mảng lưu tháng bị lỗi
@@ -849,6 +856,7 @@ methods: {
                     kpi.validated = true;
                     kpi.status = responseJSON['status'];
                     kpi.email_is_incorrect = false;
+                    kpi.code_kpi_existed = false;
                 } else {
                     kpi.status = responseJSON['status'];
                     kpi.validated = false;
@@ -857,6 +865,9 @@ methods: {
                         responseJSON['messages'].forEach(function (message) {
                             if(message.field_name == gettext("In charge Email")){
                                 kpi.email_is_incorrect = true
+                            }
+                            if(message.field_name == gettext("KPI Code")){
+                                kpi.code_kpi_existed = true
                             }
                             kpi.msg.push(
                                 {
@@ -1100,7 +1111,7 @@ methods: {
                     self.info_msg_box.type_msg = "error";
                     self.info_msg_box.tite_msg = "Chỉnh sửa KPI không thành công"
                     self.data_edit_kpi.data.msg.forEach(function (field) {
-                        self.info_msg_box.array_msg.push(field.field_name + ": " + field.message )
+                        self.info_msg_box.array_msg.push(field.field_name + ":" + field.message )
                     })
 
                 }else{
@@ -1146,6 +1157,7 @@ methods: {
             operator: kpi.operator,
             weight: kpi.weight,
             email: kpi.email,
+            code: kpi.code,
             year_data: {
                 months_target: {
                     quarter_1: {
