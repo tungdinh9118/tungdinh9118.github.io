@@ -2,6 +2,7 @@ var selected_position = Vue.extend({
     type: 'selected_position',
     delimiters: ['${', '}$'],
     template: $('#cjs-component-selected-position').html(),
+    props:['position'],
     data: function () {
         return {
             value: '',
@@ -9,8 +10,10 @@ var selected_position = Vue.extend({
             group_position:[]
         }
     },
-    created: function () {
-      $('.el-input__suffix .el-select__caret').show()
+    created: function() {
+        if(this.position.id){
+            this.search_staff = this.position.name
+        }
     },
     methods:{
         search_position: function (queryString, callback) {
@@ -102,8 +105,15 @@ var importKpiPosition = new Vue({
     el: '#import-kpi-position-chart',
     delimiters: ["${", "}$"],
     data:{
+        position_default: position_default_import,
+        import_kpi_position_message_obj:{
+            show_message:false,
+            array_msg:[],
+            type_msg:"",
+            title_msg:""
+        },
         position_kpi_id:"",
-        enable_allocation_target:  false,
+        enable_allocation_target: false,
         alert_import_kpi: true,
         id_row_error: [],
         kpis: [],
@@ -130,9 +140,25 @@ var importKpiPosition = new Vue({
             "L":"learninggrowth",
             "O":"other"
         },
+        data_show_error_exception:{
+            name: "Tên KPI",
+            kpi_code: "Mã KPI",
+            group_name: 'Mục tiêu',
+            operator: "Toán tử",
+            unit: "Đơn vị",
+            current_goal: "Phương pháp đo",
+            data_source: "Nguồn dữ liệu",
+            bsc_category: "Khía cạnh",
+            quarter_1_target: "Quý 1",
+            quarter_2_target: "Quý 2",
+            quarter_3_target: "Quý 3",
+            quarter_4_target: "Quý 4",
+            score_calculation_type: "Phương pháp phân bổ chỉ tiêu",
+            weight: "Trọng số",
+            year_target: "Chỉ tiêu năm",
+        },
         method_save: '',
     },
-    created:{},
     filters:{
         trans_method: function (str) {
             if (str == 'sum') {
@@ -149,6 +175,11 @@ var importKpiPosition = new Vue({
         convert_new_line: function (str) {
             str = str.replace(/\n|\r\n|\r/g,'<br/>');
             return str
+        }
+    },
+    computed: {
+        table_height: function () {
+            return screen.height > 768 ? 800: 500
         }
     },
     methods: {
@@ -548,7 +579,7 @@ var importKpiPosition = new Vue({
                                 }
                                 that.kpis.forEach(function (kpi, index) {
                                     kpi.index = index
-                                    that.validate_kpi(index);
+                                    that.validate_kpi(kpi);
                                     console.log(that.kpis[index]);
                                     return kpi
                                 })
@@ -607,6 +638,15 @@ var importKpiPosition = new Vue({
             }
             return "no category"
         },
+        triggeredDismissModal: function(){
+            var reset_import_kpi_position_message_obj={
+                show_message:false,
+                array_msg:[],
+                type_msg:"",
+                title_msg:""
+            }
+          this.import_kpi_position_message_obj = Object.assign(this.import_kpi_position_message_obj, reset_import_kpi_position_message_obj);
+        },
         check_add_all: function () {
             var count = 0;
             var that = this
@@ -626,15 +666,21 @@ var importKpiPosition = new Vue({
             // Process conditions
 
             // year target bang voi tong target cac quy
-            kpi.year = !$.isNumeric(kpi.year) ? null : parseFloat(kpi.year)
-            var yearTargetValid = kpi.year == sum_q
+            var year_target_input = !$.isNumeric(kpi.year) ? null : parseFloat(kpi.year).toFixed(4)
+            year_target_input = parseFloat(year_target_input) || null
+            sum_q = !$.isNumeric(sum_q) ? null : parseFloat(sum_q).toFixed(4)
+            sum_q = parseFloat(sum_q) || null
+            var yearTargetValid = year_target_input == sum_q
             if (!yearTargetValid) {
                 kpi.check_error_year = true
             }
             //bao loi khi thang khong theo phuong phap phan quy
             for (var i = 1; i < 5; i++) {
-                kpi['q' + i] = !$.isNumeric(kpi['q' + i]) ? null : parseFloat(kpi['q' + i])
-                if (!(kpi['q' + i] == totalQuarterArray[i - 1])) {
+                var quarter_target_input = !$.isNumeric(kpi['q' + i]) ? null : parseFloat(kpi['q' + i]).toFixed(4)
+                quarter_target_input = parseFloat(quarter_target_input) || null
+                totalQuarterArray[i - 1] = !$.isNumeric(totalQuarterArray[i - 1]) ? null : parseFloat(totalQuarterArray[i - 1]).toFixed(4)
+                totalQuarterArray[i - 1] = parseFloat(totalQuarterArray[i - 1]) || null
+                if (!(quarter_target_input == totalQuarterArray[i - 1])) {
                     kpi['check_error_quarter_' + i] = true
                 }
             }
@@ -722,15 +768,16 @@ var importKpiPosition = new Vue({
             }
             return kpi
         },
-        validate_kpi: function (index) {
+        validate_kpi: function (kpi, show_error=true) {
             var self = this
             var operator = ['<=', '>=', '='];
             var scores = ['q1', 'q2', 'q3', 'q4'];
-            var months = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']
-            if (index == undefined) {
-                return;
+            var months = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12'];
+
+            if($.isEmptyObject(kpi)){
+                return
             }
-            var kpi = self.kpis[index];
+
             kpi.bsc_category = kpi.type_kpi == null? kpi.type_kpi :kpi.type_kpi.toString();
             kpi.weight = kpi.weight.toString()
             if (!kpi.score_calculation_type) {
@@ -882,13 +929,14 @@ var importKpiPosition = new Vue({
             }
             kpi.msg = kpi.msg.trim();
 
-            console.log(kpi.msg)
-            if (kpi.msg != '') {
+            console.log(kpi.msg);
+
+            if (kpi.msg != '' && show_error) {
                 self.addRowError(kpi._uuid)
             } else {
                 self.removeRowError(kpi._uuid)
             }
-            self.$set(self.kpis, index, kpi);
+            // show_error && self.$set(self.kpis, index, kpi);
             self.$set(self.data_edit_kpi, 'msg', kpi.msg);
             try {
                 // auto scroll to error messages
@@ -898,7 +946,7 @@ var importKpiPosition = new Vue({
             } catch (err) {
 
             }
-            self.$set(self.kpis, index, kpi);
+            //self.$set(self.kpis, index, kpi);
         },
         to_string: function (value) {
             return value != null ? value.toString() : null;
@@ -946,27 +994,25 @@ var importKpiPosition = new Vue({
         },
         confirm_edit_kpi: function (kpi) {
             var self = this;
-            self.resetErrorMsg(kpi.data)
-            self.kpis[kpi.index] = kpi.data;
+            self.resetErrorMsg(kpi.data);
             kpi.data.msg = '';
-            self.validate_kpi(kpi.index)
-            self.data_edit_kpi.data = self.kpis[kpi.index]
+            self.data_edit_kpi.data = kpi.data;
+            self.validate_kpi(kpi.data, false);
             setTimeout(function () {
                 if (!$('.text-muted').length) {
                     $("body.bg-sm").removeAttr("style");
+                    self.import_kpi_position_message_obj.array_msg.push(gettext("Edit import KPI success!"))
+                    self.import_kpi_position_message_obj.title_msg = "Chỉnh sửa KPI thành công!"
+                    self.import_kpi_position_message_obj.type_msg = "success"
+                    self.import_kpi_position_message_obj.show_message = true
+                    $('#edit-import-kpi-position-chart').modal('hide');
                     setTimeout(function () {
-                        $('#edit-import-kpi-position-chart').modal('hide');
-                        swal({
-                            title: gettext("Success"),
-                            text: gettext("Edit import KPI success!"),
-                            type: "success",
-                            timer: 2000,
-                            confirmButtonColor: "#43ABDB"
-                        });
-                    }, 200)
+                        self.import_kpi_position_message_obj.show_message = false
+                    },2000);
+                    self.$set(self.kpis, kpi.index, kpi.data);
                     return;
                 }
-            }, 1000)
+            }, 100);
 
             if (self.method.indexOf(kpi.data.score_calculation_type.trim().toLowerCase()) != -1) kpi.data.score_calculation_type = self.trans_method(kpi.data.score_calculation_type);
 
@@ -1020,6 +1066,8 @@ var importKpiPosition = new Vue({
         },
         add_kpi: function (index) {
             var that = this;
+            // that.import_kpi_position_message_obj.show_message = false;
+            // that.import_kpi_position_message_obj.array_msg = [];
             $('#error_modal').modal('hide');
             if (index == undefined) {
                 return;
@@ -1047,12 +1095,10 @@ var importKpiPosition = new Vue({
 
             var kpi_data_import = that.convertNewStructData(kpi)
             if(that.position_kpi_id == "") {
-                swal({
-                    title: gettext("Error"),
-                    text: gettext("Not selected position chart yet"),
-                    type: 'error',
-                    animation: false
-                });
+                that.import_kpi_position_message_obj.array_msg.push(gettext("Not selected position chart yet"))
+                that.import_kpi_position_message_obj.title_msg = "Thêm KPI thất bại!"
+                that.import_kpi_position_message_obj.type_msg = "error"
+                that.import_kpi_position_message_obj.show_message = true
             }else {
                     cloudjetRequest.ajax({
                         type: "POST",
@@ -1066,26 +1112,26 @@ var importKpiPosition = new Vue({
                             kpi.score_calculation_type = that.method[p];
                         },
                         error: function (jqXHR) {
-                            requestcenterHideNotification();
-                            var html = ''
-                            if (jqXHR.responseJSON['exception']) {
-                                html = '<ol class="text-left">\n';
-                                Object.keys(jqXHR.responseJSON['exception']).forEach(function (key) {
-                                    html += '<li>"' + key + '": ' + jqXHR.responseJSON['exception'][key] + '</li>\n';
+                            // requestcenterHideNotification();
+                            var data_show_error_exception_keys = Object.keys(that.data_show_error_exception)
+                            if (jqXHR.responseJSON) {
+                                Object.keys(jqXHR.responseJSON).forEach(function (key) {
+                                    var field = "";
+                                    if ( data_show_error_exception_keys.indexOf(key) != -1){
+                                        field = that.data_show_error_exception[key];
+                                    }
+                                    else{
+                                        field = key;
+                                    }
+                                    var error_message = field + ': ' + jqXHR.responseJSON[key]
+                                    that.import_kpi_position_message_obj.array_msg.push(error_message)
                                 });
-                                html += '</ol>\n';
                             }
-                            that.$alert('<strong>This is <i>HTML</i> string</strong>', 'HTML String', {
-                                dangerouslyUseHTMLString: true
-                            });
-                            swal({
-                                title: '<h4 class>' + jqXHR.responseJSON['message'] + '</h4>',
-                                html: html,
-                                type: 'error',
-                                animation: false
-                            });
+                            that.import_kpi_position_message_obj.title_msg = "Thêm KPI thất bại!"
+                            that.import_kpi_position_message_obj.type_msg = "error"
+                            that.import_kpi_position_message_obj.show_message = true
                             try {
-                                kpi.msg = jqXHR.responseJSON['message'];
+                                kpi.msg = that.array_msg.join('\n')
                             } catch (err) {
                             }
                             kpi.status = "failed";
@@ -1110,5 +1156,8 @@ var importKpiPosition = new Vue({
         // fetch the data when the view is created and the data is
         // already being observed
         this.init()
+        if(this.position_default.id){
+            this.getPositionKpiId(this.position_default.id)
+        }
     }
 })
