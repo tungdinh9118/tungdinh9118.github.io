@@ -1492,7 +1492,7 @@ Vue.component('evidence-button', {
         'list_evidences',
         'title',
         'disabled',
-        'enable_upload_evidence'
+        'disable_upload_evidence'
     ],
     data:function(){
         return {
@@ -1506,7 +1506,7 @@ Vue.component('evidence-button', {
         v-tooltip="title"
         v-bind:disabled="disabled"
         v-bind:class="'btn btn-default KPI_BTN_EVD ' + (evidence_count ? ' evidence-exist btn-evidences-2': ' btn-evidences-1')"
-        v-on:click="showModal_e(month, kpi_id,enable_upload_evidence)"
+        v-on:click="showModal_e(month, kpi_id,disable_upload_evidence)"
         >
         <i class="fa fa-file-text-o pull-left evidences-icon"></i> {$ evidence_count $}
         </button>
@@ -1589,9 +1589,9 @@ Vue.component('evidence-button', {
 
 
         },
-        showModal_e:function(month, kpi_id,enable_upload_evidence){
+        showModal_e:function(month, kpi_id,disable_upload_evidence){
             // alert('click evidence button');
-            this.$root.$emit('showModal_e', month, kpi_id,enable_upload_evidence);
+            this.$root.$emit('showModal_e', month, kpi_id,disable_upload_evidence);
         }
     }
 
@@ -3307,8 +3307,8 @@ var v = new Vue({
         this.$on('update_evidence_event_callback', function(kpi_id, month, count) {
             that.update_evidence_event_callback(kpi_id, month, count);
         });
-        this.$on('showModal_e', function(month_number, kpi_id,enable_upload_evidence) {
-            that.showModal_e(month_number, kpi_id,enable_upload_evidence);
+        this.$on('showModal_e', function(month_number, kpi_id,disable_upload_evidence) {
+            that.showModal_e(month_number, kpi_id,disable_upload_evidence);
         });
 
         this.$on('update_list_child_kpis', function(parent_kpi, list_children_kpis) {
@@ -5124,12 +5124,12 @@ var v = new Vue({
         },
 
 
-        showModal_e: function (month_number, kpi_id,enable_upload_evidence) {
+        showModal_e: function (month_number, kpi_id,disable_upload_evidence) {
             var that = this;
             var month_name = month_number == 1 ? v.month_1_name : month_number == 2 ? v.month_2_name : month_number == 3 ? v.month_3_name : '';
             this.month_name = month_name;
             this.month = month_number;
-            this.disable_upload = enable_upload_evidence;
+            this.disable_upload = disable_upload_evidence;
             that.$set(that.$data, 'evidence_id', kpi_id);
             cloudjetRequest.ajax({
                 url: '/api/v2/kpi/' + kpi_id + '/evidence/upload/',
