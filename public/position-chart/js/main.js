@@ -156,6 +156,9 @@ Vue.component('cjs-component-selected-position', selected_position);
             var self = this
                 self.$emit('comfirm',self.data_edit_kpi)
         },
+        checkTypeKPI: function(type_kpi){
+            return /^([fclopFCLOP]{1}[0-9]+)((\.[0-9]+)*)$/gi.test(type_kpi)
+        }
     }
 });
 
@@ -276,6 +279,9 @@ var importKpiPosition = new Vue({
                 error: function () {
                 }
             });
+        },
+        checkTypeKPI: function(type_kpi){
+            return /^([fclopFCLOP]{1}[0-9]+)((\.[0-9]+)*)$/gi.test(type_kpi)
         },
         arraySpanMethod({row, column, rowIndex, columnIndex}) {
             if (columnIndex === 0) {
@@ -696,10 +702,6 @@ var importKpiPosition = new Vue({
         getCategory: function(category){
             category = category.toString();
             var first_word_category = category[0].toUpperCase();
-            var suffixes_category = category.slice(1, category.length);
-            if(isNaN(suffixes_category)){
-                return "no category"
-            }
             for( key in this.group_bsc_category){
                 if (first_word_category == key){
                     return this.group_bsc_category[key]
@@ -869,17 +871,16 @@ var importKpiPosition = new Vue({
                     });
                 }
             })
-            if (kpi.kpi_code.trim()) {
-                var is_bsc_categoty = self.getCategory(kpi.kpi_code.trim());
-                if (is_bsc_categoty == "no category"){
-                    kpi.not_correct_kpi_code = true;
+            if (kpi.kpi_code.trim() ) {
+                var is_bsc_categoty = self.checkTypeKPI(kpi.kpi_code) ;
+                if (!is_bsc_categoty){
                      kpi.msg.push({
                         'field_name': "Mã KPI",
                         'message': ' không đúng định dạng'
                     });
                 }else{
-                    kpi.not_correct_kpi_code = false;
-                    kpi.bsc_category = is_bsc_categoty;
+                    var bsc_categoty = self.getCategory(kpi.kpi_code)
+                    kpi.bsc_category = bsc_categoty;
                 }
             }
             if (operator.indexOf(kpi.operator) == -1 && kpi.operator) {
