@@ -134,10 +134,6 @@
     color: #008b8b;
 }
 /* detail-display-block */
-.detail-display-block .dropdown-menu{
-    min-width: 165px;
-    padding: 20px;
-}
 
 .detail-display-block .btn-box-radio{
     width: 120px;

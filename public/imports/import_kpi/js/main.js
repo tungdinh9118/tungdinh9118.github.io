@@ -1,3 +1,12 @@
+/*
+  quocduan note: this method is the fucking trick,
+*  so, we should check later for the better way to archive what we want
+* */
+
+window.parseFloatWeight = function(weight_percent){
+    return $.isNumeric(weight_percent) ? Decimal.mul(parseFloat(weight_percent), 100).toNumber() : NaN;
+};
+
 function format(number) {
 
     var decimalSeparator = ".";
@@ -130,7 +139,7 @@ Vue.component('edit-import-kpi-modal', {
         },
         isEmailFormatValid: function (email) {
              if (email) {
-                 return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi.test(email);
+                 return /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/gi.test(email);
              }
             return false;
         },
@@ -309,6 +318,7 @@ methods: {
         var that = this;
         that.kpis.length = 0;
         that.check_file = true;
+        that.is_error = false;
         var files = e.target.files || e.dataTransfer.files;
         var i, f;
         for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -440,15 +450,9 @@ methods: {
                 last_goal_index = row;
             }
 
-            if (kpi.trim().length != 0 && (goal == undefined || goal == '')) {
-
-                if (last_goal == "") {
-                    throw "KPI Goal is missing";
-                }
-                else {
-                    goal = last_goal;
-                    check_goal = "Check goal"
-                }
+            if (kpi.length != 0 && (goal == undefined || goal == '')) {
+                goal = last_goal;
+                check_goal = "Check goal"
             } else {
                 last_goal = goal;
             }
@@ -632,7 +636,7 @@ methods: {
                 "q3": $.isNumeric(q3) ?parseFloat(q3): q3,
                 "q4": $.isNumeric(q4) ?parseFloat(q4): q4,
                 'year': $.isNumeric(year) ?parseFloat(year): year,
-                "weight": $.isNumeric(weight) ?parseFloat(weight)*100: weight,
+                "weight": $.isNumeric(weight)?parseFloatWeight(weight):weight,
                 "email": email,
                 "check_error_year": false,
                 "check_error_quarter_1": false,
@@ -675,7 +679,7 @@ methods: {
 
     isEmailFormatValid: function (email) {
         if (email) {
-            return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi.test(email);
+            return /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/gi.test(email);
         }
         return false;
     },
@@ -939,14 +943,14 @@ methods: {
                 if (self.enable_allocation_target){
                     kpi = self.validateTargetScoreFollowAllocationTarget(kpi)
                 }
-                if (isNaN(parseFloat(kpi.weight)) && kpi.weight) {
+                if (isNaN(kpi.weight) && kpi.weight) {
                     kpi.validated = false;
                     kpi.msg.push({
                         'field_name': 'Trọng số',
                         'message': ' không đúng định dạng'
                     });
                 }
-                if (parseFloat(kpi.weight) <= 0) {
+                if (!isNaN(kpi.weight) && kpi.weight != '' && parseFloatWeight(kpi.weight) <= 0 ) {
                     kpi.validated = false;
                     kpi.msg.push({
                         'field_name': 'Trọng số',
@@ -1149,24 +1153,24 @@ methods: {
             year_data: {
                 months_target: {
                     quarter_1: {
-                        month_1: kpi.t1,
-                        month_2: kpi.t2,
-                        month_3: kpi.t3
+                        month_1_target: kpi.t1,
+                        month_2_target: kpi.t2,
+                        month_3_target: kpi.t3
                     },
                     quarter_2: {
-                        month_1: kpi.t4,
-                        month_2: kpi.t5,
-                        month_3: kpi.t6
+                        month_1_target: kpi.t4,
+                        month_2_target: kpi.t5,
+                        month_3_target: kpi.t6
                     },
                     quarter_3: {
-                        month_1: kpi.t7,
-                        month_2: kpi.t8,
-                        month_3: kpi.t9
+                        month_1_target: kpi.t7,
+                        month_2_target: kpi.t8,
+                        month_3_target: kpi.t9
                     },
                     quarter_4: {
-                        month_1: kpi.t10,
-                        month_2: kpi.t11,
-                        month_3: kpi.t12
+                        month_1_target: kpi.t10,
+                        month_2_target: kpi.t11,
+                        month_3_target: kpi.t12
                     }
                 }
             }

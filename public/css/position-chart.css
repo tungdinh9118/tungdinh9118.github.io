@@ -841,10 +841,6 @@ text-decoration: underline;
 .focused .btn-position-tree, .node:hover .btn-position-tree {
 	display: initial;
 }
-.checkbox input[type="checkbox"], .checkbox input[type="radio"] {
-    opacity: 1;
-}
-
 .multiselect-container .checkbox input[type="checkbox"] {
     position: absolute;
     top: 3px;
@@ -1126,4 +1122,41 @@ input[type="checkbox"]:after {
 }
 #remove-employee-position .pos-row {
     margin-bottom: 5px;
+}
+@media (min-width: 768px) {
+    #report-modal1 .modal-content {
+        width: 600px;
+        margin: 30px auto;
+    }
+}
+
+#report-modal1 button.close{
+    width: 20px;
+    border: 1px solid;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: normal;
+}
+#report-modal1 .modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    min-height: 16.42857143px;
+}
+#report-modal1 .modal-footer {
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+#report-modal1 .modal-header h4 {
+    font-size: 18px;
+    font-weight: normal;
+    font-weight: 500;
+}
+.modal-position-subordinate{
+    margin-top:10px;
+    box-shadow:none;
+    overflow: auto;
+    border:none;
+    max-height:265px;
+    margin-bottom:0px;
 }
