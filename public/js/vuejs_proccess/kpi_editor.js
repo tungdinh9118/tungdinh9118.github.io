@@ -3347,7 +3347,11 @@ var v = new Vue({
                     contentType: "application/json",
                     success: function(updated_kpi_data){},
                     error: function(jqxhr){
-                        alert('error on change_parent_kpis_weight');
+                        if (jqxhr.status == 403) {
+                            alert("Bạn không có quyền thay đổi trọng số");
+                        } else {
+                            alert('Thay đổi trọng số thất bại');
+                        }
                     },
                 });
 
@@ -3438,7 +3442,7 @@ var v = new Vue({
 
                 },
                 error: function (e) {
-                    alert('cannot get kpis of group ' + kpi_group.name);
+                    // alert('cannot get kpis of group ' + kpi_group.name);
                 }
             });
             // mark kpi group as loaded kpis data

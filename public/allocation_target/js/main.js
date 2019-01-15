@@ -168,6 +168,7 @@ Vue.component('decimal-input-edit-target', {
             target_kpi:''
         }
     },
+
     // watch: {
     //     value: function (val) {
     //         this.target_kpi = val
@@ -176,7 +177,7 @@ Vue.component('decimal-input-edit-target', {
     computed: {
         model:{
             get: function(){
-                var val = JSON.parse(JSON.stringify(this.value));
+                var val = JSON.parse(JSON.stringify(this.target_kpi));
                 // https://stackoverflow.com/a/33671045/6112615
                 return this.$options.filters.decimalDisplay(val);
             },
@@ -189,7 +190,7 @@ Vue.component('decimal-input-edit-target', {
                     var number = val.split(",").join("");
                     number = Number(number);
                     // Toan note: ref https://stackoverflow.com/a/5963202/2599460
-                    newVal = isNaN(number) ? 0 : parseFloat(number.toFixed(4));
+                    newVal = isNaN(number) ? 0 : parseFloat(number.toFixed(5));
                 }
                 this.target_kpi = newVal
                 if(!this.showBtn){
@@ -228,7 +229,7 @@ Vue.filter('decimalDisplay',  function (val) {
 });
 Vue.component('modal-edit-target', {
         delimiters: ['${', '}$'],
-        props: ['kpi','optionEditTarget'],
+        props: ['kpi','optionEditTarget','indexKpi'],
         template: $('#modal-edit-target').html(),
         data: function () {
             return {
@@ -255,6 +256,9 @@ Vue.component('modal-edit-target', {
             // {#            console.log("======><><><><><><><kpppppppppppppppppppppppi><><><><><><><<><=======")#}
             // {#            this.edit_target_data = this.kpi#}
         },
+        inject: [
+            'updateTarget'
+        ],
         watch: {
             kpi: {
                 handler: function (newVal, oldVal) {
@@ -304,25 +308,27 @@ Vue.component('modal-edit-target', {
                 this.error_input.quarter_4 = false;
             },
             updateAllTarget: function () {
-                var self = this;
-                self.turnOffAllMessage
-                self.checkMethodScoreType()
-                if (self.edit_target_data.year_data == undefined) {
-                    self.edit_target_data.year_data = {}
-                    self.edit_target_data.year_data['months_target'] = self.edit_target_data.months_target;
+                var that = this;
+                that.turnOffAllMessage
+                that.checkMethodScoreType()
+                if (that.edit_target_data.year_data == undefined) {
+                    that.edit_target_data.year_data = {}
+                    that.edit_target_data.year_data['months_target'] = that.edit_target_data.months_target;
                 } else {
-                    if (self.edit_target_data.year_data.months_target == undefined) {
-                        self.edit_target_data.year_data['months_target'] = self.edit_target_data.months_target;
+                    if (that.edit_target_data.year_data.months_target == undefined) {
+                        that.edit_target_data.year_data['months_target'] = that.edit_target_data.months_target;
                     }else {
-                        self.edit_target_data.year_data.months_target = self.edit_target_data.months_target;
+                        that.edit_target_data.year_data.months_target = that.edit_target_data.months_target;
                     }
                 }
                 // lấy các target quý
                 if (this.is_correct_follow_score_calculation_type ) {
                     // check input đúng với phương pháp đo thi được request lên
-                    console.log("===========================xxxxxxxx")
-                    console.log(self.tempMonth)
-                    self.$emit('update-kpi',self.edit_target_data)
+                    let jqxhr = that.updateTarget(that.edit_target_data, that.indexKpi)
+                        jqxhr.done(function () {
+                            that.showmodal = false
+                        })
+                    // self.$emit('update-kpi',self.edit_target_data)
                     // cloudjetRequest.ajax({
                     //     type: 'post',
                     //     url: '/api/v2/kpi/',
@@ -406,12 +412,18 @@ Vue.component('modal-edit-target', {
                 var data_quarter = [] // mang luu data 12 tháng convert thành kiểu float
                 var all_quarter = [] //  mang luu data 4 quý tháng convert thành kiểu float
                 var total_quarter =[] // mamg chứ total 4 quý 12 tháng theo pp phân bổ chỉ tiêu
+                var obj_number = {
+                    '1': 'one',
+                    '2': 'two',
+                    '3': 'three',
+                    '4': 'four'
+                }
                 // step 1 chuyển data thành kiểu float đê có thể tính toán
                 self.edit_target_data.year_target = !$.isNumeric(self.edit_target_data.year_target)?null:parseFloat(self.edit_target_data.year_target)
                 for (var i =1; i<5;i++){
                     data_quarter[i] = {}
                     // mảng chứa data 4 quý
-                    all_quarter[i] = self.edit_target_data['quarter_' +i] = !$.isNumeric(self.edit_target_data['quarter_' +i])?null:parseFloat(self.edit_target_data['quarter_' +i])
+                    all_quarter[i] = self.edit_target_data['quarter_' +obj_number[i]+'_target'] = !$.isNumeric(self.edit_target_data['quarter_' +obj_number[i]+'_target'])?null:parseFloat(self.edit_target_data['quarter_' +obj_number[i]+'_target'])
                     console.log(i)
                     // chứa data 3 tháng sắp xếp theo quý
                     data_quarter[i]['month_1_target'] = self.edit_target_data.months_target['quarter_' +i].month_1_target = !$.isNumeric(self.edit_target_data.months_target['quarter_' +i].month_1_target)?null:parseFloat(self.edit_target_data.months_target['quarter_' +i].month_1_target)
@@ -514,6 +526,11 @@ var targetPage = new Vue({
         dataToSearch: function () {
             return this.mergeSubordinateAndUserSearchList()
         },
+    },
+    provide: function () {
+        return {
+            updateTarget: this.updateTarget
+        }
     },
     methods: {
         check_paste: function (evt) {
@@ -877,8 +894,8 @@ var targetPage = new Vue({
                     //that.get_current_quarter = res.fields.quarter;
                     that.$set(that.$data, 'get_current_quarter', res.fields.quarter);
                     that.$set(that.$data, 'month_1_name', res.month_1_name);
-                    that.$set(that.$data, 'month_1_name', res.month_1_name);
-                    that.$set(that.$data, 'month_1_name', res.month_1_name);
+                    that.$set(that.$data, 'month_2_name', res.month_2_name);
+                    that.$set(that.$data, 'month_3_name', res.month_3_name);
                     // console.log(this.get_current_quarter)
                     that.getListKpi()
                 },
@@ -887,9 +904,6 @@ var targetPage = new Vue({
             })
         },
         updateTarget: function (kpi,index) { // update target khi edit tung field kpi
-            var tempMonth_1 = "";
-            var tempMonth_2 = "";
-            var tempMonth_3 = "";
             var that = this;
             if (kpi.year_data == undefined) {
                 kpi.year_data = {}
@@ -901,16 +915,16 @@ var targetPage = new Vue({
                     kpi.year_data.months_target = kpi.months_target;
                 }
             }
-            cloudjetRequest.ajax({
+            var jqXhr = cloudjetRequest.ajax({
                 type: 'post',
                 url: '/api/v2/kpi/',
                 dataType: "json",
                 data: JSON.stringify({
                     id: kpi.id,
+                    score_calculation_type: kpi.score_calculation_type,
                     year_target: kpi.year_target === ""? null : parseFloat(kpi.year_target),
                     quarter_one_target: kpi.quarter_one_target === ""? null : parseFloat(kpi.quarter_one_target),
                     quarter_two_target: kpi.quarter_two_target === ""? null : parseFloat(kpi.quarter_two_target),
-                    score_calculation_type: kpi.score_calculation_type,
                     quarter_three_target: kpi.quarter_three_target === ""? null : parseFloat(kpi.quarter_three_target),
                     quarter_four_target: kpi.quarter_four_target === ""? null : parseFloat(kpi.quarter_four_target),
                     year_data: kpi.year_data
@@ -928,6 +942,7 @@ var targetPage = new Vue({
                     $('.el-popover').hide()
                 }
             })
+            return jqXhr
         },
         cancelEditTarget: function () {
             $('.el-popover').hide()
