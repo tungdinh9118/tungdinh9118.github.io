@@ -177,7 +177,7 @@ Vue.component('decimal-input-edit-target', {
     computed: {
         model:{
             get: function(){
-                var val = JSON.parse(JSON.stringify(this.target_kpi));
+                var val = JSON.parse(JSON.stringify(this.value));
                 // https://stackoverflow.com/a/33671045/6112615
                 return this.$options.filters.decimalDisplay(val);
             },
@@ -363,7 +363,12 @@ Vue.component('modal-edit-target', {
                 // return true false -- true là đúng theo format phương pháp phân bổ chỉ tiêu
                 var self = this;
                 // Initialize pre condition
-
+                var obj_number = {
+                    '1': 'one',
+                    '2': 'two',
+                    '3': 'three',
+                    '4': 'four'
+                }
                 var quarterNeedTocheckSample = [1,2,3,4]
                 var intQuarterNumber = parseInt(this.edit_target_data.current_quarter)
                 var quarterNeedToCheck = []
@@ -389,12 +394,12 @@ Vue.component('modal-edit-target', {
                 var quartersValid = quarterNeedToCheck.reduce(function(prevVal, element){
                     console.log(totalQuarterArray[element - 1])
                     console.log(self.edit_target_data["quarter_" + element])
-                    if((self.edit_target_data['quarter_' + element] == totalQuarterArray[element - 1]) == false){
+                    if((self.edit_target_data['quarter_' + obj_number[element] + '_target'] == totalQuarterArray[element - 1]) == false){
                         // show message lỗi
                         self.error_input['quarter_' + element] = true
 
                     }
-                    return prevVal && (self.edit_target_data['quarter_' + element] === totalQuarterArray[element - 1])
+                    return prevVal && (self.edit_target_data['quarter_' + obj_number[element] + '_target'] === totalQuarterArray[element - 1])
                 },true)
 
 
@@ -755,31 +760,12 @@ var targetPage = new Vue({
             }else{
                 tempTableData.weight = item.weight == undefined ? 0 : item.weight;
             }
-            // tempTableData.owner_email = item.owner_email;
-            // tempTableData.unit = item.unit == undefined ? "" : item.unit;
-            // tempTableData.current_goal = item.current_goal == undefined ? "" : item.current_goal;     // measurement method
-            // tempTableData.operator = item.operator == undefined ? "" : item.operator;
-            // tempTableData.score_calculation_type = item.score_calculation_type;
-            // tempTableData.assigned_to = item.assigned_to == undefined ? "" : item.assigned_to;
-            // tempTableData.data_source = '';
-            // console.log(item.name)
-            // tempTableData.ten_KPI = item.name == undefined ? "" : item.name;
-            // tempTableData.year = item.year_target == undefined ? "" : item.year_target;
-            // tempTableData.quarter_1 = item.quarter_one_target == undefined ? "" : item.quarter_one_target;
-            // tempTableData.quarter_2 = item.quarter_two_target == undefined ? "" : item.quarter_two_target;
-            // tempTableData.quarter_3 = item.quarter_three_target == undefined ? "" : item.quarter_three_target;
-            // tempTableData.quarter_4 = item.quarter_four_target == undefined ? "" : item.quarter_four_target;
             tempTableData.edit = "";
             tempTableData.isGroup = item.isGroup == undefined ? false : true
-            // tempTableData.score_calculation_type = item.score_calculation_type == undefined ? "" : item.score_calculation_type
-            // tempTableData.refer_to = item.refer_to
-            // tempTableData.is_approved = item.is_approved == undefined?"":item.is_approved
             // biến sử dung truyền khi request lên server
             tempTableData.disable_edit = !self.checkPermissionToEditTarget(item)
-            //tempTableData.id = item.id;
             tempTableData.current_quarter = self.get_current_quarter
             tempTableData.months_target = self.getMonthsTarget(item) == undefined ? "" : self.getMonthsTarget(item);
-            //tempTableData.yeardata = item.year_data == undefined ? "" : item.year_data;
             return tempTableData
         },
         triggeredDismissModal: function(e){
