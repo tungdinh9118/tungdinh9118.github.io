@@ -1066,7 +1066,8 @@ Vue.component('verify-and-save-results-modal',{
     inject:[
         'get_parent_kpis',
         'get_current_employee_performance',
-        'complete_review_confirm'
+        'complete_review_confirm',
+        'capture_and_download'
     ],
     data: function () {
         return{
@@ -1120,6 +1121,9 @@ Vue.component('verify-and-save-results-modal',{
             let that = this
             $(this.verify_and_save_result_modal_element).modal('show');
         },
+        isEmpty: function (obj) {
+            return $.isEmptyObject(obj);
+        },
         we_complete_review_confirm: function () {
             let that = this
             that.loading = true
@@ -1130,6 +1134,7 @@ Vue.component('verify-and-save-results-modal',{
                     that.loading = false
                     $(that.verify_and_save_result_modal_element).modal('hide');
                 })
+            that.capture_and_download()
             vue_support.show_rate_nps()
         },
 
@@ -2811,7 +2816,8 @@ var v = new Vue({
             update_parent_kpis_weight: that.change_parent_kpis_weight,
             is_parent_kpi: undefined,
             complete_review_confirm: that.complete_review_confirm,
-            get_current_employee_performance: that.get_current_employee_performance
+            get_current_employee_performance: that.get_current_employee_performance,
+            capture_and_download: that.capture_and_download
             // parent_kpis: that.parentKPIs,// <-- this will not work as expected
         }
     },
@@ -3074,6 +3080,9 @@ var v = new Vue({
 
     },
     methods: {
+        updateOrganizationFromCompanyBlock: function(data){
+            this.organization = data;
+        },
         change_parent_kpis_weight: function(parent_kpis_with_weight_changed=[]){
             let that = this;
             let data = {};
@@ -5502,7 +5511,7 @@ var v = new Vue({
 
             // $('<form></form>').attr('action', "{% url 'SimpleExport' org_user.id %}").appendTo('body').submit().remove();
 
-            this.capture_and_download();
+            //this.capture_and_download();
             return jqXhr
         },
 
@@ -5519,6 +5528,7 @@ var v = new Vue({
                         // a.download = (new Date()) + '-kpi.jpg';
                         a.download = 'KPIs ' + (new Date()) + '.jpg';
                         a.click();
+                        $('#btn-complete-review').html('');
                     }
 
                 });
