@@ -169,11 +169,11 @@ Vue.component('decimal-input-edit-target', {
         }
     },
 
-    // watch: {
-    //     value: function (val) {
-    //         this.target_kpi = val
-    //     }
-    // },
+    watch: {
+        value: function (val) {
+            this.target_kpi = val
+        }
+    },
     computed: {
         model:{
             get: function(){
@@ -219,6 +219,7 @@ Vue.component('decimal-input-edit-target', {
             this.$emit('save')
         },
         cancel: function () {
+            this.target_kpi = this.value;
             this.$emit('cancel')
         }
     }
@@ -275,9 +276,11 @@ Vue.component('modal-edit-target', {
         },
         methods: {
             showEditTargetModal: function(){
-                this.showmodal = true;
-                this.edit_target_data = {}
-                this.$set(this,'edit_target_data', JSON.parse(JSON.stringify(this.kpi)));
+                let that = this
+                that.turnOffAllMessage();
+                that.showmodal = true;
+                that.edit_target_data = {}
+                that.$set(this,'edit_target_data', JSON.parse(JSON.stringify(this.kpi)));
             },
             check_paste: function (evt) {
                 evt.preventDefault();
@@ -309,7 +312,7 @@ Vue.component('modal-edit-target', {
             },
             updateAllTarget: function () {
                 var that = this;
-                that.turnOffAllMessage
+                that.turnOffAllMessage()
                 that.checkMethodScoreType()
                 if (that.edit_target_data.year_data == undefined) {
                     that.edit_target_data.year_data = {}
@@ -328,31 +331,6 @@ Vue.component('modal-edit-target', {
                         jqxhr.done(function () {
                             that.showmodal = false
                         })
-                    // self.$emit('update-kpi',self.edit_target_data)
-                    // cloudjetRequest.ajax({
-                    //     type: 'post',
-                    //     url: '/api/v2/kpi/',
-                    //     dataType: "json",
-                    //     contentType: "application/json",
-                    //     data: JSON.stringify({
-                    //         id: self.edit_target_data.id,
-                    //         year_target: self.edit_target_data.year_target === ""?null:self.edit_target_data.year_target,
-                    //         quarter_one_target: self.edit_target_data.quarter_one_target === ""?null:self.edit_target_data.quarter_one_target,
-                    //         quarter_two_target: self.edit_target_data.quarter_two_target === ""?null:self.edit_target_data.quarter_two_target,
-                    //         quarter_three_target: self.edit_target_data.quarter_three_target === ""?null:self.edit_target_data.quarter_three_target,
-                    //         quarter_four_target: self.edit_target_data.quarter_four_target === ""?null:self.edit_target_data.quarter_four_target,
-                    //         year_data: self.edit_target_data.year_data
-                    //     }),
-                    //     success: function (result) {
-                    //         console.log(result)
-                    //         self.edit_target_data
-                    //         //console.log(self.tempMonth_1)
-                    //         //self.$emit('dismiss', self.edit_target_data)
-                    //     },
-                    //     error: function () {
-                    //
-                    //     }
-                    // })
                 } else {
                 }
             },
@@ -424,16 +402,16 @@ Vue.component('modal-edit-target', {
                     '4': 'four'
                 }
                 // step 1 chuyển data thành kiểu float đê có thể tính toán
-                self.edit_target_data.year_target = !$.isNumeric(self.edit_target_data.year_target)?null:parseFloat(self.edit_target_data.year_target)
+                self.edit_target_data.year_target = $.isNumeric(self.edit_target_data.year_target)?parseFloat(self.edit_target_data.year_target):null
                 for (var i =1; i<5;i++){
                     data_quarter[i] = {}
                     // mảng chứa data 4 quý
-                    all_quarter[i] = self.edit_target_data['quarter_' +obj_number[i]+'_target'] = !$.isNumeric(self.edit_target_data['quarter_' +obj_number[i]+'_target'])?null:parseFloat(self.edit_target_data['quarter_' +obj_number[i]+'_target'])
+                    all_quarter[i] = self.edit_target_data['quarter_' +obj_number[i]+'_target'] = $.isNumeric(self.edit_target_data['quarter_' +obj_number[i]+'_target'])?parseFloat(self.edit_target_data['quarter_' +obj_number[i]+'_target']):null
                     console.log(i)
                     // chứa data 3 tháng sắp xếp theo quý
-                    data_quarter[i]['month_1_target'] = self.edit_target_data.months_target['quarter_' +i].month_1_target = !$.isNumeric(self.edit_target_data.months_target['quarter_' +i].month_1_target)?null:parseFloat(self.edit_target_data.months_target['quarter_' +i].month_1_target)
-                    data_quarter[i]['month_2_target'] = self.edit_target_data.months_target['quarter_' +i].month_2_target = !$.isNumeric(self.edit_target_data.months_target['quarter_' +i].month_2_target)?null:parseFloat(self.edit_target_data.months_target['quarter_' +i].month_2_target)
-                    data_quarter[i]['month_3_target'] = self.edit_target_data.months_target['quarter_' +i].month_3_target = !$.isNumeric(self.edit_target_data.months_target['quarter_' +i].month_3_target)?null:parseFloat(self.edit_target_data.months_target['quarter_' +i].month_3_target)
+                    data_quarter[i]['month_1_target'] = self.edit_target_data.months_target['quarter_' +i].month_1_target = $.isNumeric(self.edit_target_data.months_target['quarter_' +i].month_1_target)?parseFloat(self.edit_target_data.months_target['quarter_' +i].month_1_target):null
+                    data_quarter[i]['month_2_target'] = self.edit_target_data.months_target['quarter_' +i].month_2_target = $.isNumeric(self.edit_target_data.months_target['quarter_' +i].month_2_target)?parseFloat(self.edit_target_data.months_target['quarter_' +i].month_2_target):null
+                    data_quarter[i]['month_3_target'] = self.edit_target_data.months_target['quarter_' +i].month_3_target = $.isNumeric(self.edit_target_data.months_target['quarter_' +i].month_3_target)?parseFloat(self.edit_target_data.months_target['quarter_' +i].month_3_target):null
                 }
                 // step 2 tính toán total 4 quý và 12 tháng theo 3 pp phân bổ sum, average, most_recent_quarter
                 total_quarter[0] = calculateYearTotal(all_quarter)
@@ -908,11 +886,11 @@ var targetPage = new Vue({
                 data: JSON.stringify({
                     id: kpi.id,
                     score_calculation_type: kpi.score_calculation_type,
-                    year_target: kpi.year_target === ""? null : parseFloat(kpi.year_target),
-                    quarter_one_target: kpi.quarter_one_target === ""? null : parseFloat(kpi.quarter_one_target),
-                    quarter_two_target: kpi.quarter_two_target === ""? null : parseFloat(kpi.quarter_two_target),
-                    quarter_three_target: kpi.quarter_three_target === ""? null : parseFloat(kpi.quarter_three_target),
-                    quarter_four_target: kpi.quarter_four_target === ""? null : parseFloat(kpi.quarter_four_target),
+                    year_target: $.isNumeric(kpi.year_target) ? parseFloat(kpi.year_target) : null,
+                    quarter_one_target: $.isNumeric(kpi.quarter_one_target )? parseFloat(kpi.quarter_one_target):null,
+                    quarter_two_target: $.isNumeric(kpi.quarter_two_target)?  parseFloat(kpi.quarter_two_target):null,
+                    quarter_three_target: $.isNumeric(kpi.quarter_three_target)? parseFloat(kpi.quarter_three_target):null,
+                    quarter_four_target: $.isNumeric(kpi.quarter_four_target)? parseFloat(kpi.quarter_four_target):null,
                     year_data: kpi.year_data
                 }),
                 success: function (result) {
