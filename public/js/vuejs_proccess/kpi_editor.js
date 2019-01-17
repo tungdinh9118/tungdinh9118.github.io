@@ -1023,7 +1023,7 @@ Vue.component('kpi-config', {
                 jqxhr.done(function(){
                     swal(gettext( "Success"), gettext( "Data is successfully copied"), "success");
                 });
-                jqxhr.error(function () {
+                jqxhr.fail(function () {
                         swal(gettext( "Error"), gettext( "Please try again!"), "error");
                 });
 
@@ -1433,7 +1433,6 @@ Vue.component('delay-kpi-modal', {
         },
 
     }
-
 });
 
 
@@ -2239,6 +2238,7 @@ Vue.component('kpi-row', {
             let list_action_need_to_reload_childs=[
                 'delay_kpi',
                 'active_kpi',
+                'copy_data_to_children'
             ];
             if(list_action_need_to_reload_childs.indexOf(update_type) != -1){
                 reload_childs=true;
