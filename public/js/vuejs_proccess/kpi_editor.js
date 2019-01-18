@@ -1096,10 +1096,11 @@ Vue.component('verify-and-save-results-modal',{
         // register event to refesh parent_kpis datahide
         $(this.verify_and_save_result_modal_element ).on('show.bs.modal', function (e) {
             that.loading = true
+            that.internal_parent_kpis = that.get_parent_kpis();
             let jqXhr = that.get_current_employee_performance()
                 jqXhr.done(function () {
                     that.loading = false
-                    that.internal_parent_kpis = that.get_parent_kpis();
+
                 })
         })
 
@@ -2533,7 +2534,7 @@ Vue.component('kpi-row', {
                 this.remove_child_kpi(kpi_id);
             }
 
-            this.reload_kpi();
+            this.reload_kpi(true);
             this.$parent.$emit('child_kpi_removed');
         },
         reset_childs: function(){
@@ -3406,7 +3407,6 @@ var v = new Vue({
                     this.$delete(this.kpi_list, kpi_id);
                     this.get_current_employee_performance();
                 }
-
             }
 
         },
