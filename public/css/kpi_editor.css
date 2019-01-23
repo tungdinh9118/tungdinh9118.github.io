@@ -4412,6 +4412,9 @@ button.close{
 .transparent-color{
     background: transparent;
 }
+#modal-order-quarter-kpi .modal-body table{
+   text-align: left;
+}
 #modal-order-quarter-kpi .modal-body .table-size{
     width: 100%;
 }

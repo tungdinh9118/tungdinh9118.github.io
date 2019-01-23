@@ -2913,7 +2913,7 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
     text-align: center;
     display: inline-block;
     position: absolute;
-    top:70px;
+    top: 0px;
     right: 0px;
     padding-right: 20px;
 }
@@ -3556,7 +3556,7 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
     min-height: 70px;
 }
 #cjs-component-kpi-changelog-modal .modal-body .row:hover{
-    {#background: #eef6f6;#}
+
 }
 #cjs-component-kpi-changelog-modal .block-1-img-avatar{
     float:left;

@@ -519,7 +519,7 @@ var completeReviewModal = Vue.extend({
             return warning_kpi_not_review
         },
         check_month_kpiapproval: function(month){
-            return this.get_month() == month || this.get_month() == 'allow_all'
+            return this.get_month() == month || this.get_month() == null
         },
         management_approval_kpi_evaluation: function() {
            this.update_kpi_approval();
@@ -3313,6 +3313,9 @@ var v = new Vue({
 
     },
     methods: {
+        updateOrganizationFromCompanyBlock: function(data){
+            this.organization = data;
+        },
         getKPIApproval: function(){
             var that = this;
             cloudjetRequest.ajax({
