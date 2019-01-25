@@ -77,8 +77,13 @@ Vue.component('decimal-input-import', {
     },
     methods: {
         check_number: function (e){
-            var _number = String.fromCharCode(e.keyCode);
-            if ('0123456789.'.indexOf(_number) !== -1) {
+            // With Firefox e.keyCode alway return 0
+            var charCode = e.which || e.keyCode;
+            var _number = String.fromCharCode(charCode);
+
+            // For firefox, include 'Arrow left, arrow right, backspace, delete'.
+            var controlKeyAllowPress = [37, 39, 8, 46];
+            if ('0123456789.'.indexOf(_number) !== -1 || controlKeyAllowPress.indexOf(charCode) !== -1) {
                 return _number;
             }
             e.preventDefault();
@@ -139,7 +144,7 @@ Vue.component('edit-import-kpi-modal', {
         },
         isEmailFormatValid: function (email) {
              if (email) {
-                 return /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/gi.test(email);
+                 return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi.test(email);
              }
             return false;
         },
@@ -190,7 +195,7 @@ data: function () {
         organization:{},
         file: {},
         check_total: 0,
-        method: ["sum", "average", "most_recent", "tổng", "trung bình", "tháng/quý gần nhất"],
+        method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         method_save: '',
 
     }
@@ -318,7 +323,6 @@ methods: {
         var that = this;
         that.kpis.length = 0;
         that.check_file = true;
-        that.is_error = false;
         var files = e.target.files || e.dataTransfer.files;
         var i, f;
         for (i = 0, f = files[i]; i != files.length; ++i) {
@@ -608,8 +612,14 @@ methods: {
             } catch (err) {
                  email = '';
             }
-
+            var code = '';
+            try {
+                code = String(sheet["AD" + row].v);
+            } catch (err) {
+                code = '';
+            }
              kpi = {
+                "code": code,
                 "kpi_id": kpi_id,
                 "check_goal": check_goal,
                 "goal": goal,
@@ -679,7 +689,7 @@ methods: {
 
     isEmailFormatValid: function (email) {
         if (email) {
-            return /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/gi.test(email);
+            return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi.test(email);
         }
         return false;
     },
@@ -822,8 +832,9 @@ methods: {
         var operator = ['<=', '>=', '='];
         var scores = ['q1', 'q2', 'q3', 'q4'];
         var months = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']
-        var list_field_name_kpi = ['kpi_id','unit','measurement','weight','goal','kpi','score_calculation_type','operator']
+        var list_field_name_kpi = ['code','kpi_id','unit','measurement','weight','goal','kpi','score_calculation_type','operator']
         var object_trans_field = {
+            'code':"Mã KPI",
             'kpi_id':"Loại KPI",
             'unit': "Đơn vị",
             'measurement': "Phương pháp đo lường",
@@ -853,6 +864,7 @@ methods: {
                     kpi.validated = true;
                     kpi.status = responseJSON['status'];
                     kpi.email_is_incorrect = false;
+                    kpi.code_kpi_existed = false;
                 } else {
                     kpi.status = responseJSON['status'];
                     kpi.validated = false;
@@ -861,6 +873,9 @@ methods: {
                         responseJSON['messages'].forEach(function (message) {
                             if(message.field_name == gettext("In charge Email")){
                                 kpi.email_is_incorrect = true
+                            }
+                            if(message.field_name == gettext("KPI Code")){
+                                kpi.code_kpi_existed = true
                             }
                             kpi.msg.push(
                                 {
@@ -1120,7 +1135,7 @@ methods: {
 
                 return;
             }
-        }, 2000)
+        }, 1000)
         // Không cần thiết vì đã có filter xử lý việc này => tránh lỗi chuyển data kpi.score_calculation_type
         // qua tiếng việt rồi lại qua tiếng anh chỉ để show lên xem
         //
@@ -1150,6 +1165,7 @@ methods: {
             operator: kpi.operator,
             weight: kpi.weight,
             email: kpi.email,
+            code: kpi.code,
             year_data: {
                 months_target: {
                     quarter_1: {

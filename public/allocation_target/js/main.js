@@ -203,8 +203,13 @@ Vue.component('decimal-input-edit-target', {
     },
     methods: {
         check_number: function (e){
-            var _number = String.fromCharCode(e.keyCode);
-            if ('0123456789.'.indexOf(_number) !== -1) {
+            // With Firefox e.keyCode alway return 0
+            var charCode = e.which || e.keyCode;
+            var _number = String.fromCharCode(charCode);
+
+            // For firefox, include 'Arrow left, arrow right, backspace, delete'.
+            var controlKeyAllowPress = [37, 39, 8, 46];
+            if ('0123456789.'.indexOf(_number) !== -1 || controlKeyAllowPress.indexOf(charCode) !== -1) {
                 return _number;
             }
             e.preventDefault();
@@ -287,8 +292,13 @@ Vue.component('modal-edit-target', {
                 evt.stopPropagation();
             },
             check_number: function(e){
-                var _number = String.fromCharCode(e.keyCode);
-                if ('0123456789.'.indexOf(_number) !== -1) {
+                // With Firefox e.keyCode alway return 0
+                var charCode = e.which || e.keyCode;
+                var _number = String.fromCharCode(charCode);
+
+                // For firefox, include 'Arrow left, arrow right, backspace, delete'.
+                var controlKeyAllowPress = [37, 39, 8, 46];
+                if ('0123456789.'.indexOf(_number) !== -1 || controlKeyAllowPress.indexOf(charCode) !== -1) {
                     return _number;
                 }
                 e.preventDefault();
@@ -471,8 +481,9 @@ var targetPage = new Vue({
     data: {
         loading:false,
         actorId: COMMON.ActorId,
-        nameActor: COMMON.UserName,
-        emailActor: COMMON.EmailActor,
+        user_viewed_id :COMMON.UserViewedId,
+        user_viewed_name: COMMON.UserViewedDisplayName,
+        user_viewed_email: COMMON.UserViewedEmail,
         enableFollowTarget: false,
         allow_edit_monthly_target:false,
         is_user_system:false,
@@ -484,8 +495,8 @@ var targetPage = new Vue({
         option: '',
         oldQuery: '',
         query: "",
-        user_profile:"",
-        user_profile_actor:"",
+        user_profile:{},
+        user_profile_actor:{},
         isShowMonth: true,
         currentUserId: '',
         kpiList: {},
@@ -499,10 +510,7 @@ var targetPage = new Vue({
         storage_user: [],
         list_user_searched: [],
         list_surbodinates_user_viewed: [],
-        organization: {},
-        month_1_name:'',
-        month_2_name:'',
-        month_3_name:''
+        organization: COMMON.Organization,
     },
     components: {},
     computed: {
@@ -516,18 +524,18 @@ var targetPage = new Vue({
         }
     },
     methods: {
-        cancelRequestEditKpi: function(kpi_id,row_index){
-            if(this.tableData[row_index] && this.tableData[row_index].id == kpi_id){
-                this.$set(this.tableData[row_index],'is_approved', true)
-            }
-        },
         check_paste: function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
         },
         check_number: function(e){
-            var _number = String.fromCharCode(e.keyCode);
-            if ('0123456789.'.indexOf(_number) !== -1) {
+            // With Firefox e.keyCode alway return 0
+            var charCode = e.which || e.keyCode;
+            var _number = String.fromCharCode(charCode);
+
+            // For firefox, include 'Arrow left, arrow right, backspace, delete'.
+            var controlKeyAllowPress = [37, 39, 8, 46];
+            if ('0123456789.'.indexOf(_number) !== -1 || controlKeyAllowPress.indexOf(charCode) !== -1) {
                 return _number;
             }
             e.preventDefault();
@@ -535,7 +543,7 @@ var targetPage = new Vue({
         },
         refreshHistoryData: function () {
             var self = this;
-            self.$set(self, 'storage_user', self.getHistoryStorageByEmail(this.emailActor))
+            self.$set(self, 'storage_user', self.getHistoryStorageByEmail(this.user_viewed_email))
         },
         cloneObject: function (objectOriginal) {
             return JSON.parse(JSON.stringify(objectOriginal))
@@ -656,7 +664,7 @@ var targetPage = new Vue({
             self.tableData = []
             self.currentUserId = userId;
 
-            var _storage = self.getHistoryStorageByEmail(this.emailActor)
+            var _storage = self.getHistoryStorageByEmail(this.user_viewed_email)
 
             // Step 3: Update search history
 
@@ -678,7 +686,7 @@ var targetPage = new Vue({
 
 
             // Step 4: update to localStorage again
-            self.setHistoryStorageByEmail(this.emailActor, _storage)
+            self.setHistoryStorageByEmail(this.user_viewed_email, _storage)
 
             self.getCurrentQuarter();
             self.getUserProfile();
@@ -694,24 +702,28 @@ var targetPage = new Vue({
             }
         },
         tableRowClassName: function ({row, rowIndex}) { // add class cho category
+            var list_classes = [];
             if (this.tableData[rowIndex].isGroup == true) {
                 if (this.tableData[rowIndex].name == gettext('Financial')) {
-                    return 'target_fin_title';
+                    list_classes.push('target_fin_title');
                 } else if (this.tableData[rowIndex].name == gettext('Customer')) {
-                    return 'target_client_title'
+                    list_classes.push('target_client_title');
                 }
                 else if (this.tableData[rowIndex].name == gettext('Internal')) {
-                    return 'target_internal_title'
+                    list_classes.push('target_internal_title');
                 }
                 else if (this.tableData[rowIndex].name == gettext('Learninggrowth')) {
-                    return 'target_clean_title'
+                    list_classes.push('target_clean_title');
                 }
                 else if (this.tableData[rowIndex].name == gettext('More')) {
-                    return 'target_other_title'
+                    list_classes.push('target_other_title');
                 } else {
                 }
-                return '';
             }
+            if (row.weight == 0) {
+                list_classes.push("disabled");
+            }
+            return list_classes.join(" ");
         },
         createItem: function (item) { // created data cho tung kpi
             var self = this;
@@ -732,16 +744,13 @@ var targetPage = new Vue({
                 visible2: false,
                 refer_to:'',
                 name_kpi_parent:"",
-                is_approved:"",
             };
             tempTableData = Object.assign(tempTableData,item);
             // add field to export excel
             // tempTableData.code = item.code == undefined ? "" : item.code;
             // tempTableData.group = item.group == undefined ? "" : item.group;
-            if (item.refer_to){
+            if (item.parent){
                 tempTableData.weight_child = item.weight == undefined ? 0 : item.weight;
-            }else{
-                tempTableData.weight = item.weight == undefined ? 0 : item.weight;
             }
             tempTableData.edit = "";
             tempTableData.isGroup = item.isGroup == undefined ? false : true
@@ -759,7 +768,7 @@ var targetPage = new Vue({
         },
         showModalEdit: function(kpi){
             // console.log('triggered show modal')
-            this.selected_kpi = kpi
+            this.$set(this,'selected_kpi', kpi)
             this.dialogFormVisible = true
         },
         getMonthsTarget: function (item) { // tao field thang theo tung quy
@@ -860,11 +869,7 @@ var targetPage = new Vue({
                 success: function (res) {
                     // console.log("quarter")
                     console.log(res);
-                    //that.get_current_quarter = res.fields.quarter;
                     that.$set(that.$data, 'get_current_quarter', res.fields.quarter);
-                    that.$set(that.$data, 'month_1_name', res.month_1_name);
-                    that.$set(that.$data, 'month_2_name', res.month_2_name);
-                    that.$set(that.$data, 'month_3_name', res.month_3_name);
                     // console.log(this.get_current_quarter)
                     that.getListKpi()
                 },
@@ -988,10 +993,10 @@ var targetPage = new Vue({
             var self = this
             var temp = []
             temp.push(self.createItem(kpi));
-            var email_parent = kpi.owner_email
+            var email_parent = kpi.incharge_user_email
             if(kpi.children.length >0){
                 for(var i = 0; i < kpi.children.length; i++){
-                    if(email_parent === kpi.children[i].owner_email){
+                    if(email_parent === kpi.children[i].incharge_user_email){
                         temp.push(self.createItem(kpi.children[i]));
                     }
                 }
@@ -1058,7 +1063,7 @@ var targetPage = new Vue({
             cloudjetRequest.ajax({
                 method: "GET",
                 dataType: 'json',
-                url: '/api/team/?user_id=' + that.actorId,
+                url: '/api/team/?user_id=' + that.user_viewed_id,
                 success: function (data) {
                     // console.log(data)
                     that.list_surbodinates_user_viewed = data.length > 0 ? data : [];
@@ -1095,28 +1100,14 @@ var targetPage = new Vue({
                     id: null,
                     child: null,
                     text: gettext('KPI Code'),
-                    slug: 'code',
+                    slug: 'kpi_id',
                     width: '20',
                     style: 'center'
                 }, {
                     id: null,
                     child: null,
                     text: gettext('Group'),
-                    slug: 'group',
-                    width: '20',
-                    style: 'center'
-                }, {
-                    id: null,
-                    child: null,
-                    text: gettext('Weight'),
-                    slug: 'weight',
-                    width: '20',
-                    style: 'center'
-                }, {
-                    id: null,
-                    child: null,
-                    text: gettext('% Weight'),
-                    slug: 'weight_percent',
+                    slug: 'refer_group_name',
                     width: '20',
                     style: 'center'
                 }, {
@@ -1135,8 +1126,22 @@ var targetPage = new Vue({
                 }, {
                     id: null,
                     child: null,
+                    text: gettext('Weight'),
+                    slug: 'weight',
+                    width: '20',
+                    style: 'center'
+                }, {
+                    id: null,
+                    child: null,
+                    text: gettext('% Weight'),
+                    slug: 'weight_percent',
+                    width: '20',
+                    style: 'center'
+                }, {
+                    id: null,
+                    child: null,
                     text: gettext('Assign to'),
-                    slug: 'owner_email',
+                    slug: 'incharge_user_email',
                     width: '25',
                     style: {
                         alignment: {
@@ -1579,7 +1584,7 @@ var targetPage = new Vue({
             function totalWeight(tableData) {
                 total = 0;
                 tableData.forEach(function (row) {
-                    if (row.weight != undefined && !row.refer_to ){
+                    if (row.weight != undefined && !row.parent){
                         total = total + row.weight;
                     }
                     this.total_weight = total;
@@ -1609,30 +1614,57 @@ var targetPage = new Vue({
                                 if (col.slug == 'score_calculation_type'){
                                     val = gettext(val);
                                     console.log("type:", val);
-                                }
-                                // if (!row.refer_to){}
-                                if (val == 'weight_percent') {
-                                    if (!row.refer_to){
-                                        val = (row.weight / this.total_weight);
+                                } else if (val == 'weight_percent') {
+                                    if (!row.parent){
+                                        if (this.total_weight > 0) {
+                                            val = (row.weight / this.total_weight);
+                                        } else {
+                                            val = null;
+                                        }
                                         total_weight_percent = total_weight_percent + val;
                                         setNumFormat(cell, '0.00%')
                                     }else{
                                         val = '';
                                     }
-
-                                }
-                                if (val == 'weight_child_percent'){
-                                    if (row.refer_to){
+                                } else if (col.slug == 'weight_child') {
+                                    val = null;
+                                    if (row.parent) {
+                                        var parent = _.find(tableData, {id: row.parent});
+                                        if (parent && parent.children_data && parent.children_data.children_weights) {
+                                            parent.children_data.children_weights.forEach(function (child) {
+                                                if (child.kpi_id == row.id) {
+                                                    val = child.weight;
+                                                }
+                                            });
+                                        }
+                                    }
+                                } else if (val == 'weight_child_percent'){
+                                    if (row.parent){
                                         var total_weight_child = 0;
-                                        tableData.forEach(function (_row) {
-                                            if (_row.refer_to == row.refer_to){
-                                                total_weight_child += _row.weight_child;
+                                        var parent = _.find(tableData, {id: row.parent});
+                                        if (parent && parent.children_data && parent.children_data.children_weights) {
+                                            parent.children_data.children_weights.forEach(function (child) {
+                                                total_weight_child += child.weight;
+                                                if (row.id == child.kpi_id) {
+                                                    row.weight_child = child.weight;
+                                                }
+                                            });
+                                            if (total_weight_child > 0) {
+                                                val = (row.weight_child / total_weight_child);
+                                            } else {
+                                                val = null;
                                             }
-                                        });
-                                        val = (row.weight_child / total_weight_child);
+                                        }
+
                                         setNumFormat(cell, '0.00%')
-                                    }else{
+                                    } else {
                                         val ='';
+                                    }
+                                } else if (col.slug == 'weight') {
+                                    if (row.parent) {
+                                        val = null
+                                    } else {
+                                        val = row.weight;
                                     }
                                 }
                                 setCellVal(cell, val);
@@ -1649,10 +1681,10 @@ var targetPage = new Vue({
 
                 });
                 setValueCell((id_start + start_row ), gettext('Sum'));
-                setValueCell(('D' + start_row ), this.total_weight);
+                setValueCell(('E' + start_row ), this.total_weight);
 
-                setValueCell(('E' + start_row ), total_weight_percent);
-                setNumFormat('E' + start_row, '0.00%');
+                setValueCell(('F' + start_row ), total_weight_percent);
+                setNumFormat('F' + start_row, '0.00%');
                 headerData.columns.forEach(function (col) {         // set mau dong cuoi cung
                     cell = id_start + start_row;
                     if (col.child){
@@ -1760,10 +1792,10 @@ var targetPage = new Vue({
         window.targetApp = this;
         this.option = $('#change-style-drop').children().eq(0).text();
         this.isShowMonth = true;
-        this.getOrg();
+        //this.getOrg();
         this.getProfileActor()
-        this.setCurrentUser(self.actorId, self.nameActor);
-        this.storage_user = self.getHistoryStorageByEmail(self.emailActor);
+        this.setCurrentUser(this.user_viewed_id, this.user_viewed_name);
+        this.storage_user = this.getHistoryStorageByEmail(this.user_viewed_email);
         this.get_surbodinate_user_viewed();
         setInterval(function(){
             $('#launcher').hide();
