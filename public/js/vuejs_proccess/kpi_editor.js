@@ -100,17 +100,17 @@ Vue.filter('createdat_format', function (value) {
     return moment(value).format('H:mm:ss - DD/MM/YYYY')
 });
 
-
-
-Vue.filter('weightDisplay', function (val) {
-    try {
-        return (val.toFixed(1) == 'NaN') ? 0 + "%" : val.toFixed(2) + "%"
-    }
-    catch (err) {
-        return val
-    }
-
-});
+//
+//
+// Vue.filter('weightDisplay', function (val) {
+//     try {
+//         return (val.toFixed(1) == 'NaN') ? 0 + "%" : val.toFixed(2) + "%"
+//     }
+//     catch (err) {
+//         return val
+//     }
+//
+// });
 
 Vue.filter('scoreDisplay', function (val) {
         try {
@@ -134,13 +134,13 @@ Vue.filter('monthDisplay',  function (val, quarter, order) {
 
 
 });
-
-Vue.filter('decimalDisplay',  function (val) {
-    return (val === 0) ? 0 : (val == null || val === '') ? '' : format(val);
-
-
-});
-
+//
+// Vue.filter('decimalDisplay',  function (val) {
+//     return (val === 0) ? 0 : (val == null || val === '') ? '' : format(val);
+//
+//
+// });
+//
 
 
 Vue.mixin({
@@ -180,7 +180,6 @@ Vue.mixin({
 
     },
     methods: {
-
         to_percent: function (val, total) {
             if (total > 0) {
                 return val * 100 / total;
@@ -937,7 +936,7 @@ Vue.component('kpi-config', {
             /*
             * QUOCDUAN NOTE:
             *   DO NOT USE `cascaded_from` field BECAUSE DEPRICATED!!!!!!!
-            * 
+            *
             * */
             // return (!this.kpi.parent && this.kpi.refer_to && this.kpi.cascaded_from) //
             return (this.kpi.refer_to && this.kpi.user !=  this.kpi.refer_to_user)
@@ -1204,7 +1203,7 @@ const EditKPIsWeightBaseModal =  {
 
         // register event to refesh parent_kpis data
         $(this.edit_kpis_weight_modal_element ).on('show.bs.modal', function (e) {
-
+            console.log("triggered this")
             that.internal_parent_kpis_to_show = that.get_parent_kpis();
             that.internal_parent_kpis = JSON.parse(JSON.stringify(that.internal_parent_kpis_to_show));
         })
@@ -1263,7 +1262,7 @@ const EditKPIsWeightBaseModal =  {
                 let total = 0;
 
                 Object.values(that.internal_parent_kpis_to_show).forEach(function (kpi) {
-                    if (kpi.bsc_category == category.value){
+                    if (kpi.bsc_category === category.value){
                         total += parseFloat(kpi.weight) || 0;
                     }
 
@@ -1284,7 +1283,7 @@ const EditKPIsWeightBaseModal =  {
             categories.forEach(function(category){
                 let total = 0;
                 Object.values(that.internal_parent_kpis).forEach(function (kpi) {
-                    if (kpi.bsc_category == category.value && (!that.is_delay_kpi || (that.is_delay_kpi && kpi.id != that.kpi.id))){
+                    if (kpi.bsc_category === category.value && (!that.is_delay_kpi || (that.is_delay_kpi && kpi.id !== that.kpi.id))){
                         total += parseFloat(kpi.weight) || 0;
                     }
 
@@ -1307,7 +1306,7 @@ const EditKPIsWeightBaseModal =  {
         get_parent_kpis_with_weight_changed: function(){
             let that = this;
             let kpis = Object.values(this.internal_parent_kpis).filter(function(parent_kpi){
-                return parent_kpi.weight != that.internal_parent_kpis_to_show[parent_kpi.id].weight
+                return parent_kpi.weight !== that.internal_parent_kpis_to_show[parent_kpi.id].weight
             });
 
             return kpis;
@@ -2063,9 +2062,9 @@ Vue.component('kpi-row', {
         },
 
         update_quarter_x_target: function(update_data){
+            var that = this;
             let data = this.kpi;
-            let kpi_id = this.kpi.id;
-             let url = `/api/v2/kpi/${kpi_id}/update-quarter-target/` ;
+            let url = `/api/v2/kpi/${data.id}/update-quarter-target/` ;
             data.quarter_one_target = update_data[0].value;
             data.quarter_two_target = update_data[1].value;
             data.quarter_three_target = update_data[2].value;
@@ -3856,7 +3855,7 @@ var v = new Vue({
         toggle_adjusting_estimation: function () {
             var self = this;
             // self.$set('adjusting_kpi.enable_estimation', !self.adjusting_kpi.enable_estimation)
-            self.$set(self.$data, 'adjusting_kpi.enable_estimation', !self.adjusting_kpi.enable_estimation)
+            self.$set(self.adjusting_kpi, 'enable_estimation', !self.adjusting_kpi.enable_estimation)
             if (self.adjusting_kpi.enable_estimation === true) {
                 $('#adjuster-estimation').slideDown();
             }
