@@ -1108,9 +1108,6 @@ Vue.component('verify-and-save-results-modal',{
                     that.loading = false
 
                 })
-                jqXhr.fail(function () {
-                   that.loading = false
-                });
         })
 
     },
@@ -1144,9 +1141,6 @@ Vue.component('verify-and-save-results-modal',{
                     that.loading = false
                     $(that.verify_and_save_result_modal_element).modal('hide');
                 })
-                jqXhr.fail(function () {
-                   that.loading = false
-                });
             that.capture_and_download()
             vue_support.show_rate_nps()
         },
