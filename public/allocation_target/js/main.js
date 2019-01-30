@@ -1574,6 +1574,10 @@ var targetPage = new Vue({
                 var id_start = 'B';
                 var val = '';
                 var total_weight_percent = 0;
+                var start_row_merge_group = 0;
+                var end_row_merge_group = 0;
+                var is_same_group = false;
+                var ready_merge_group = false
                 tableData.forEach(function (row) {
                     if (!row.isGroup){
                         headerData.columns.forEach(function (col) {
@@ -1592,7 +1596,23 @@ var targetPage = new Vue({
                                 if (col.slug == 'score_calculation_type'){
                                     val = gettext(val);
                                     console.log("type:", val);
-                                } else if (val == 'weight_percent') {
+                                } else if (col.slug == 'refer_group_name') {
+                                    if (row.parent){
+                                        if(!is_same_group){
+                                            start_row_merge_group = id_start + (start_row -1);
+                                        }
+
+                                        val = ''
+                                        is_same_group = true
+
+                                    }else if (is_same_group && !row.parent){
+                                        is_same_group = false
+                                        end_row_merge_group = id_start + (start_row -1);
+                                        ready_merge_group = true
+                                    }else{
+                                        //not thing
+                                    }
+                                }else if (val == 'weight_percent') {
                                     if (!row.parent){
                                         if (this.total_weight > 0) {
                                             val = (row.weight / this.total_weight);
@@ -1648,6 +1668,10 @@ var targetPage = new Vue({
                                 setCellVal(cell, val);
                                 setFormatCell(cell, bodyFormat);
                                 setFormatCell(cell, col.style);
+                                if (col.slug == 'refer_group_name' && ready_merge_group) {
+                                    ws.mergeCells(start_row_merge_group+':' + end_row_merge_group);
+                                    ready_merge_group = false
+                                }
 
                             }
                             id_start = id_start.nextChar();
