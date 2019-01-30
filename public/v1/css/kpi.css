@@ -2844,6 +2844,7 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 
 .target-page .el-table .cell {
     line-height: 1.29;
+    word-break: break-word;
 }
 
 #target .search-target-staff {
@@ -3004,30 +3005,8 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
     margin: 11px 10px 11px 0px;
 }
 
-.modal-edit-target .option-score-calculation {
-    width: 100%;
-}
 
-.modal-edit-target .kpi-name {
-    font-size: 12px;
-    font-weight: bold;
-    text-align: left;
-    color: #337ab7;
-    /* font-family: HelveticaNeue; */
-}
 
-.modal-edit-target .el-dialog__body {
-    padding: 0px 20px;
-}
-
-.modal-edit-target .el-dialog__footer {
-    margin: 30px 0px 0px 0px;
-    padding: 10px 20px;
-    text-align: right;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-}
 
 #target .table-contain .score-target {
     display: inline-block;
@@ -3090,51 +3069,12 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
     text-align: left;
     padding-bottom: 2px;
 }
-.modal-edit-target .material-icons.font-20{
-    position: relative;
-    bottom: -4px;
-    margin-top: -9px;
-    color: #ffffff;
-    margin-right: 8px;
-}
 
-.modal-edit-target .el-dialog__title {
-    line-height: 24px;
-    font-size: 16px;
-    color: #333333;
-    font-weight: bold;
-}
-
-.modal-edit-target {
-    text-align: left;
-}
-
-.modal-edit-target .title-input {
-    color: #666666;
-    font-size: 12px;
-}
-
-.modal-edit-target .input-target-cell input {
-    padding: 0px 0px 0px 15px;
-    color: #333333;
-}
-
-.modal-edit-target .el-button:hover {
-    background-color: #e4e4e4;
-    color: #333333;
-    border-color: #333333;
-}
 
 .btn-edit-box .el-button:hover {
     background-color: #e4e4e4;
     color: #333333;
     border-color: #333333;
-}
-
-.modal-edit-target .el-button--primary:hover {
-    background-color: #33a2a2;
-    color: #fff;
-    border-color: #33a2a2;
 }
 
 .btn-edit-box .el-button--primary:hover {
@@ -3152,11 +3092,6 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 .is-row-months .input-target-cell {
     margin: 5px 10px 5px 0px !important;
 }
-
-.modal-edit-target .el-input--small .el-input__inner {
-    height: 40px !important;
-}
-
 #notification-action a {
     vertical-align: inherit !important;
     background: transparent !important;
@@ -3322,7 +3257,7 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
 
 .tooltip.vue-tooltip-theme[x-placement^="top"] .tooltip-arrow {
     border-width: 5px 5px 0 5px;
-    border-left-color: transparent !important;
+    border-left-color: transparent !important;c
     border-right-color: transparent !important;
     border-bottom-color: transparent !important;
     bottom: -5px;
