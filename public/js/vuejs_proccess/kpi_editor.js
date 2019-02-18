@@ -1418,10 +1418,14 @@ Vue.component('delay-kpi-modal', {
             });
 
             // UI
-            jqxhr.fail(function () {
+            jqxhr.fail(function (e) {
                 that.error_on_delayed = true;
                 that.error_on_delayed_message = gettext('You do not have permission to delay this KPI!')
-                swal(gettext('Not successful'), gettext('Cannot delay/active this kpi'), "error")
+                if (e.responseJSON.message != "" || e.responseJSON.message != null || e.responseJSON.message != undefined) {
+                    swal(gettext('Not successful'), e.responseJSON.message, "error");
+                }else{
+                    swal(gettext('Not successful'), gettext('Cannot delay/active this kpi'), "error")
+                }
             });
             jqxhr.done(function(){
                that.hide_edit_kpis_weight_modal();
