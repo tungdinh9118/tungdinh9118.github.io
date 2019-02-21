@@ -1549,7 +1549,7 @@ var targetPage = new Vue({
             function renderData(tableData, headerData) {
                 var start_row = 11;
                 var data_start_row = 11
-                var number_category = 5
+                var number_category = 0
                 var id_start = 'B';
                 var val = '';
                 var total_weight_percent = 0;
@@ -1558,6 +1558,9 @@ var targetPage = new Vue({
                 var is_same_group = false;
                 var ready_merge_group = false
                 tableData.forEach(function (row) {
+                    if(row.isGroup){
+                        number_category++
+                    }
                     if (!row.isGroup){
                         headerData.columns.forEach(function (col) {
                             setWidthCol(id_start, col.width);
@@ -1652,7 +1655,7 @@ var targetPage = new Vue({
                                     ready_merge_group = false
                                 }else if( col.slug == 'refer_group_name' && is_same_group && start_row == (tableData.length + data_start_row - number_category)){
                                     //case for merge group : khi kpi cuối cùng có kpi con cần merge chung ô group lại
-                                    ws.mergeCells(start_row_merge_group+':' +'C'+ start_row)
+                                    ws.mergeCells(start_row_merge_group+':' +id_start+ start_row)
                                 }
 
                             }
