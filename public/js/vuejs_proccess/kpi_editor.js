@@ -1153,7 +1153,7 @@ const EditKPIsWeightBaseModal =  {
             kpi: null,
             delay_reason:'',
             error_on_delayed: false,
-            error_on_delayed_message: '',
+            //error_on_delayed_message: '',
 
 
         }
@@ -1420,7 +1420,7 @@ Vue.component('delay-kpi-modal', {
             // UI
             jqxhr.fail(function (e) {
                 that.error_on_delayed = true;
-                that.error_on_delayed_message = gettext('You do not have permission to delay this KPI!')
+                //that.error_on_delayed_message = gettext('You do not have permission to delay this KPI!')
                 if (e.responseJSON.message != "" || e.responseJSON.message != null || e.responseJSON.message != undefined) {
                     swal(gettext('Not successful'), e.responseJSON.message, "error");
                 }else{
