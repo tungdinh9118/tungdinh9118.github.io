@@ -1653,7 +1653,7 @@ var targetPage = new Vue({
                                 if (col.slug == 'refer_group_name' && ready_merge_group) {
                                     ws.mergeCells(start_row_merge_group+':' + end_row_merge_group);
                                     ready_merge_group = false
-                                }else if( col.slug == 'refer_group_name' && is_same_group && start_row == (tableData.length + data_start_row - number_category)){
+                                }else if( col.slug == 'refer_group_name' && is_same_group && start_row == ((tableData.length -1) + data_start_row - number_category)){
                                     //case for merge group : khi kpi cuối cùng có kpi con cần merge chung ô group lại
                                     ws.mergeCells(start_row_merge_group+':' +id_start+ start_row)
                                 }
