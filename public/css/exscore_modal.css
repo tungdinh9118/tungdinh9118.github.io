@@ -29,8 +29,11 @@
 }
 #exscore-modal .el-tabs{
     box-shadow: 0 2px 8px 0 #e4e4e4;
-    max-width:690px;
+    /*max-width:690px;*/
     padding:0px 10px;
+}
+#exscore-modal .add-margin-right{
+    margin-right: 43px;
 }
 #exscore-modal .el-tabs__content{
     padding:10px;
@@ -426,8 +429,8 @@
 }
 #add-exscore-lib-modal .modal-body{
     padding-top:10px;
-    max-height:none;
     padding-bottom:0px;
+    max-height: calc(100vh - 155px);
 }
 #add-exscore-lib-modal .close{
     border:none;
