@@ -4761,24 +4761,22 @@ var v = new Vue({
             var dateParts = date.split("-");
             if (dateParts.length != 3)
                 return null;
-            // var year = dateParts[0];
-            // var month = dateParts[1];
-            // var day = dateParts[2];
-            // var date_c = new Date(year, month, day);
+            var year = dateParts[0];
+            var month = dateParts[1];
+            var day = dateParts[2];
+            var date_c = new Date(year, month, day);
             switch (format) {
                 case 'm':
-                    return moment(date).format('['+ gettext('Year')+']'+ ' YYYY');
+                    return gettext('Month') + ' ' + date_c.getMonth();
                     break;
                 case 'd':
-                    return moment(date).format('['+ gettext('Day')+']'+ ' DD');
+                    return gettext('Day') + ' ' + date_c.getDate();
                     break;
                 case 'y':
-                    return moment(date).format('['+ gettext('Year')+']'+ ' YYYY');
+                    return gettext('Year') + ' ' + date_c.getFullYear();
                     break;
                 case 'dmy':
-                    //return gettext('Day') + ' ' + date_c.getDate() + ' ' + gettext('Month') + ' ' + date_c.getMonth() + ' ' + gettext('Year') + ' ' + date_c.getFullYear();
-                    //date_c.getDate() va date_c.getMonth() tra ve dang 0-->23 va 0-->11
-                    return moment(date).format('['+ gettext('Day')+']'+ ' DD ' + '[' + gettext('Month') + ']' + ' M ' +'[' + gettext('Year') + ']'+ ' YYYY')
+                    return gettext('Day') + ' ' + date_c.getDate() + ' ' + gettext('Month') + ' ' + date_c.getMonth() + ' ' + gettext('Year') + ' ' + date_c.getFullYear();
                     break;
                 default:
                     return '';
