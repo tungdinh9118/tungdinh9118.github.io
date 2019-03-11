@@ -425,6 +425,86 @@ Vue.component('decimal-input', {
 
 });
 
+Vue.component('kpi-unique-code-modal',{
+    delimiters: ['{$', '$}'],
+    template:'#kpi-unique-code-template',
+    props:{
+        kpi:{
+            type: Object,
+            required: true
+        },
+    },
+    inject: [
+        'update_kpi_with_score_affectability',
+    ],
+    data: function () {
+        return {
+            hide_help_tip: false,
+            kpi_unique_code_modal: null,
+            current_kpi: this.kpi,
+            link_kpi_unique_code: `${COMMON.LinkKPIUniqueCode}?kpi_id=${this.kpi.id}`,
+            unique_code: '',
+        }
+    },
+    mounted:function(){
+        this.kpi_unique_code_modal=this.$refs.kpi_unique_code_modal;
+        $(this.kpi_unique_code_modal).appendTo("body");
+    },
+    computed:{
+
+    },
+    methods:{
+        showModal: function () {
+            $(this.kpi_unique_code_modal).modal('show');
+            this.get_kpi_unique_code();
+
+        },
+        hideModal: function(){
+            $(this.kpi_unique_code_modal).modal('hide');
+        },
+        get_kpi_unique_code: function(){
+            let that = this;
+            var jqxhr = cloudjetRequest.ajax({
+                type: 'get',
+                url: that.link_kpi_unique_code,
+                success: function (data) {
+                    that.unique_code=data.unique_code;
+                }
+            });
+        },
+
+        update_kpi_unique_code: function () {
+
+            let that = this;
+            let update_data = {
+                'id':this.kpi.id,
+                'unique_code':this.unique_code
+            };
+
+
+            let jqxhr = that.update_kpi_with_score_affectability('update_kpi_unique_code',update_data);
+
+            jqxhr.done(function () {
+
+                swal({
+                    type: 'success',
+                    title: 'Cập nhật "Mã liên kết" thành công.',
+                    showConfirmButton: false,
+                    timer: 1000,
+                });
+
+            });
+            jqxhr.fail(function(){
+                swal(gettext('Not successful'), "Không thành công!!!", "error");
+            });
+
+
+        }
+    },
+});
+
+
+
 Vue.component('kpi-children-weight-modal',{
     delimiters: ['{$', '$}'],
     template:'#kpi-children-weight-auto-score-calculation-method',
@@ -1326,9 +1406,7 @@ Vue.component('kpi-config', {
         //     this.$root.$emit('get_children_kpis', kpi_id);
         // },
 
-        show_unique_code_modal: function(kpi_id){
-            this.$root.$emit('show_unique_code_modal', kpi_id)
-        },
+
 
         init_data_align_up_kpi:function(user, kpi_id, bsc_category){
             this.$root.$emit('init_data_align_up_kpi', user, kpi_id, bsc_category);
@@ -2524,6 +2602,10 @@ Vue.component('kpi-row', {
                      url = `/api/v2/kpi/children_weights/${kpi_id}/` ;
                      data = Object.assign({}, update_data);
                     break;
+                case 'update_kpi_unique_code':
+                    url = COMMON.LinkKPIAPI ;
+                    data = Object.assign({}, update_data);
+                    break;
 
 
                 /* NOTE: there are several cases that also affect kpi's score
@@ -3118,7 +3200,7 @@ var v = new Vue({
         selected_kpilib: {},
         // BSC_CATEGORY: COMMON.BSCCategory,
         // EXTRA_FIELDS: COMMON.ExtraFields,
-        unique_code_cache: '',
+
         total_edit_weight: {},
         kpi_list_cache: [],
         option_export: 'q-m',
@@ -3328,9 +3410,6 @@ var v = new Vue({
         //     that.get_children_v2(kpi_id);
         // });
 
-        this.$on('show_unique_code_modal', function(kpi_id) {
-            that.show_unique_code_modal(kpi_id);
-        });
 
         this.$on('init_data_align_up_kpi', function(user_id, kpi_id, bsc_category) {
             that.init_data_align_up_kpi(user_id, kpi_id, bsc_category);
@@ -3465,8 +3544,9 @@ var v = new Vue({
             // Chỉ admin mới có toàn quyền: Xoá, thêm.
             // Manager có quyền thêm.
             if (this.is_user_system) return 'admin';
-            else if (COMMON.isManager==='True') return 'manager';
-            return 'normal_user';
+            else if (COMMON.IsManager==='True') return 'manager';
+            else return 'normal_user';
+
         },
         reload_backup_kpi_list: function(is_remove=false){
             this.$set(this.employee_performance, 'month_1_backup', false);
@@ -4832,20 +4912,6 @@ var v = new Vue({
 
         },
 
-        show_unique_code_modal: function (kpi_id) {
-            var kpi=this.kpi_list[kpi_id];
-            var that =  this;
-            if (!kpi.unique_code){
-                kpi.unique_code = kpi.id + "_" + slugify(kpi.name).substring(0,10);
-                that.update_kpi(kpi);
-
-            }
-
-            this.current_kpi = kpi;
-
-            this.unique_code_cache = kpi.unique_code;
-            $('#kpi-uniquecode').modal();
-        },
 
         update_kpi: function (kpi, show_blocking_modal, callback) {
             var show_blocking_modal = (typeof show_blocking_modal !== 'undefined') ? show_blocking_modal : false;
