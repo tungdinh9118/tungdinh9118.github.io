@@ -1885,7 +1885,7 @@ Vue.component('kpi-owner', {
                     <img align="left" src="${result.avatar}" alt="Avatar" class="user-thumb">
                     <div class="incharge-user-info">
                         <div class="incharge-user-name">
-                            <span class="relative-level">L[${result.relative_level}]</span> <span>${result.display_name}</span>
+                            <span class="relative-level">${result.display_name}</span>
                          </div>
                         
                         <div class="incharge-user-email">${result.email}</div>    
