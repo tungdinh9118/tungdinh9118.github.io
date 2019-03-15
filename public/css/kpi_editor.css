@@ -5466,8 +5466,9 @@ button.close{
 /* css banel strategic map*/
 .strategy-com-box .el-header {
     color: #333;
-    text-align: center;
+    /*text-align: center;*/
     height: 68px !important;
+    padding: 20px !important;
     background: #F7FAFC;
     border-radius: 6px;
     margin: 0px 32px 8px 0px;
@@ -5495,7 +5496,7 @@ button.close{
 
 .strategy-com-box .el-main {
     color: #333;
-    text-align: center;
+    /*text-align: center;*/
     background: #F7FAFC;
     border-radius: 6px;
     height: 320px;
@@ -5526,14 +5527,16 @@ button.close{
     background: #ffffff;
 }
 .strategy-com-box .el-main .inplaceedit.textareainplaceedit{
-    min-height: 320px;
+    min-height: 270px;
 }
 .strategy-com-box .el-header:hover{
     background: #D7DFE5;
     color: black;
 }
-.strategy-com-box .el-header:hover .strategy-com-box .edit-icon{
-    display: block;
+.strategy-com-box .el-header:hover .edit-icon{
+    float: right;
+    display: block !important;
+    cursor: pointer;
 }
 .strategy-com-box .el-header:hover .inplaceedit.enable{
     background: #D7DFE5;
@@ -5542,6 +5545,11 @@ button.close{
 .strategy-com-box .el-main:hover{
     background: #D7DFE5;
     color: black;
+}
+.strategy-com-box .el-main:hover .edit-icon{
+    float: right;
+    display: block !important;
+    cursor: pointer;
 }
 .strategy-com-box .el-main .inplaceedit.enable:focus{
     background: #F7FAFC;
@@ -5553,6 +5561,18 @@ button.close{
 .strategy-com-box .el-main:hover .inplaceedit.enable{
     background: #D7DFE5;
     color: black;
+}
+.strategy-com-box .el-main .inplaceedit .placeholder{
+    color: #929DA3;
+    border: none;
+    font-size: 18px;
+    font-family: "Helvetica Neue"
+}
+.strategy-com-box .el-header .inplaceedit .placeholder{
+    color: #929DA3;
+    border: none;
+    font-size: 18px;
+    font-family: "Helvetica Neue"
 }
   /*.el-container:nth-child(5) .el-aside,*/
   /*.el-container:nth-child(6) .el-aside {*/
