@@ -5468,7 +5468,6 @@ button.close{
     color: #333;
     /*text-align: center;*/
     height: 68px !important;
-    padding: 20px !important;
     background: #F7FAFC;
     border-radius: 6px;
     margin: 0px 32px 8px 0px;
@@ -5537,6 +5536,7 @@ button.close{
     float: right;
     display: block !important;
     cursor: pointer;
+    padding: 15px 0px;
 }
 .strategy-com-box .el-header:hover .inplaceedit.enable{
     background: #D7DFE5;
@@ -5572,7 +5572,8 @@ button.close{
     color: #929DA3;
     border: none;
     font-size: 18px;
-    font-family: "Helvetica Neue"
+    font-family: "Helvetica Neue";
+    padding-top: 20px ;
 }
   /*.el-container:nth-child(5) .el-aside,*/
   /*.el-container:nth-child(6) .el-aside {*/
