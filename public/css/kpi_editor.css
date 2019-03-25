@@ -5585,7 +5585,7 @@ button.close{
     padding-top: 20px ;
 }
 .strategy-com-box .el-header .inplaceedit .placeholder-map-name{
-    padding-top: 20px ;
+    line-height: 70px;
 }
   /*.el-container:nth-child(5) .el-aside,*/
   /*.el-container:nth-child(6) .el-aside {*/
