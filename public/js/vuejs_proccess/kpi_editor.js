@@ -1518,7 +1518,6 @@ Vue.component('point-calculation-methods-modal',{
                 that.init_adjusting_chart();
             }
             let data = that.fetch_chart_data();
-
             that.adjusting_chart.data.datasets[1].data = data; // update performance chart
             if (that.adjusting_kpi.enable_estimation) {
                 that.adjusting_chart.data.datasets[0].data = [
@@ -1646,32 +1645,34 @@ Vue.component('point-calculation-methods-modal',{
             if (_month === 'quarter') {
                 _target = parseFloat(that.adjusting_kpi['target']);
             }
-            if (_result === null) { // calculate fof default values
-                _result = parseFloat(that.adjusting_kpi['month_' + _month]);
-                if (_month === 'quarter') {
-                    _result = parseFloat(that.adjusting_kpi['real']);
-                }
-            } // get result}
+            // Not set default in https://a.happyworking.life/project/fountainhead-cloudjet-kpi/us/6601
+            // if (_result === null) { // calculate fof default values
+            //     _result = parseFloat(that.adjusting_kpi['month_' + _month]);
+            //     if (_month === 'quarter') {
+            //         _result = parseFloat(that.adjusting_kpi['real']);
+            //     }
+            // } // get result}
             let _min = 0;
             let _max = 0;
             let _max_score = parseFloat(that.organization.max_score);
             let _operator = that.adjusting_kpi.operator;
 
-            if (_operator === '>=') {
-                _min = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].bottom); // get min target
-                _max = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].top); // get max target
-                let score = calculate_with_operator_greater();
-                if (score < 0) return (0.0).toFixed(2);
-                return score;
-            }
-            if (_operator === '<=') {
-                _min = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].top); // get min target
-                _max = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].bottom); // get max target
-                let score = calculate_with_operator_less();
-                if (score < 0) return (0.0).toFixed(2);
-                return score;
-            }
+            if (!$.isNumeric(_result)) return (0.0).toFixed(2);
 
+            if (_operator === '>=') {
+            _min = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].bottom); // get min target
+            _max = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].top); // get max target
+            let score = calculate_with_operator_greater();
+            if (score < 0) return (0.0).toFixed(2);
+            return score;
+        }
+            if (_operator === '<=') {
+            _min = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].top); // get min target
+            _max = parseFloat(that.adjusting_kpi.achievement_calculation_method_extra[that.get_adjusting_key()].bottom); // get max target
+            let score = calculate_with_operator_less();
+            if (score < 0) return (0.0).toFixed(2);
+            return score;
+        }
             function calculate_with_operator_greater() {
                 let score = (0.0).toFixed(2);
 
