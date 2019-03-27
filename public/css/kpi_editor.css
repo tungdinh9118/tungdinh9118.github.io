@@ -5480,7 +5480,7 @@ button.close{
     background: #F7FAFC;
     border-radius: 6px;
     margin: 0px 32px 8px 0px;
-    overflow: hidden;
+    overflow-y: auto;
   }
 .strategy-com-box .el-footer {
     color: #333;
@@ -5508,7 +5508,7 @@ button.close{
     background: #F7FAFC;
     border-radius: 6px;
     height: 320px;
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     margin: 0px 32px 0px 0px;
 }
 
@@ -5542,10 +5542,14 @@ button.close{
     color: black;
 }
 .strategy-com-box .el-header:hover .edit-icon{
-    float: right;
     display: block !important;
     cursor: pointer;
-    padding: 15px 0px;
+    position: absolute;
+    top: 15px;
+    right: 60px;
+}
+.strategy-com-box .container-map{
+    position: relative;
 }
 .strategy-com-box .el-header:hover .inplaceedit.enable{
     background: #D7DFE5;
@@ -5556,9 +5560,11 @@ button.close{
     color: black;
 }
 .strategy-com-box .el-main:hover .edit-icon{
-    float: right;
     display: block !important;
     cursor: pointer;
+    position: absolute;
+    right: 30px;
+    top: 10px
 }
 .strategy-com-box .el-main .inplaceedit.enable:focus{
     background: #F7FAFC;

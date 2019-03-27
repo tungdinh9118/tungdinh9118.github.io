@@ -410,6 +410,12 @@
 .nav li[data-v-1e2a6852]{
     cursor: pointer;
 }
+@media (max-width: 1282px) {
+#navbar > ul > li > a > img[data-v-1e2a6852] {
+            display: none;
+}
+}
+
 
 
 .mg-bt-0[data-v-19b28649] {
@@ -494,6 +500,7 @@ div.decimal-input__item .invalid-input[data-v-d7756746] > input {
 div.decimal-input__item .current-target[data-v-d7756746] > input {
   border: 2px solid #ffb82d;
 }
+
 
 
 
