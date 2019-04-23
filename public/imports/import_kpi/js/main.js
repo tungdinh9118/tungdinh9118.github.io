@@ -1,4 +1,4 @@
-/*
+    /*
   quocduan note: this method is the fucking trick,
 *  so, we should check later for the better way to archive what we want
 * */
@@ -75,6 +75,7 @@ Vue.component('edit-import-kpi-modal', {
     },
     mounted: function () {
         // {#            this.old_data = this.kpi#}
+        $("#edit-import-kpi").appendTo("body");
     },
     created: function () {
         // {#            console.log("======><><><><><><><kpppppppppppppppppppppppi><><><><><><><<><=======")#}
@@ -124,21 +125,8 @@ Vue.component('edit-import-kpi-modal', {
     }
 })
 
-const Home = {
-// {#                    template: '#home-template',#}
+var app = new Vue ({
 el: '#home-template',
-    //  template : "<div>abc</div>",
-    mounted: function(){
-    var self = this;
-    window.import_app = this;
-    /*
-    * Quick hack
-    * */
-
-
-
-    /* end quick hack */
-},
 data: function () {
     return {
         info_msg_box:{
@@ -158,16 +146,14 @@ data: function () {
         check_file: true,
         data_edit_kpi: {
             data: {},
-            index: -1,
             check_error: false,
-            msg: [],
         },
         organization:{},
         file: {},
         check_total: 0,
         method: ["sum", "average", "most_recent", "tính tổng", "trung bình", "tháng gần nhất"],
         method_save: '',
-
+        id_table:'',
     }
 },
 filters: {
@@ -322,6 +308,8 @@ methods: {
     handleFile: function (e) {
         var that = this;
         that.kpis.length = 0;
+        that.kpis = []
+        that.id_table = makeid();
         that.check_file = true;
         var files = e.target.files || e.dataTransfer.files;
         var i, f;
@@ -854,7 +842,7 @@ methods: {
         self.check_file = true;
         var quarter_error = [];// mảng lưu quý bị lỗi
         var months_error = [];// mảng lưu tháng bị lỗi
-        cloudjetRequest.ajax({
+        let jqXhr = cloudjetRequest.ajax({
             type: "POST",
             url: '/api/kpis/import/validate',
             data: JSON.stringify(kpi),
@@ -1059,6 +1047,7 @@ methods: {
             contentType: "application/json"
 
         });
+        return jqXhr
         // self.$set(self.kpis, index, kpi);
     },
     to_string: function (value) {
@@ -1074,9 +1063,9 @@ methods: {
     edit_kpi: function (index) {
         var that = this;
         that.data_edit_kpi.check_error = false;
-        that.data_edit_kpi.msg = that.kpis[index].msg;
+        that.data_edit_kpi.data.msg = that.kpis[index].msg;
         that.data_edit_kpi.data = JSON.parse(JSON.stringify(that.kpis[index]));
-        console.log(that.data_edit_kpi.data)
+        console.log(that.data_edit_kpi.data);
         if (that.data_edit_kpi.data.score_calculation_type.trim().toLowerCase() == '' || that.data_edit_kpi.data.score_calculation_type.trim().toLowerCase()=='most recent'){
             // {#that.data_edit_kpi.data.score_calculation_type = 'most_recent';#}
         }
@@ -1092,7 +1081,7 @@ methods: {
                 that.data_edit_kpi.data.score_calculation_type = ""
             }
         }
-        that.data_edit_kpi.index = index;
+        that.data_edit_kpi.data.index = index;
         setTimeout(function () {
             $('#edit-import-kpi').modal('show');
             $('.modal-dialog .modal-body').attr('style', 'max-height:' + parseInt(screen.height * 0.6) + 'px !important; overflow-y: auto');
@@ -1106,36 +1095,35 @@ methods: {
         kpi.check_error_quarter_4 = false;
     },
     confirm_edit_kpi: function (kpi) {
-        var self = this;
-        var kpi_validate = {}
-        self.resetErrorMsg(kpi.data)
+        let that = this;
+        that.resetErrorMsg(kpi.data);
         kpi.data.msg = '';
-        self.validate_kpi(kpi.data)
-        setTimeout(function () {
-            if (!$('.text-muted').length) {
+        let jqxhr = that.validate_kpi(kpi.data);
+        debugger
+        jqxhr.done(function () {
+            // if (!$('.text-muted').length) {
                 $("body.bg-sm").removeAttr("style");
-                self.info_msg_box.show_infor_msg = true;
-                if(self.data_edit_kpi.data.msg.length > 0){
-                    self.info_msg_box.type_msg = "error";
-                    self.info_msg_box.tite_msg = "Chỉnh sửa KPI không thành công"
-                    self.data_edit_kpi.data.msg.forEach(function (field) {
-                        self.info_msg_box.array_msg.push(field.field_name + ": " + field.message )
+                that.info_msg_box.show_infor_msg = true;
+                if(that.data_edit_kpi.data.msg.length > 0){
+                    that.info_msg_box.type_msg = "error";
+                    that.info_msg_box.tite_msg = "Chỉnh sửa KPI không thành công";
+                    that.data_edit_kpi.data.msg.forEach(function (field) {
+                        that.info_msg_box.array_msg.push(field.field_name + ": " + field.message )
                     })
 
                 }else{
-                    $('#edit-import-kpi').modal('hide')
-                    self.info_msg_box.type_msg = "success";
-                    self.info_msg_box.tite_msg = "Chỉnh sửa KPI thành công"
-                    self.info_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !")
-                    self.$set(self.kpis, self.data_edit_kpi.data.index, self.data_edit_kpi.data);
+                    $("[data-dismiss=modal]").trigger({ type: "click" });
+                    that.info_msg_box.type_msg = "success";
+                    that.info_msg_box.tite_msg = "Chỉnh sửa KPI thành công";
+                    that.info_msg_box.array_msg.push("Chỉnh sửa nhập dữ liệu KPI thành công !");
+                    that.$set(that.kpis, that.data_edit_kpi.data.index, that.data_edit_kpi.data)
                     setTimeout(function () {
-                        self.info_msg_box.show_infor_msg = false;
+                        that.info_msg_box.show_infor_msg = false;
                     },2000)
                 }
-
                 return;
-            }
-        }, 1000)
+            // }
+        })
         // Không cần thiết vì đã có filter xử lý việc này => tránh lỗi chuyển data kpi.score_calculation_type
         // qua tiếng việt rồi lại qua tiếng anh chỉ để show lên xem
         //
@@ -1282,36 +1270,12 @@ methods: {
     //end example */
 },
 delimiters: ['${', '}$'],
-    created: function () {
+created: function () {
     // fetch the data when the view is created and the data is
     // already being observed
     this.init()
 }
-,
-watch: {
-    // call again the method if the route changes
-    '$route': 'init'
-}
-}
-;
-
-
-const routes = [
-    {path: '/', component: Home},
-//                {path: '/create-account', component: CreateAccount}
-];
-
-const router = new VueRouter({
-    routes // short for routes: routes
-});
-
-
-const app = new Vue({
-    router,
-
-    delimiters: ['${', '}$']
-
-}).$mount('#app');
+})
 
 function validate(evt) {
     var theEvent = evt || window.event;

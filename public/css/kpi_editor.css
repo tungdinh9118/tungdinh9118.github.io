@@ -5104,6 +5104,13 @@ button.close{
     background: #CAED9E !important;
     color: #3F6219 !important;
     width: 500px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 15;
+    display: -webkit-box !important;
+    white-space: pre-wrap;
+    max-height: 222px;
+    -webkit-box-orient: vertical;
 }
 
 .el-tooltip-measurement-method .popper__arrow::after, .el-tooltip-measurement-method .popper__arrow{
