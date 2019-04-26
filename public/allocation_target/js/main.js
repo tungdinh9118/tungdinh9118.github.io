@@ -140,31 +140,30 @@ Vue.component('decimal-input-edit-target', {
     //     >
     // `,
 
-    data: function(){
+    data: function () {
         return {
-            target_kpi:''
+            internalModel: undefined,
+            temporaryData: undefined,
         }
     },
-
     watch: {
-        value: function (val) {
-            this.target_kpi = val
+        internalModel(val, oldVal){
+            if(oldVal === undefined) {
+                this.temporaryData = this.value
+            }
         }
     },
     computed: {
-        model:{
-            get: function(){
-                var val = JSON.parse(JSON.stringify(this.value));
-                // https://stackoverflow.com/a/33671045/6112615
-                return this.$options.filters.decimalDisplay(val, 5);
+        model: {
+            get: function () {
+                if (this.internalModel === undefined) return this.value
+                else return this.internalModel
             },
-            set: function(val){
-                var newVal=val;
-                this.target_kpi = newVal
-                if(!this.showBtn){
-                    this.$emit('input',newVal)
-                }
-                return newVal
+            set: function (val) {
+                this.internalModel = val
+                // if (!this.showBtn) {
+                //     this.$emit('input', val)
+                // }
             },
 
         }
@@ -175,12 +174,28 @@ Vue.component('decimal-input-edit-target', {
             evt.stopPropagation();
         },
         save: function () {
-            this.$emit('input',this.target_kpi);
+            // $emmit input
+            this.$emit('input', this.model);
+
+            // emit save
             this.$emit('save')
+
+            // reset after save
+            this.reset()
+        },
+        reset() {
+            // reset data
+            this.internalModel = undefined
         },
         cancel: function () {
-            this.target_kpi = this.value;
+            // emit input
+            this.$emit('input', this.temporaryData || this.value);
+
+            // emit cancel
             this.$emit('cancel')
+
+            // reset
+            this.reset()
         }
     }
 
@@ -188,6 +203,56 @@ Vue.component('decimal-input-edit-target', {
 // Vue.filter('decimalDisplay',  function (val) {
 //     return (val === 0) ? 0 : (val == null || val === '') ? '' : format_number(val);
 // });
+Vue.component('modal-edit-target-cell', {
+    delimiters: ['${', '}$'],
+    props: ['kpi', 'value', 'indexKpi'],
+    template: $('#modal-edit-target-cell').html(),
+    data: function () {
+        return {
+            visible: false,
+            edit_target_data: {},
+            if_kpi_not_edit: {}
+
+        }
+    },
+    mounted: function () {
+
+    },
+    created: function () {
+
+    },
+    computed: {
+        cell_target: {
+            get: function () {
+                var val = JSON.parse(JSON.stringify(this.value));
+                return val
+            },
+            set: function (val) {
+                var newVal = val;
+                this.$emit('input', newVal)
+                return newVal
+            },
+
+        }
+    },
+    methods: {
+        showEditTargetModal: function () {
+            let that = this;
+            this.visible = true;
+            this.$nextTick(function () {
+                that.$refs.popover.doShow()
+
+            })
+        },
+        save_edit_target: function () {
+            this.$emit('update-target-cell')
+            this.visible = false
+        },
+        cancelEditTarget: function () {
+            $('.el-popover').hide()
+        },
+    }
+})
 Vue.component('modal-edit-target', {
         delimiters: ['${', '}$'],
         props: ['kpi','optionEditTarget','indexKpi'],

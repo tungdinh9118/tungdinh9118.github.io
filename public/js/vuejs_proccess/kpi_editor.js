@@ -2324,6 +2324,15 @@ Vue.component('kpi-owner', {
 
     },
     watch:{
+        show_search_box: function (val) {
+            if (val) {
+                let autocomplete_instance = this.$refs.kpi_owner_autocomplete, that = this;
+                // this code let us show user email in autocomplete-input instead of result of `formattedDisplay` function
+                autocomplete_instance.$nextTick(function(){
+                    this.display = that.kpi.incharge_user_email;
+                });
+            }
+        }
     },
     computed:{
         search_url: function () {

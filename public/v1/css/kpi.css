@@ -3082,6 +3082,11 @@ input[type="checkbox"] .styled:checked + label::after, input[type="radio"] .styl
     border: 2px solid #008b8b;
     margin: 0px 3px 0px 0px;
 }
+.vue-tooltip.custom-tooltip-sub-link{
+    word-break: break-word;
+    max-width: 400px;
+    padding:20px
+}
 #target .el-table .kpi-name{
     /*display: inline-block;*/
     word-break: break-word;
