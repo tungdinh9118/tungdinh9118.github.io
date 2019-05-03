@@ -2011,8 +2011,7 @@ const EditKPIsWeightBaseModal =  {
             delay_reason:'',
             error_on_delayed: false,
             //error_on_delayed_message: '',
-
-
+            valid_items: {}
         }
     },
     inject: [
@@ -2044,6 +2043,10 @@ const EditKPIsWeightBaseModal =  {
             console.log("triggered this")
             that.internal_parent_kpis_to_show = that.get_parent_kpis();
             that.internal_parent_kpis = JSON.parse(JSON.stringify(that.internal_parent_kpis_to_show));
+
+            Object.values(that.internal_parent_kpis_to_show).forEach(function (item) {
+                that.$set(that.valid_items, item.id, true);
+            })
         })
 
     },
@@ -2051,6 +2054,10 @@ const EditKPIsWeightBaseModal =  {
 
     },
     computed:{
+        isInvalid: function () {
+            let values = Object.values(this.valid_items);
+            return !_.every(values, function (val) {return val})
+        },
         is_delay_reason_valid: function () {
             /* should be overwrite in delay-kpi-modal sub-component */
             return false;
@@ -2134,7 +2141,9 @@ const EditKPIsWeightBaseModal =  {
         },
     },
     methods:{
-
+        on_valid_checked: function (val, kpi_id) {
+            this.$set(this.valid_items, kpi_id, val);
+        },
         show_edit_kpis_weight_modal: function(){
             $(this.edit_kpis_weight_modal_element ).modal('show');
         },

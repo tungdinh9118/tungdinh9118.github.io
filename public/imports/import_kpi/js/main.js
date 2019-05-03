@@ -1099,7 +1099,6 @@ methods: {
         that.resetErrorMsg(kpi.data);
         kpi.data.msg = '';
         let jqxhr = that.validate_kpi(kpi.data);
-        debugger
         jqxhr.done(function () {
             // if (!$('.text-muted').length) {
                 $("body.bg-sm").removeAttr("style");
